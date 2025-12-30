@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      anatomy_resonance_points: {
+        Row: {
+          body_region: string
+          created_at: string
+          description: string | null
+          emotional_associations: string[] | null
+          harmonic_frequencies: number[] | null
+          id: string
+          meridian_associations: string[] | null
+          name: string
+          name_latin: string | null
+          organ_associations: string[] | null
+          primary_frequency: number
+          x_position: number
+          y_position: number
+          z_position: number
+        }
+        Insert: {
+          body_region: string
+          created_at?: string
+          description?: string | null
+          emotional_associations?: string[] | null
+          harmonic_frequencies?: number[] | null
+          id?: string
+          meridian_associations?: string[] | null
+          name: string
+          name_latin?: string | null
+          organ_associations?: string[] | null
+          primary_frequency: number
+          x_position: number
+          y_position: number
+          z_position: number
+        }
+        Update: {
+          body_region?: string
+          created_at?: string
+          description?: string | null
+          emotional_associations?: string[] | null
+          harmonic_frequencies?: number[] | null
+          id?: string
+          meridian_associations?: string[] | null
+          name?: string
+          name_latin?: string | null
+          organ_associations?: string[] | null
+          primary_frequency?: number
+          x_position?: number
+          y_position?: number
+          z_position?: number
+        }
+        Relationships: []
+      }
       client_vectors: {
         Row: {
           attractor_distance: number | null
@@ -121,6 +172,85 @@ export type Database = {
         }
         Relationships: []
       }
+      harmonization_jobs: {
+        Row: {
+          client_id: string
+          completed_at: string | null
+          created_at: string
+          error_message: string | null
+          id: string
+          job_type: string
+          priority: number | null
+          progress: number | null
+          protocol_id: string | null
+          result_data: Json | null
+          started_at: string | null
+          status: string
+          target_anatomy_points: string[] | null
+          target_frequencies: number[] | null
+          target_word_energies: string[] | null
+          vector_id: string | null
+        }
+        Insert: {
+          client_id: string
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          job_type?: string
+          priority?: number | null
+          progress?: number | null
+          protocol_id?: string | null
+          result_data?: Json | null
+          started_at?: string | null
+          status?: string
+          target_anatomy_points?: string[] | null
+          target_frequencies?: number[] | null
+          target_word_energies?: string[] | null
+          vector_id?: string | null
+        }
+        Update: {
+          client_id?: string
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          job_type?: string
+          priority?: number | null
+          progress?: number | null
+          protocol_id?: string | null
+          result_data?: Json | null
+          started_at?: string | null
+          status?: string
+          target_anatomy_points?: string[] | null
+          target_frequencies?: number[] | null
+          target_word_energies?: string[] | null
+          vector_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "harmonization_jobs_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "harmonization_jobs_protocol_id_fkey"
+            columns: ["protocol_id"]
+            isOneToOne: false
+            referencedRelation: "harmonization_protocols"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "harmonization_jobs_vector_id_fkey"
+            columns: ["vector_id"]
+            isOneToOne: false
+            referencedRelation: "client_vectors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       harmonization_protocols: {
         Row: {
           amplitude: number
@@ -198,6 +328,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      word_energies: {
+        Row: {
+          amplitude: number | null
+          category: string
+          chakra: string | null
+          created_at: string
+          description: string | null
+          emotional_quality: string | null
+          frequency: number
+          id: string
+          language: string | null
+          meridian: string | null
+          organ_system: string | null
+          word: string
+        }
+        Insert: {
+          amplitude?: number | null
+          category: string
+          chakra?: string | null
+          created_at?: string
+          description?: string | null
+          emotional_quality?: string | null
+          frequency: number
+          id?: string
+          language?: string | null
+          meridian?: string | null
+          organ_system?: string | null
+          word: string
+        }
+        Update: {
+          amplitude?: number | null
+          category?: string
+          chakra?: string | null
+          created_at?: string
+          description?: string | null
+          emotional_quality?: string | null
+          frequency?: number
+          id?: string
+          language?: string | null
+          meridian?: string | null
+          organ_system?: string | null
+          word?: string
+        }
+        Relationships: []
       }
     }
     Views: {
