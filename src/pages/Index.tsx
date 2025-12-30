@@ -7,6 +7,7 @@ import FrequencyTherapySection from "@/components/FrequencyTherapySection";
 import SystemStatusDashboard from "@/components/SystemStatusDashboard";
 import ClientVectorInterface from "@/components/ClientVectorInterface";
 import ClientVectorTrajectory3D from "@/components/ClientVectorTrajectory3D";
+import AnatomyResonanceViewer from "@/components/AnatomyResonanceViewer";
 import FrequencyOutputModule from "@/components/FrequencyOutputModule";
 import RealtimeStatusWidget from "@/components/RealtimeStatusWidget";
 import ThomResources from "@/components/ThomResources";
@@ -16,9 +17,14 @@ import type { VectorAnalysis } from '@/services/feldengine';
 
 const Index = () => {
   const [currentVectorAnalysis, setCurrentVectorAnalysis] = useState<VectorAnalysis | null>(null);
+  const [selectedFrequency, setSelectedFrequency] = useState<number | null>(null);
 
   const handleVectorCreated = useCallback((analysis: VectorAnalysis) => {
     setCurrentVectorAnalysis(analysis);
+  }, []);
+
+  const handleFrequencySelect = useCallback((frequency: number) => {
+    setSelectedFrequency(frequency);
   }, []);
 
   return (
@@ -40,6 +46,10 @@ const Index = () => {
         <FrequencyTherapySection />
         <ClientVectorInterface onVectorCreated={handleVectorCreated} />
         <ClientVectorTrajectory3D vectorAnalysis={currentVectorAnalysis} />
+        <AnatomyResonanceViewer 
+          vectorAnalysis={currentVectorAnalysis} 
+          onFrequencySelect={handleFrequencySelect}
+        />
         <FrequencyOutputModule />
         <section id="ressourcen">
           <ThomResources />
