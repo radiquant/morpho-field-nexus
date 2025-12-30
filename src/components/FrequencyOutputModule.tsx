@@ -1,6 +1,13 @@
-// Frequenz-Output-Modul mit WebAudio und Serial-Kommunikation
+/**
+ * Frequency Output Module
+ * Unterstützt verschiedene Therapie-Modi für Frequenzausgabe
+ * 
+ * Modi:
+ * - Bipolar-Resonanz: Bipolare Wellenformen nach dem Prinzip gegenpoliger Schwingungen
+ * - Harmonikale Modulation: Frequenztherapie mit harmonischen Obertönen und Modulationen
+ */
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Play, 
   Square, 
@@ -10,7 +17,10 @@ import {
   Waves,
   Settings2,
   Zap,
-  Activity
+  Activity,
+  Check,
+  Timer,
+  BarChart3
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
@@ -25,33 +35,96 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import type { FrequencyOutput, ModulationConfig } from '@/types/hardware';
+import type { FrequencyOutput } from '@/types/hardware';
 
-type WaveformType = 'sine' | 'square' | 'triangle' | 'sawtooth';
+type WaveformType = 'sine' | 'square' | 'triangle' | 'sawtooth' | 'bipolar_sine' | 'harmonic_complex';
 
-interface FrequencyOutputModuleProps {
-  onFrequencyChange?: (config: FrequencyOutput) => void;
+// Therapie-Modi (ohne echte Markenbezeichnungen)
+type TherapyMode = 'bipolar_resonance' | 'harmonic_modulation';
+
+interface TherapyModeConfig {
+  id: TherapyMode;
+  name: string;
+  description: string;
+  icon: typeof Waves;
+  waveforms: WaveformType[];
+  defaultWaveform: WaveformType;
+  supportsModulation: boolean;
+  bipolar: boolean;
+  harmonics: number[];
 }
+
+const THERAPY_MODES: TherapyModeConfig[] = [
+  {
+    id: 'bipolar_resonance',
+    name: 'Bipolar-Resonanz',
+    description: 'Gegenphasige Schwingungen für tiefgreifende Regulation',
+    icon: Radio,
+    waveforms: ['bipolar_sine', 'square', 'triangle'],
+    defaultWaveform: 'bipolar_sine',
+    supportsModulation: false,
+    bipolar: true,
+    harmonics: [1],
+  },
+  {
+    id: 'harmonic_modulation',
+    name: 'Harmonikale Modulation',
+    description: 'Mehrstufige Frequenztherapie mit Obertönen',
+    icon: Waves,
+    waveforms: ['harmonic_complex', 'sine', 'triangle'],
+    defaultWaveform: 'harmonic_complex',
+    supportsModulation: true,
+    bipolar: false,
+    harmonics: [1, 2, 3, 4, 5, 6, 7, 8],
+  },
+];
 
 // Vordefinierte therapeutische Frequenzen
 const THERAPEUTIC_FREQUENCIES = [
   { name: 'Schumann-Resonanz', frequency: 7.83, description: 'Erdresonanz' },
   { name: 'Alpha-Wellen', frequency: 10, description: 'Entspannung' },
   { name: 'Theta-Wellen', frequency: 6, description: 'Meditation' },
-  { name: 'Rife - Entgiftung', frequency: 727, description: 'Detox-Frequenz' },
-  { name: 'Rife - Immunsystem', frequency: 880, description: 'Immunstärkung' },
-  { name: 'Solfeggio UT', frequency: 396, description: 'Befreiung von Angst' },
-  { name: 'Solfeggio MI', frequency: 528, description: 'DNA-Reparatur' },
-  { name: 'Solfeggio FA', frequency: 639, description: 'Harmonie' },
+  { name: 'Detox-Frequenz', frequency: 727, description: 'Entgiftung' },
+  { name: 'Immun-Stärkung', frequency: 880, description: 'Immunsystem' },
+  { name: 'Befreiung', frequency: 396, description: 'Lösung von Blockaden' },
+  { name: 'Regeneration', frequency: 528, description: 'Zellerneuerung' },
+  { name: 'Harmonie', frequency: 639, description: 'Balance' },
 ];
 
+interface FrequencyOutputModuleProps {
+  onFrequencyChange?: (config: FrequencyOutput) => void;
+}
+
+// Helper: Map WaveformType to OscillatorType
+const getOscillatorType = (wf: WaveformType): OscillatorType => {
+  switch (wf) {
+    case 'bipolar_sine':
+    case 'harmonic_complex':
+      return 'sine';
+    default:
+      return wf as OscillatorType;
+  }
+};
+
 const FrequencyOutputModule = ({ onFrequencyChange }: FrequencyOutputModuleProps) => {
+  // Therapy Mode
+  const [therapyMode, setTherapyMode] = useState<TherapyMode>('bipolar_resonance');
+  
   // Audio State
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [frequency, setFrequency] = useState(7.83);
   const [amplitude, setAmplitude] = useState(0.5);
-  const [waveform, setWaveform] = useState<WaveformType>('sine');
+  const [waveform, setWaveform] = useState<WaveformType>('bipolar_sine');
+  
+  // Timer
+  const [duration, setDuration] = useState(180);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [isTimerEnabled, setIsTimerEnabled] = useState(true);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Additional oscillators for bipolar/harmonic modes
+  const oscillatorsRef = useRef<OscillatorNode[]>([]);
   
   // Modulation
   const [modulationEnabled, setModulationEnabled] = useState(false);
@@ -88,49 +161,134 @@ const FrequencyOutputModule = ({ onFrequencyChange }: FrequencyOutputModuleProps
     return audioContextRef.current;
   }, []);
 
+  // Current therapy mode config
+  const currentModeConfig = THERAPY_MODES.find(m => m.id === therapyMode)!;
+
+  // Update waveform when therapy mode changes
+  useEffect(() => {
+    setWaveform(currentModeConfig.defaultWaveform);
+    setModulationEnabled(currentModeConfig.supportsModulation);
+  }, [therapyMode, currentModeConfig]);
+
+  // Timer effect
+  useEffect(() => {
+    if (isPlaying && isTimerEnabled) {
+      timerRef.current = setInterval(() => {
+        setElapsedTime(prev => {
+          if (prev >= duration) {
+            stopAudio();
+            toast.success('Harmonisierung abgeschlossen', {
+              description: `${Math.floor(duration / 60)} Minuten @ ${frequency} Hz`
+            });
+            return 0;
+          }
+          return prev + 1;
+        });
+      }, 1000);
+    }
+    
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, [isPlaying, isTimerEnabled, duration, frequency]);
+
+  // Format time helper
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
   // Audio starten
   const startAudio = useCallback(() => {
     const ctx = initAudio();
     
-    // Haupt-Oszillator
-    const osc = ctx.createOscillator();
-    osc.type = waveform;
-    osc.frequency.value = frequency;
-    oscillatorRef.current = osc;
-
     // Gain-Node für Amplitude
     const gain = ctx.createGain();
     gain.gain.value = isMuted ? 0 : amplitude;
     gainNodeRef.current = gain;
+    gain.connect(ctx.destination);
 
-    // Modulation Setup
-    if (modulationEnabled) {
+    // Create oscillators based on therapy mode
+    if (currentModeConfig.bipolar && waveform === 'bipolar_sine') {
+      // Bipolar mode: two anti-phase oscillators
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      osc1.frequency.value = frequency;
+      osc2.frequency.value = frequency;
+      
+      const gain1 = ctx.createGain();
+      const gain2 = ctx.createGain();
+      gain1.gain.value = 0.5;
+      gain2.gain.value = -0.5; // Inverted = anti-phase
+      
+      osc1.connect(gain1);
+      osc2.connect(gain2);
+      gain1.connect(gain);
+      gain2.connect(gain);
+      
+      osc1.start();
+      osc2.start();
+      oscillatorsRef.current = [osc1, osc2];
+      oscillatorRef.current = osc1;
+    } else if (waveform === 'harmonic_complex') {
+      // Harmonic mode: fundamental + overtones
+      const oscs: OscillatorNode[] = [];
+      currentModeConfig.harmonics.forEach((harmonic) => {
+        const harmonicFreq = frequency * harmonic;
+        if (harmonicFreq < 20000) {
+          const osc = ctx.createOscillator();
+          osc.frequency.value = harmonicFreq;
+          osc.type = 'sine';
+          
+          const harmonicGain = ctx.createGain();
+          harmonicGain.gain.value = (1 / (harmonic * 1.5)) * amplitude;
+          
+          osc.connect(harmonicGain);
+          harmonicGain.connect(gain);
+          osc.start();
+          oscs.push(osc);
+        }
+      });
+      oscillatorsRef.current = oscs;
+      oscillatorRef.current = oscs[0] || null;
+    } else {
+      // Standard single oscillator
+      const osc = ctx.createOscillator();
+      osc.type = getOscillatorType(waveform);
+      osc.frequency.value = frequency;
+      osc.connect(gain);
+      osc.start();
+      oscillatorRef.current = osc;
+      oscillatorsRef.current = [osc];
+    }
+
+    // Modulation Setup (only for harmonic modulation mode)
+    if (modulationEnabled && currentModeConfig.supportsModulation) {
       const modulator = ctx.createOscillator();
       modulator.frequency.value = modulationFreq;
       modulatorRef.current = modulator;
 
       const modGain = ctx.createGain();
-      modGain.gain.value = modulationDepth * frequency;
+      modGain.gain.value = modulationDepth * amplitude;
       modulationGainRef.current = modGain;
 
       modulator.connect(modGain);
-      modGain.connect(osc.frequency);
+      modGain.connect(gain.gain);
       modulator.start();
     }
 
-    // Verbindungen
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start();
-
     setIsPlaying(true);
+    setElapsedTime(0);
     
     // Callback
     const config: FrequencyOutput = {
       type: emOutputEnabled ? 'dual' : 'audio',
       frequency,
       amplitude,
-      waveform,
+      waveform: getOscillatorType(waveform) as 'sine' | 'square' | 'triangle' | 'sawtooth',
       modulation: modulationEnabled ? {
         type: 'fm',
         frequency: modulationFreq,
@@ -139,11 +297,22 @@ const FrequencyOutputModule = ({ onFrequencyChange }: FrequencyOutputModuleProps
     };
     onFrequencyChange?.(config);
 
-    toast.success(`Frequenz gestartet: ${frequency} Hz`);
-  }, [frequency, amplitude, waveform, modulationEnabled, modulationFreq, modulationDepth, isMuted, emOutputEnabled, initAudio, onFrequencyChange]);
+    toast.success(`${currentModeConfig.name} gestartet`, {
+      description: `${frequency} Hz • ${waveform}`
+    });
+  }, [frequency, amplitude, waveform, modulationEnabled, modulationFreq, modulationDepth, isMuted, emOutputEnabled, initAudio, onFrequencyChange, currentModeConfig]);
 
   // Audio stoppen
   const stopAudio = useCallback(() => {
+    // Stop all oscillators
+    oscillatorsRef.current.forEach(osc => {
+      try {
+        osc.stop();
+        osc.disconnect();
+      } catch {}
+    });
+    oscillatorsRef.current = [];
+    
     oscillatorRef.current?.stop();
     oscillatorRef.current?.disconnect();
     modulatorRef.current?.stop();
@@ -151,6 +320,11 @@ const FrequencyOutputModule = ({ onFrequencyChange }: FrequencyOutputModuleProps
     
     oscillatorRef.current = null;
     modulatorRef.current = null;
+    
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
     
     setIsPlaying(false);
   }, []);
@@ -177,8 +351,8 @@ const FrequencyOutputModule = ({ onFrequencyChange }: FrequencyOutputModuleProps
 
   // Waveform aktualisieren
   useEffect(() => {
-    if (oscillatorRef.current && isPlaying) {
-      oscillatorRef.current.type = waveform;
+    if (oscillatorRef.current && isPlaying && waveform !== 'bipolar_sine' && waveform !== 'harmonic_complex') {
+      oscillatorRef.current.type = getOscillatorType(waveform);
     }
   }, [waveform, isPlaying]);
 
