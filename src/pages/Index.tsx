@@ -1,5 +1,6 @@
 import Hero from "@/components/Hero";
 import ConceptSection from "@/components/ConceptSection";
+import CuspVisualization from "@/components/CuspVisualization";
 import FrequencyTherapySection from "@/components/FrequencyTherapySection";
 import ThomResources from "@/components/ThomResources";
 import Footer from "@/components/Footer";
@@ -20,6 +21,7 @@ const Index = () => {
       <main className="min-h-screen bg-background">
         <Hero />
         <ConceptSection />
+        <CuspVisualization />
         <FrequencyTherapySection />
         <section id="ressourcen">
           <ThomResources />
