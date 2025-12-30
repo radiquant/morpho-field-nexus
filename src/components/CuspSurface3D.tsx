@@ -1,40 +1,195 @@
-import { useRef, useMemo, useState } from "react";
+import { useRef, useMemo, useState, useCallback } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Text, Grid, Line } from "@react-three/drei";
+import { OrbitControls, Text, Grid, Line, Sphere } from "@react-three/drei";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Info, Layers } from "lucide-react";
+import { Info, Layers, Play, Pause, RotateCcw, Route } from "lucide-react";
 import * as THREE from "three";
+
+// Find equilibrium x for given (a, b)
+const findStableX = (a: number, b: number): number => {
+  let bestX = 0;
+  let minPotential = Infinity;
+  
+  for (let x = -3; x <= 3; x += 0.1) {
+    const dV = 4 * Math.pow(x, 3) + 2 * a * x + b;
+    const d2V = 12 * x * x + 2 * a;
+    
+    if (Math.abs(dV) < 0.5 && d2V > 0) {
+      const potential = Math.pow(x, 4) + a * Math.pow(x, 2) + b * x;
+      if (potential < minPotential) {
+        minPotential = potential;
+        bestX = x;
+      }
+    }
+  }
+  
+  // Newton-Raphson refinement
+  for (let i = 0; i < 10; i++) {
+    const dV = 4 * Math.pow(bestX, 3) + 2 * a * bestX + b;
+    const d2V = 12 * bestX * bestX + 2 * a;
+    if (Math.abs(d2V) > 0.01) {
+      bestX -= dV / d2V;
+    }
+  }
+  
+  return bestX;
+};
+
+// Animated path through parameter space
+const AnimatedPath = ({ 
+  isPlaying, 
+  progress,
+  pathType 
+}: { 
+  isPlaying: boolean; 
+  progress: number;
+  pathType: "hysteresis" | "critical" | "spiral";
+}) => {
+  const sphereRef = useRef<THREE.Mesh>(null);
+  const trailRef = useRef<THREE.Points>(null);
+  const trailPositions = useRef<number[]>([]);
+  
+  // Define different path types
+  const getPathPoint = useCallback((t: number): [number, number, number] => {
+    let a: number, b: number;
+    
+    switch (pathType) {
+      case "hysteresis":
+        // Elliptical path crossing bifurcation set twice
+        a = -1.5 + 0.3 * Math.cos(t * Math.PI * 2);
+        b = 2.5 * Math.sin(t * Math.PI * 2);
+        break;
+      case "critical":
+        // Path that crosses through the cusp point
+        a = -2 + 2.5 * t;
+        b = 1.5 * Math.sin(t * Math.PI * 4) * (1 - t);
+        break;
+      case "spiral":
+        // Spiral approaching the cusp
+        const radius = 2 * (1 - t * 0.7);
+        a = -1 + radius * Math.cos(t * Math.PI * 6);
+        b = radius * Math.sin(t * Math.PI * 6);
+        break;
+      default:
+        a = -1.5;
+        b = 0;
+    }
+    
+    const x = findStableX(a, b);
+    return [a, x, b];
+  }, [pathType]);
+  
+  // Generate trail points
+  const trailGeometry = useMemo(() => {
+    const points: number[] = [];
+    const colors: number[] = [];
+    const numPoints = 100;
+    
+    for (let i = 0; i <= numPoints; i++) {
+      const t = i / numPoints;
+      const [a, x, b] = getPathPoint(t);
+      points.push(a, x, b);
+      
+      // Color gradient along path
+      const hue = 0.5 + t * 0.3; // Cyan to purple
+      const color = new THREE.Color().setHSL(hue, 0.8, 0.6);
+      colors.push(color.r, color.g, color.b);
+    }
+    
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(points, 3));
+    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+    return geometry;
+  }, [getPathPoint]);
+  
+  // Update sphere position
+  useFrame(() => {
+    if (sphereRef.current) {
+      const [a, x, b] = getPathPoint(progress);
+      sphereRef.current.position.set(a, x, b);
+      
+      // Update trail (show path up to current progress)
+      if (trailRef.current) {
+        const geometry = trailRef.current.geometry;
+        const positions = geometry.attributes.position.array as Float32Array;
+        const numPoints = Math.floor(progress * 100);
+        
+        // Hide points ahead of current position
+        for (let i = 0; i < positions.length / 3; i++) {
+          if (i > numPoints) {
+            positions[i * 3 + 1] = -100; // Move out of view
+          }
+        }
+        geometry.attributes.position.needsUpdate = true;
+      }
+    }
+  });
+  
+  // Full path preview
+  const fullPathPoints = useMemo(() => {
+    const points: [number, number, number][] = [];
+    for (let i = 0; i <= 100; i++) {
+      points.push(getPathPoint(i / 100));
+    }
+    return points;
+  }, [getPathPoint]);
+  
+  return (
+    <group>
+      {/* Full path preview (faded) */}
+      <Line
+        points={fullPathPoints}
+        color="#4ade80"
+        lineWidth={1}
+        transparent
+        opacity={0.3}
+        dashed
+        dashSize={0.1}
+        gapSize={0.05}
+      />
+      
+      {/* Animated sphere */}
+      <Sphere ref={sphereRef} args={[0.12, 16, 16]}>
+        <meshStandardMaterial
+          color="#22c55e"
+          emissive="#22c55e"
+          emissiveIntensity={0.5}
+        />
+      </Sphere>
+      
+      {/* Glow effect */}
+      <Sphere args={[0.18, 16, 16]} position={sphereRef.current?.position || [0, 0, 0]}>
+        <meshBasicMaterial
+          color="#22c55e"
+          transparent
+          opacity={0.3}
+        />
+      </Sphere>
+    </group>
+  );
+};
 
 // Create the cusp surface mesh
 const CuspSurface = ({ showBifurcationSet }: { showBifurcationSet: boolean }) => {
   const groupRef = useRef<THREE.Group>(null);
 
   // Create cusp surface geometry
-  // The surface is defined by: 4x³ + 2ax + b = 0 (equilibrium condition)
-  // We parametrize it as x = t, a = -6t², b = 8t³ for the fold curve
-  // But we want the full surface, so we solve for x given a and b
   const geometry = useMemo(() => {
     const segments = 80;
     const geometry = new THREE.BufferGeometry();
     const vertices: number[] = [];
     const colors: number[] = [];
-    const indices: number[] = [];
 
-    // Range for a and b
     const aMin = -3, aMax = 1;
     const bMin = -4, bMax = 4;
 
-    // For each (a, b), find x values where dV/dx = 0
-    // 4x³ + 2ax + b = 0
     const findRoots = (a: number, b: number): number[] => {
       const roots: number[] = [];
-      // Numerical root finding
       for (let x = -3; x <= 3; x += 0.05) {
         const f1 = 4 * Math.pow(x, 3) + 2 * a * x + b;
         const f2 = 4 * Math.pow(x + 0.05, 3) + 2 * a * (x + 0.05) + b;
         if (f1 * f2 < 0) {
-          // Newton-Raphson refinement
           let xr = x + 0.025;
           for (let i = 0; i < 5; i++) {
             const f = 4 * Math.pow(xr, 3) + 2 * a * xr + b;
@@ -49,42 +204,28 @@ const CuspSurface = ({ showBifurcationSet }: { showBifurcationSet: boolean }) =>
       return roots;
     };
 
-    // Create surface points
-    const pointMap: Map<string, number> = new Map();
-    let vertexIndex = 0;
-
     for (let i = 0; i <= segments; i++) {
       const a = aMin + (aMax - aMin) * (i / segments);
       
       for (let j = 0; j <= segments; j++) {
         const b = bMin + (bMax - bMin) * (j / segments);
-        
         const roots = findRoots(a, b);
         
-        roots.forEach((x, rootIdx) => {
-          // Check stability (second derivative)
+        roots.forEach((x) => {
           const d2V = 12 * x * x + 2 * a;
           const isStable = d2V > 0;
           
-          // Position: (a, x, b) - x is the vertical axis
           vertices.push(a, x, b);
           
-          // Color based on stability
           if (isStable) {
-            colors.push(0.2, 0.8, 0.9); // Cyan for stable
+            colors.push(0.2, 0.8, 0.9);
           } else {
-            colors.push(0.9, 0.3, 0.3); // Red for unstable
+            colors.push(0.9, 0.3, 0.3);
           }
-          
-          const key = `${i},${j},${rootIdx}`;
-          pointMap.set(key, vertexIndex);
-          vertexIndex++;
         });
       }
     }
 
-    // Create faces by connecting adjacent points
-    // This is simplified - we create the surface as points
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
     geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
     geometry.computeVertexNormals();
@@ -92,18 +233,16 @@ const CuspSurface = ({ showBifurcationSet }: { showBifurcationSet: boolean }) =>
     return geometry;
   }, []);
 
-  // Create bifurcation set points for Line component
+  // Bifurcation set points
   const bifurcationPoints = useMemo(() => {
     const points: [number, number, number][] = [];
     
-    // Upper branch
     for (let a = -3; a <= 0; a += 0.05) {
       const b = Math.sqrt(-8 * Math.pow(a, 3) / 27);
       if (!isNaN(b)) {
         points.push([a, -3, b]);
       }
     }
-    // Lower branch (reverse to connect)
     for (let a = 0; a >= -3; a -= 0.05) {
       const b = -Math.sqrt(-8 * Math.pow(a, 3) / 27);
       if (!isNaN(b)) {
@@ -114,7 +253,6 @@ const CuspSurface = ({ showBifurcationSet }: { showBifurcationSet: boolean }) =>
     return points;
   }, []);
 
-  // Slow rotation animation
   useFrame((state) => {
     if (groupRef.current) {
       groupRef.current.rotation.y = state.clock.elapsedTime * 0.1;
@@ -123,7 +261,6 @@ const CuspSurface = ({ showBifurcationSet }: { showBifurcationSet: boolean }) =>
 
   return (
     <group ref={groupRef}>
-      {/* Cusp surface as points */}
       <points geometry={geometry}>
         <pointsMaterial
           size={0.05}
@@ -134,7 +271,6 @@ const CuspSurface = ({ showBifurcationSet }: { showBifurcationSet: boolean }) =>
         />
       </points>
 
-      {/* Bifurcation set curve using drei Line */}
       {showBifurcationSet && bifurcationPoints.length > 1 && (
         <Line
           points={bifurcationPoints}
@@ -143,31 +279,9 @@ const CuspSurface = ({ showBifurcationSet }: { showBifurcationSet: boolean }) =>
         />
       )}
 
-      {/* Axes labels */}
-      <Text
-        position={[2, 0, 0]}
-        fontSize={0.3}
-        color="#06b6d4"
-        anchorX="left"
-      >
-        a
-      </Text>
-      <Text
-        position={[0, 2.5, 0]}
-        fontSize={0.3}
-        color="#8b5cf6"
-        anchorX="center"
-      >
-        x
-      </Text>
-      <Text
-        position={[0, 0, 3]}
-        fontSize={0.3}
-        color="#f59e0b"
-        anchorX="center"
-      >
-        b
-      </Text>
+      <Text position={[2, 0, 0]} fontSize={0.3} color="#06b6d4" anchorX="left">a</Text>
+      <Text position={[0, 2.5, 0]} fontSize={0.3} color="#8b5cf6" anchorX="center">x</Text>
+      <Text position={[0, 0, 3]} fontSize={0.3} color="#f59e0b" anchorX="center">b</Text>
     </group>
   );
 };
@@ -176,26 +290,9 @@ const CuspSurface = ({ showBifurcationSet }: { showBifurcationSet: boolean }) =>
 const Axes = () => {
   return (
     <group>
-      {/* X axis (a) - cyan */}
-      <Line
-        points={[[-4, 0, 0], [2, 0, 0]]}
-        color="#06b6d4"
-        lineWidth={1}
-      />
-      
-      {/* Y axis (x - state variable) - purple */}
-      <Line
-        points={[[0, -3, 0], [0, 3, 0]]}
-        color="#8b5cf6"
-        lineWidth={1}
-      />
-      
-      {/* Z axis (b) - amber */}
-      <Line
-        points={[[0, 0, -5], [0, 0, 5]]}
-        color="#f59e0b"
-        lineWidth={1}
-      />
+      <Line points={[[-4, 0, 0], [2, 0, 0]]} color="#06b6d4" lineWidth={1} />
+      <Line points={[[0, -3, 0], [0, 3, 0]]} color="#8b5cf6" lineWidth={1} />
+      <Line points={[[0, 0, -5], [0, 0, 5]]} color="#f59e0b" lineWidth={1} />
     </group>
   );
 };
@@ -203,6 +300,49 @@ const Axes = () => {
 const CuspSurface3D = () => {
   const [showBifurcationSet, setShowBifurcationSet] = useState(true);
   const [showInfo, setShowInfo] = useState(false);
+  const [showPath, setShowPath] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [pathType, setPathType] = useState<"hysteresis" | "critical" | "spiral">("hysteresis");
+  
+  // Animation loop
+  const animationRef = useRef<number>();
+  const lastTimeRef = useRef<number>(0);
+  
+  const animate = useCallback((time: number) => {
+    if (isPlaying) {
+      const delta = (time - lastTimeRef.current) / 1000;
+      lastTimeRef.current = time;
+      
+      setProgress(prev => {
+        const newProgress = prev + delta * 0.1; // Speed factor
+        return newProgress > 1 ? 0 : newProgress;
+      });
+    }
+    animationRef.current = requestAnimationFrame(animate);
+  }, [isPlaying]);
+  
+  useState(() => {
+    animationRef.current = requestAnimationFrame(animate);
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  });
+  
+  // Effect for animation
+  const intervalRef = useRef<NodeJS.Timeout>();
+  useState(() => {
+    intervalRef.current = setInterval(() => {
+      if (isPlaying) {
+        setProgress(prev => (prev + 0.005) % 1);
+      }
+    }, 50);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  });
 
   return (
     <section className="py-20 relative overflow-hidden">
@@ -223,8 +363,8 @@ const CuspSurface3D = () => {
             Die <span className="text-gradient-secondary">Kuspen-Fläche</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Interaktive 3D-Darstellung der Gleichgewichtsfläche im (a, x, b)-Raum. 
-            Ziehen Sie zum Drehen, scrollen Sie zum Zoomen.
+            Interaktive 3D-Darstellung mit animiertem Pfad durch den Parameterraum. 
+            Beobachten Sie, wie das System Katastrophen durchläuft.
           </p>
         </motion.div>
 
@@ -246,6 +386,14 @@ const CuspSurface3D = () => {
             
             <CuspSurface showBifurcationSet={showBifurcationSet} />
             <Axes />
+            
+            {showPath && (
+              <AnimatedPath 
+                isPlaying={isPlaying} 
+                progress={progress}
+                pathType={pathType}
+              />
+            )}
             
             <OrbitControls
               enablePan={true}
@@ -276,6 +424,30 @@ const CuspSurface3D = () => {
             <Button
               variant="field"
               size="icon"
+              onClick={() => setShowPath(!showPath)}
+              title="Pfad anzeigen"
+            >
+              <Route className={`w-4 h-4 ${showPath ? "text-green-400" : ""}`} />
+            </Button>
+            <Button
+              variant="field"
+              size="icon"
+              onClick={() => setIsPlaying(!isPlaying)}
+              title={isPlaying ? "Pause" : "Abspielen"}
+            >
+              {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+            </Button>
+            <Button
+              variant="field"
+              size="icon"
+              onClick={() => setProgress(0)}
+              title="Zurücksetzen"
+            >
+              <RotateCcw className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="field"
+              size="icon"
               onClick={() => setShowBifurcationSet(!showBifurcationSet)}
               title="Bifurkationsset anzeigen"
             >
@@ -290,6 +462,53 @@ const CuspSurface3D = () => {
             </Button>
           </div>
 
+          {/* Path type selector */}
+          {showPath && (
+            <div className="absolute top-4 left-4 flex flex-col gap-2">
+              <span className="text-xs text-muted-foreground px-2">Pfadtyp:</span>
+              <div className="flex gap-1">
+                {[
+                  { key: "hysteresis", label: "Hysterese" },
+                  { key: "critical", label: "Kritisch" },
+                  { key: "spiral", label: "Spirale" },
+                ].map(({ key, label }) => (
+                  <button
+                    key={key}
+                    onClick={() => {
+                      setPathType(key as typeof pathType);
+                      setProgress(0);
+                    }}
+                    className={`px-3 py-1.5 text-xs rounded-full border transition-all ${
+                      pathType === key
+                        ? "bg-green-500/20 border-green-500 text-green-400"
+                        : "bg-background/50 border-border text-muted-foreground hover:border-green-500/50"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Progress bar */}
+          {showPath && (
+            <div className="absolute bottom-20 left-4 right-4">
+              <div className="h-1 bg-border rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-green-500"
+                  style={{ width: `${progress * 100}%` }}
+                  transition={{ duration: 0.05 }}
+                />
+              </div>
+              <div className="flex justify-between mt-1 text-xs text-muted-foreground">
+                <span>Start</span>
+                <span>{Math.round(progress * 100)}%</span>
+                <span>Ende</span>
+              </div>
+            </div>
+          )}
+
           {/* Info overlay */}
           {showInfo && (
             <motion.div
@@ -298,29 +517,21 @@ const CuspSurface3D = () => {
               className="absolute top-16 right-4 w-80 bg-popover/95 backdrop-blur-sm border border-border rounded-xl p-4 shadow-elevated"
             >
               <h4 className="font-display text-sm font-semibold text-foreground mb-3">
-                Die Kuspen-Fläche erklärt
+                Pfadvisualisierung
               </h4>
               <div className="space-y-3 text-xs text-muted-foreground">
                 <p>
-                  Diese Fläche zeigt alle Gleichgewichtspunkte der Potenzialfunktion 
-                  V(x) = x⁴ + ax² + bx im dreidimensionalen (a, x, b)-Raum.
+                  Der grüne Punkt zeigt einen Systemzustand, der sich durch den 
+                  Parameterraum bewegt und dabei Katastrophen erlebt.
                 </p>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-primary" />
-                  <span>Stabile Gleichgewichte (Minima)</span>
+                <div className="space-y-2 pt-2 border-t border-border">
+                  <p><strong>Hysterese:</strong> Elliptischer Pfad, der das Bifurkationsset 
+                  zweimal kreuzt – zeigt den klassischen Hysterese-Effekt.</p>
+                  <p><strong>Kritisch:</strong> Durchquert den Kuspen-Punkt – 
+                  maximale Instabilität.</p>
+                  <p><strong>Spirale:</strong> Nähert sich spiralförmig dem 
+                  kritischen Punkt – zunehmende Sensitivität.</p>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-katastrophe" />
-                  <span>Instabile Gleichgewichte (Maxima)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-chreode" />
-                  <span>Bifurkationsset: 8a³ + 27b² = 0</span>
-                </div>
-                <p className="pt-2 border-t border-border">
-                  Die gefaltete Struktur ("Kuspe") entsteht, wo drei Gleichgewichte 
-                  existieren – zwei stabile und eines instabiles.
-                </p>
               </div>
             </motion.div>
           )}
@@ -335,17 +546,17 @@ const CuspSurface3D = () => {
               <div className="w-2 h-2 rounded-full bg-katastrophe" />
               <span className="text-muted-foreground">Instabil</span>
             </div>
-            {showBifurcationSet && (
+            {showPath && (
               <div className="flex items-center gap-2 px-3 py-1.5 bg-background/80 backdrop-blur-sm rounded-full border border-border">
-                <div className="w-2 h-2 rounded-full bg-chreode" />
-                <span className="text-muted-foreground">Bifurkation</span>
+                <div className="w-2 h-2 rounded-full bg-green-500" />
+                <span className="text-muted-foreground">System</span>
               </div>
             )}
           </div>
         </motion.div>
 
         {/* Explanation cards */}
-        <div className="grid md:grid-cols-2 gap-6 mt-8">
+        <div className="grid md:grid-cols-3 gap-6 mt-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -354,13 +565,13 @@ const CuspSurface3D = () => {
             className="bg-card border border-border rounded-xl p-6"
           >
             <h4 className="font-display text-lg font-semibold text-foreground mb-3">
-              Die Faltstruktur
+              Hysterese-Effekt
             </h4>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              Bei negativem a (links) faltet sich die Fläche und bildet drei Schichten: 
-              zwei stabile (oben und unten) und eine instabile (Mitte). 
-              Ein System, das sich auf der oberen Schicht befindet, kann bei 
-              Variation von b plötzlich auf die untere "fallen" – das ist die Katastrophe.
+              Bei der Hysterese-Schleife folgt das System unterschiedlichen Pfaden 
+              bei Hin- und Rückweg. Der Sprung von oben nach unten erfolgt an 
+              einem anderen Punkt als der Rücksprung – ein klassisches Merkmal 
+              bistabiler Systeme.
             </p>
           </motion.div>
 
@@ -372,13 +583,31 @@ const CuspSurface3D = () => {
             className="bg-card border border-border rounded-xl p-6"
           >
             <h4 className="font-display text-lg font-semibold text-foreground mb-3">
-              Das Bifurkationsset
+              Kritische Verlangsamung
             </h4>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              Die goldene Kurve auf der Grundebene zeigt das <em>Bifurkationsset</em> – 
-              die Projektion der Faltenkante. Innerhalb dieser Kuspen-Form existieren 
-              zwei stabile Zustände. An der Kurve selbst verschwinden Gleichgewichte 
-              und Sprünge werden erzwungen.
+              Nahe dem Kuspen-Punkt reagiert das System immer langsamer auf 
+              Störungen – ein Frühwarnzeichen für bevorstehende Übergänge. 
+              Diese "kritische Verlangsamung" ist ein universelles Merkmal 
+              vor Katastrophen.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            viewport={{ once: true }}
+            className="bg-card border border-border rounded-xl p-6"
+          >
+            <h4 className="font-display text-lg font-semibold text-foreground mb-3">
+              Therapeutische Pfade
+            </h4>
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              In der Frequenztherapie repräsentieren verschiedene Pfade 
+              unterschiedliche Behandlungsstrategien. Ein sanfter Spiral-Pfad 
+              kann kontrollierte Übergänge ermöglichen, während direkte Pfade 
+              abrupte Zustandsänderungen auslösen.
             </p>
           </motion.div>
         </div>
