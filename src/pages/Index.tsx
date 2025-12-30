@@ -1,6 +1,7 @@
 import Hero from "@/components/Hero";
 import ConceptSection from "@/components/ConceptSection";
 import CuspVisualization from "@/components/CuspVisualization";
+import CuspSurface3D from "@/components/CuspSurface3D";
 import FrequencyTherapySection from "@/components/FrequencyTherapySection";
 import ThomResources from "@/components/ThomResources";
 import Footer from "@/components/Footer";
@@ -22,6 +23,7 @@ const Index = () => {
         <Hero />
         <ConceptSection />
         <CuspVisualization />
+        <CuspSurface3D />
         <FrequencyTherapySection />
         <section id="ressourcen">
           <ThomResources />
