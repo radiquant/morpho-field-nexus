@@ -107,7 +107,12 @@ const SystemStatusDashboard = () => {
           >
             <div className="flex items-center gap-3 mb-6">
               <Server className="w-6 h-6 text-primary" />
-              <h3 className="font-display text-xl text-foreground">GPU Server M G1</h3>
+              <h3 className="font-display text-xl text-foreground">
+                {serverConfig.gpu.cudaCores ? 'GPU Server M G1' : 'Development PC'}
+              </h3>
+              <span className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded">
+                {serverConfig.gpu.cudaCores ? 'Production' : 'Dev-Mode'}
+              </span>
             </div>
 
             {/* CPU */}

@@ -1,8 +1,55 @@
 // System Monitor Service für Server-Hardware Metriken
-import type { ServerHardware, SystemMetrics, CPUInfo, GPUInfo, MemoryInfo } from '@/types/hardware';
+import type { ServerHardware, SystemMetrics } from '@/types/hardware';
 
-// Statische Server-Konfiguration basierend auf GPU Server M G1
-const SERVER_CONFIG: ServerHardware = {
+// Umgebungsmodus
+export type EnvironmentMode = 'development' | 'production';
+
+// Development Hardware: ASUS Vivobook S 16 (Ryzen 9 8945HS)
+const DEVELOPMENT_CONFIG: ServerHardware = {
+  cpu: {
+    name: 'AMD Ryzen 9 8945HS',
+    cores: 8,
+    threads: 16,
+    baseFrequency: 4000,
+    turboFrequency: 5200,
+    usage: 0,
+    temperature: undefined,
+  },
+  gpu: {
+    name: 'AMD Radeon 780M',
+    vram: 370, // Shared Memory
+    cudaCores: undefined,
+    tensorCores: undefined,
+    usage: 0,
+    temperature: undefined,
+    driver: 'RDNA3 iGPU',
+  },
+  memory: {
+    total: 16384, // 16 GB in MB
+    used: 0,
+    available: 16384,
+    type: 'DDR5',
+    speed: 7500,
+    jitter: undefined,
+  },
+  storage: {
+    devices: [
+      { name: 'Micron SSD', type: 'nvme', capacity: 954000, used: 680000 },
+    ],
+    totalCapacity: 954000,
+    usedCapacity: 680000,
+  },
+  network: {
+    interfaces: [
+      { name: 'WiFi 6E', speed: 1000, isConnected: true },
+    ],
+    latency: undefined,
+    bandwidth: 1000,
+  },
+};
+
+// Production Hardware: GPU Server M G1 (Ryzen 5 9600X + RTX 4000)
+const PRODUCTION_CONFIG: ServerHardware = {
   cpu: {
     name: 'AMD Ryzen 5 9600X',
     cores: 6,
@@ -54,13 +101,27 @@ class SystemMonitorService {
   private currentMetrics: SystemMetrics | null = null;
   private updateInterval: NodeJS.Timeout | null = null;
   private isRunning = false;
+  private mode: EnvironmentMode = 'development';
 
-  // Statische Server-Konfiguration abrufen
-  getServerConfig(): ServerHardware {
-    return { ...SERVER_CONFIG };
+  // Umgebungsmodus setzen
+  setMode(mode: EnvironmentMode): void {
+    this.mode = mode;
+    console.log('[SystemMonitor] Mode set to:', mode);
   }
 
-  // Aktuelle Metriken abrufen
+  getMode(): EnvironmentMode {
+    return this.mode;
+  }
+
+  // Aktive Konfiguration basierend auf Modus
+  private getActiveConfig(): ServerHardware {
+    return this.mode === 'production' ? PRODUCTION_CONFIG : DEVELOPMENT_CONFIG;
+  }
+
+  // Server-Konfiguration abrufen
+  getServerConfig(): ServerHardware {
+    return { ...this.getActiveConfig() };
+  }
   getCurrentMetrics(): SystemMetrics | null {
     return this.currentMetrics;
   }
@@ -131,7 +192,7 @@ class SystemMonitorService {
         used: performanceMemory 
           ? Math.round(performanceMemory.usedJSHeapSize / 1024 / 1024)
           : this.simulateMemoryUsage(16000, 32000),
-        available: SERVER_CONFIG.memory.total - (performanceMemory 
+        available: this.getActiveConfig().memory.total - (performanceMemory 
           ? Math.round(performanceMemory.usedJSHeapSize / 1024 / 1024)
           : this.simulateMemoryUsage(16000, 32000)),
         jitter: this.simulateJitter(0.1, 2.0),

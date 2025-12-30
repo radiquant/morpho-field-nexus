@@ -4,6 +4,8 @@ import CuspVisualization from "@/components/CuspVisualization";
 import CuspSurface3D from "@/components/CuspSurface3D";
 import FrequencyTherapySection from "@/components/FrequencyTherapySection";
 import SystemStatusDashboard from "@/components/SystemStatusDashboard";
+import ClientVectorInterface from "@/components/ClientVectorInterface";
+import FrequencyOutputModule from "@/components/FrequencyOutputModule";
 import ThomResources from "@/components/ThomResources";
 import Footer from "@/components/Footer";
 import { Helmet } from "react-helmet-async";
@@ -27,6 +29,8 @@ const Index = () => {
         <CuspSurface3D />
         <FrequencyTherapySection />
         <SystemStatusDashboard />
+        <ClientVectorInterface />
+        <FrequencyOutputModule />
         <section id="ressourcen">
           <ThomResources />
         </section>
