@@ -1,12 +1,14 @@
 // React Hook für System-Monitoring
 import { useState, useEffect, useCallback } from 'react';
 import type { ServerHardware, SystemMetrics } from '@/types/hardware';
-import { systemMonitor } from '@/services/hardware/SystemMonitorService';
+import { systemMonitor, type EnvironmentMode } from '@/services/hardware/SystemMonitorService';
 
 interface UseSystemMonitorReturn {
   serverConfig: ServerHardware;
   currentMetrics: SystemMetrics | null;
   isMonitoring: boolean;
+  environmentMode: EnvironmentMode;
+  setEnvironmentMode: (mode: EnvironmentMode) => void;
   startMonitoring: (intervalMs?: number) => void;
   stopMonitoring: () => void;
   measureWebSocketLatency: (wsUrl: string) => Promise<number>;
@@ -16,6 +18,7 @@ interface UseSystemMonitorReturn {
 export function useSystemMonitor(): UseSystemMonitorReturn {
   const [currentMetrics, setCurrentMetrics] = useState<SystemMetrics | null>(null);
   const [isMonitoring, setIsMonitoring] = useState(false);
+  const [environmentMode, setEnvMode] = useState<EnvironmentMode>(systemMonitor.getMode());
 
   // Metriken-Handler
   const handleMetrics = useCallback((metrics: SystemMetrics) => {
@@ -59,10 +62,18 @@ export function useSystemMonitor(): UseSystemMonitorReturn {
     return systemMonitor.measureNetworkLatency(endpoint);
   }, []);
 
+  // Umgebungsmodus setzen
+  const setEnvironmentMode = useCallback((mode: EnvironmentMode) => {
+    systemMonitor.setMode(mode);
+    setEnvMode(mode);
+  }, []);
+
   return {
     serverConfig: systemMonitor.getServerConfig(),
     currentMetrics,
     isMonitoring,
+    environmentMode,
+    setEnvironmentMode,
     startMonitoring,
     stopMonitoring,
     measureWebSocketLatency,
