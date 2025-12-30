@@ -6,6 +6,7 @@ import FrequencyTherapySection from "@/components/FrequencyTherapySection";
 import SystemStatusDashboard from "@/components/SystemStatusDashboard";
 import ClientVectorInterface from "@/components/ClientVectorInterface";
 import FrequencyOutputModule from "@/components/FrequencyOutputModule";
+import RealtimeStatusWidget from "@/components/RealtimeStatusWidget";
 import ThomResources from "@/components/ThomResources";
 import Footer from "@/components/Footer";
 import { Helmet } from "react-helmet-async";
@@ -35,6 +36,7 @@ const Index = () => {
           <ThomResources />
         </section>
         <Footer />
+        <RealtimeStatusWidget />
       </main>
     </>
   );

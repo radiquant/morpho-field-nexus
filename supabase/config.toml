@@ -1,0 +1,4 @@
+project_id = "yoryyvfuscyfumeseour"
+
+[functions.realtime-sync]
+verify_jwt = false
