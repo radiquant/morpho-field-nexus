@@ -1,10 +1,10 @@
 /**
  * 3D Anatomie-Resonanz-Visualisierung
- * Interaktives 3D-Modell mit resonierenden Körperpunkten
+ * Interaktives 3D-Modell mit resonierenden Körperpunkten und TCM-Meridianen
  */
 import { useRef, useState, useEffect, useMemo, Suspense } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls, Html, Environment, ContactShadows, Float } from '@react-three/drei';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { OrbitControls, Html, Environment, ContactShadows, Float, Line } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -17,9 +17,12 @@ import {
   ChevronLeft,
   ChevronRight,
   RotateCcw,
-  Info
+  Info,
+  GitBranch
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { useResonanceDatabase, type AnatomyResonancePoint } from '@/hooks/useResonanceDatabase';
 import type { VectorAnalysis } from '@/services/feldengine';
 
@@ -29,7 +32,7 @@ interface AnatomyResonanceViewerProps {
 }
 
 // Anatomie-Modell Typen
-type AnatomyModelType = 'full_body' | 'heart' | 'brain';
+type AnatomyModelType = 'full_body' | 'heart' | 'brain' | 'meridians';
 
 interface ModelConfig {
   id: AnatomyModelType;
@@ -50,6 +53,14 @@ const MODEL_CONFIGS: ModelConfig[] = [
     scale: 1,
   },
   {
+    id: 'meridians',
+    name: 'Meridiane',
+    icon: GitBranch,
+    description: 'Die 12 TCM-Hauptmeridiane mit Akupunkturpunkten',
+    cameraPosition: [0, 0.4, 2.5],
+    scale: 1,
+  },
+  {
     id: 'heart',
     name: 'Herz',
     icon: Heart,
@@ -64,6 +75,305 @@ const MODEL_CONFIGS: ModelConfig[] = [
     description: 'Neurologische Zentren und Gehirnwellen-Resonanzen',
     cameraPosition: [0, 0.2, 2],
     scale: 1.5,
+  },
+];
+
+// ============= TCM MERIDIAN SYSTEM =============
+
+interface MeridianPath {
+  id: string;
+  name: string;
+  nameChinese: string;
+  element: 'wood' | 'fire' | 'earth' | 'metal' | 'water' | 'fire_ministerial';
+  yinYang: 'yin' | 'yang';
+  organ: string;
+  color: string;
+  points: THREE.Vector3[];
+  acupoints: AcupuncturePoint[];
+}
+
+interface AcupuncturePoint {
+  id: string;
+  name: string;
+  nameChinese: string;
+  position: THREE.Vector3;
+  frequency: number;
+  indication: string;
+}
+
+// Die 12 Hauptmeridiane der TCM mit vereinfachten Pfaden
+const TCM_MERIDIANS: MeridianPath[] = [
+  // LUNGEN-MERIDIAN (LU) - Yin, Metall
+  {
+    id: 'LU',
+    name: 'Lungen-Meridian',
+    nameChinese: '手太陰肺經',
+    element: 'metal',
+    yinYang: 'yin',
+    organ: 'lung',
+    color: '#94a3b8',
+    points: [
+      new THREE.Vector3(-0.12, 0.55, 0.05),
+      new THREE.Vector3(-0.16, 0.52, 0.04),
+      new THREE.Vector3(-0.20, 0.48, 0.03),
+      new THREE.Vector3(-0.24, 0.40, 0.02),
+      new THREE.Vector3(-0.28, 0.30, 0.01),
+      new THREE.Vector3(-0.30, 0.20, 0),
+    ],
+    acupoints: [
+      { id: 'LU1', name: 'Zhongfu', nameChinese: '中府', position: new THREE.Vector3(-0.12, 0.55, 0.05), frequency: 146.0, indication: 'Husten, Atemnot' },
+      { id: 'LU7', name: 'Lieque', nameChinese: '列缺', position: new THREE.Vector3(-0.28, 0.30, 0.01), frequency: 194.7, indication: 'Kopfschmerzen, Nackensteife' },
+      { id: 'LU9', name: 'Taiyuan', nameChinese: '太淵', position: new THREE.Vector3(-0.30, 0.20, 0), frequency: 256.0, indication: 'Puls-Diagnostik' },
+    ],
+  },
+  // DICKDARM-MERIDIAN (LI) - Yang, Metall
+  {
+    id: 'LI',
+    name: 'Dickdarm-Meridian',
+    nameChinese: '手陽明大腸經',
+    element: 'metal',
+    yinYang: 'yang',
+    organ: 'large_intestine',
+    color: '#cbd5e1',
+    points: [
+      new THREE.Vector3(-0.32, 0.18, 0),
+      new THREE.Vector3(-0.30, 0.28, 0.01),
+      new THREE.Vector3(-0.26, 0.40, 0.02),
+      new THREE.Vector3(-0.20, 0.55, 0.03),
+      new THREE.Vector3(-0.14, 0.70, 0.04),
+      new THREE.Vector3(-0.06, 0.80, 0.06),
+    ],
+    acupoints: [
+      { id: 'LI4', name: 'Hegu', nameChinese: '合谷', position: new THREE.Vector3(-0.30, 0.28, 0.01), frequency: 136.1, indication: 'Schmerzen, Immunsystem' },
+      { id: 'LI11', name: 'Quchi', nameChinese: '曲池', position: new THREE.Vector3(-0.22, 0.50, 0.025), frequency: 174.6, indication: 'Fieber, Hautprobleme' },
+      { id: 'LI20', name: 'Yingxiang', nameChinese: '迎香', position: new THREE.Vector3(-0.06, 0.80, 0.06), frequency: 221.2, indication: 'Nasenbeschwerden' },
+    ],
+  },
+  // MAGEN-MERIDIAN (ST) - Yang, Erde
+  {
+    id: 'ST',
+    name: 'Magen-Meridian',
+    nameChinese: '足陽明胃經',
+    element: 'earth',
+    yinYang: 'yang',
+    organ: 'stomach',
+    color: '#fbbf24',
+    points: [
+      new THREE.Vector3(-0.04, 0.82, 0.08),
+      new THREE.Vector3(-0.06, 0.72, 0.06),
+      new THREE.Vector3(-0.08, 0.60, 0.04),
+      new THREE.Vector3(-0.08, 0.48, 0.03),
+      new THREE.Vector3(-0.08, 0.35, 0.02),
+      new THREE.Vector3(-0.08, 0.20, 0.01),
+      new THREE.Vector3(-0.08, 0.05, 0),
+      new THREE.Vector3(-0.08, -0.10, 0),
+    ],
+    acupoints: [
+      { id: 'ST36', name: 'Zusanli', nameChinese: '足三里', position: new THREE.Vector3(-0.08, 0.05, 0), frequency: 126.2, indication: 'Verdauung, Energie' },
+      { id: 'ST25', name: 'Tianshu', nameChinese: '天樞', position: new THREE.Vector3(-0.08, 0.48, 0.03), frequency: 141.3, indication: 'Darmregulation' },
+    ],
+  },
+  // MILZ-MERIDIAN (SP) - Yin, Erde
+  {
+    id: 'SP',
+    name: 'Milz-Meridian',
+    nameChinese: '足太陰脾經',
+    element: 'earth',
+    yinYang: 'yin',
+    organ: 'spleen',
+    color: '#f59e0b',
+    points: [
+      new THREE.Vector3(-0.10, -0.12, 0.01),
+      new THREE.Vector3(-0.10, 0.00, 0.02),
+      new THREE.Vector3(-0.10, 0.15, 0.03),
+      new THREE.Vector3(-0.10, 0.30, 0.04),
+      new THREE.Vector3(-0.12, 0.45, 0.05),
+      new THREE.Vector3(-0.14, 0.55, 0.06),
+    ],
+    acupoints: [
+      { id: 'SP6', name: 'Sanyinjiao', nameChinese: '三陰交', position: new THREE.Vector3(-0.10, 0.00, 0.02), frequency: 117.3, indication: 'Gynäkologie, Schlaf' },
+      { id: 'SP9', name: 'Yinlingquan', nameChinese: '陰陵泉', position: new THREE.Vector3(-0.10, 0.15, 0.03), frequency: 131.8, indication: 'Feuchtigkeit, Ödeme' },
+    ],
+  },
+  // HERZ-MERIDIAN (HT) - Yin, Feuer
+  {
+    id: 'HT',
+    name: 'Herz-Meridian',
+    nameChinese: '手少陰心經',
+    element: 'fire',
+    yinYang: 'yin',
+    organ: 'heart',
+    color: '#ef4444',
+    points: [
+      new THREE.Vector3(-0.10, 0.58, 0.02),
+      new THREE.Vector3(-0.14, 0.52, 0.01),
+      new THREE.Vector3(-0.18, 0.44, 0),
+      new THREE.Vector3(-0.22, 0.34, -0.01),
+      new THREE.Vector3(-0.26, 0.24, -0.02),
+      new THREE.Vector3(-0.28, 0.16, -0.02),
+    ],
+    acupoints: [
+      { id: 'HT7', name: 'Shenmen', nameChinese: '神門', position: new THREE.Vector3(-0.28, 0.16, -0.02), frequency: 250.6, indication: 'Angst, Schlafstörungen' },
+      { id: 'HT3', name: 'Shaohai', nameChinese: '少海', position: new THREE.Vector3(-0.20, 0.40, -0.005), frequency: 211.4, indication: 'Herzruhe' },
+    ],
+  },
+  // DÜNNDARM-MERIDIAN (SI) - Yang, Feuer
+  {
+    id: 'SI',
+    name: 'Dünndarm-Meridian',
+    nameChinese: '手太陽小腸經',
+    element: 'fire',
+    yinYang: 'yang',
+    organ: 'small_intestine',
+    color: '#f87171',
+    points: [
+      new THREE.Vector3(-0.30, 0.14, -0.02),
+      new THREE.Vector3(-0.26, 0.28, -0.03),
+      new THREE.Vector3(-0.22, 0.44, -0.04),
+      new THREE.Vector3(-0.16, 0.60, -0.04),
+      new THREE.Vector3(-0.10, 0.72, -0.03),
+      new THREE.Vector3(-0.04, 0.80, -0.02),
+    ],
+    acupoints: [
+      { id: 'SI3', name: 'Houxi', nameChinese: '後溪', position: new THREE.Vector3(-0.30, 0.14, -0.02), frequency: 185.0, indication: 'Nacken, Wirbelsäule' },
+      { id: 'SI19', name: 'Tinggong', nameChinese: '聽宮', position: new THREE.Vector3(-0.04, 0.80, -0.02), frequency: 234.2, indication: 'Ohrenprobleme' },
+    ],
+  },
+  // BLASEN-MERIDIAN (BL) - Yang, Wasser
+  {
+    id: 'BL',
+    name: 'Blasen-Meridian',
+    nameChinese: '足太陽膀胱經',
+    element: 'water',
+    yinYang: 'yang',
+    organ: 'bladder',
+    color: '#3b82f6',
+    points: [
+      new THREE.Vector3(-0.02, 0.88, -0.02),
+      new THREE.Vector3(-0.04, 0.78, -0.06),
+      new THREE.Vector3(-0.04, 0.65, -0.08),
+      new THREE.Vector3(-0.04, 0.50, -0.08),
+      new THREE.Vector3(-0.04, 0.35, -0.07),
+      new THREE.Vector3(-0.06, 0.20, -0.06),
+      new THREE.Vector3(-0.06, 0.05, -0.05),
+      new THREE.Vector3(-0.06, -0.10, -0.04),
+    ],
+    acupoints: [
+      { id: 'BL23', name: 'Shenshu', nameChinese: '腎俞', position: new THREE.Vector3(-0.04, 0.40, -0.08), frequency: 172.1, indication: 'Nieren, Rücken' },
+      { id: 'BL40', name: 'Weizhong', nameChinese: '委中', position: new THREE.Vector3(-0.06, 0.10, -0.055), frequency: 194.2, indication: 'Rückenschmerzen' },
+    ],
+  },
+  // NIEREN-MERIDIAN (KI) - Yin, Wasser
+  {
+    id: 'KI',
+    name: 'Nieren-Meridian',
+    nameChinese: '足少陰腎經',
+    element: 'water',
+    yinYang: 'yin',
+    organ: 'kidney',
+    color: '#1d4ed8',
+    points: [
+      new THREE.Vector3(-0.08, -0.14, 0.04),
+      new THREE.Vector3(-0.08, -0.02, 0.05),
+      new THREE.Vector3(-0.08, 0.12, 0.05),
+      new THREE.Vector3(-0.08, 0.26, 0.05),
+      new THREE.Vector3(-0.06, 0.42, 0.05),
+      new THREE.Vector3(-0.04, 0.56, 0.04),
+    ],
+    acupoints: [
+      { id: 'KI1', name: 'Yongquan', nameChinese: '湧泉', position: new THREE.Vector3(-0.08, -0.14, 0.04), frequency: 136.1, indication: 'Notfall, Bewusstsein' },
+      { id: 'KI3', name: 'Taixi', nameChinese: '太溪', position: new THREE.Vector3(-0.08, -0.02, 0.05), frequency: 160.0, indication: 'Nierenessenz' },
+    ],
+  },
+  // PERIKARD-MERIDIAN (PC) - Yin, Minister-Feuer
+  {
+    id: 'PC',
+    name: 'Perikard-Meridian',
+    nameChinese: '手厥陰心包經',
+    element: 'fire_ministerial',
+    yinYang: 'yin',
+    organ: 'pericardium',
+    color: '#dc2626',
+    points: [
+      new THREE.Vector3(-0.11, 0.57, 0.03),
+      new THREE.Vector3(-0.15, 0.50, 0.02),
+      new THREE.Vector3(-0.19, 0.42, 0.01),
+      new THREE.Vector3(-0.23, 0.32, 0),
+      new THREE.Vector3(-0.27, 0.22, 0),
+      new THREE.Vector3(-0.29, 0.14, 0),
+    ],
+    acupoints: [
+      { id: 'PC6', name: 'Neiguan', nameChinese: '內關', position: new THREE.Vector3(-0.25, 0.27, 0), frequency: 183.6, indication: 'Übelkeit, Herzprobleme' },
+      { id: 'PC8', name: 'Laogong', nameChinese: '勞宮', position: new THREE.Vector3(-0.29, 0.14, 0), frequency: 210.4, indication: 'Hitze klären' },
+    ],
+  },
+  // DREIFACHER ERWÄRMER (TE) - Yang, Minister-Feuer
+  {
+    id: 'TE',
+    name: 'Dreifacher Erwärmer',
+    nameChinese: '手少陽三焦經',
+    element: 'fire_ministerial',
+    yinYang: 'yang',
+    organ: 'triple_warmer',
+    color: '#fb923c',
+    points: [
+      new THREE.Vector3(-0.31, 0.12, 0),
+      new THREE.Vector3(-0.27, 0.26, -0.01),
+      new THREE.Vector3(-0.23, 0.42, -0.02),
+      new THREE.Vector3(-0.17, 0.58, -0.03),
+      new THREE.Vector3(-0.10, 0.72, -0.03),
+      new THREE.Vector3(-0.04, 0.82, -0.02),
+    ],
+    acupoints: [
+      { id: 'TE5', name: 'Waiguan', nameChinese: '外關', position: new THREE.Vector3(-0.25, 0.34, -0.015), frequency: 176.0, indication: 'Fieber, Erkältung' },
+      { id: 'TE17', name: 'Yifeng', nameChinese: '翳風', position: new THREE.Vector3(-0.04, 0.82, -0.02), frequency: 220.0, indication: 'Ohren, Gesicht' },
+    ],
+  },
+  // GALLENBLASEN-MERIDIAN (GB) - Yang, Holz
+  {
+    id: 'GB',
+    name: 'Gallenblasen-Meridian',
+    nameChinese: '足少陽膽經',
+    element: 'wood',
+    yinYang: 'yang',
+    organ: 'gallbladder',
+    color: '#22c55e',
+    points: [
+      new THREE.Vector3(-0.06, 0.88, 0.02),
+      new THREE.Vector3(-0.10, 0.78, 0.01),
+      new THREE.Vector3(-0.12, 0.65, -0.01),
+      new THREE.Vector3(-0.12, 0.50, -0.03),
+      new THREE.Vector3(-0.10, 0.35, -0.04),
+      new THREE.Vector3(-0.10, 0.18, -0.04),
+      new THREE.Vector3(-0.10, 0.00, -0.03),
+      new THREE.Vector3(-0.10, -0.12, -0.02),
+    ],
+    acupoints: [
+      { id: 'GB20', name: 'Fengchi', nameChinese: '風池', position: new THREE.Vector3(-0.08, 0.75, -0.04), frequency: 164.8, indication: 'Kopfschmerzen, Wind' },
+      { id: 'GB34', name: 'Yanglingquan', nameChinese: '陽陵泉', position: new THREE.Vector3(-0.10, 0.10, -0.035), frequency: 147.9, indication: 'Sehnen, Muskeln' },
+    ],
+  },
+  // LEBER-MERIDIAN (LR) - Yin, Holz
+  {
+    id: 'LR',
+    name: 'Leber-Meridian',
+    nameChinese: '足厥陰肝經',
+    element: 'wood',
+    yinYang: 'yin',
+    organ: 'liver',
+    color: '#15803d',
+    points: [
+      new THREE.Vector3(-0.12, -0.14, 0.03),
+      new THREE.Vector3(-0.12, -0.02, 0.04),
+      new THREE.Vector3(-0.12, 0.12, 0.05),
+      new THREE.Vector3(-0.12, 0.28, 0.05),
+      new THREE.Vector3(-0.10, 0.44, 0.05),
+      new THREE.Vector3(-0.08, 0.55, 0.04),
+    ],
+    acupoints: [
+      { id: 'LR3', name: 'Taichong', nameChinese: '太衝', position: new THREE.Vector3(-0.12, -0.08, 0.035), frequency: 183.6, indication: 'Stress, Leber-Qi' },
+      { id: 'LR14', name: 'Qimen', nameChinese: '期門', position: new THREE.Vector3(-0.08, 0.55, 0.04), frequency: 197.7, indication: 'Leber-Erkrankungen' },
+    ],
   },
 ];
 
@@ -377,6 +687,162 @@ function BrainModel({ opacity = 0.5 }: { opacity?: number }) {
   );
 }
 
+// ============= MERIDIAN 3D COMPONENTS =============
+
+// Einzelner Meridian-Pfad
+function MeridianLine({
+  meridian,
+  isActive,
+  showLabels,
+  onAcupointClick,
+  activeAcupointId,
+}: {
+  meridian: MeridianPath;
+  isActive: boolean;
+  showLabels: boolean;
+  onAcupointClick: (point: AcupuncturePoint, meridian: MeridianPath) => void;
+  activeAcupointId: string | null;
+}) {
+  const opacity = isActive ? 0.9 : 0.5;
+
+  return (
+    <group>
+      {/* Meridian-Linie */}
+      <Line
+        points={meridian.points}
+        color={meridian.color}
+        lineWidth={isActive ? 4 : 2}
+        transparent
+        opacity={opacity}
+      />
+
+      {/* Gespiegelte Linie (rechte Körperseite) */}
+      <Line
+        points={meridian.points.map(p => new THREE.Vector3(-p.x, p.y, p.z))}
+        color={meridian.color}
+        lineWidth={isActive ? 4 : 2}
+        transparent
+        opacity={isActive ? 0.9 : 0.5}
+      />
+
+      {/* Akupunkturpunkte */}
+      {meridian.acupoints.map((point) => (
+        <AcupuncturePointMesh
+          key={point.id}
+          point={point}
+          meridian={meridian}
+          isActive={activeAcupointId === point.id}
+          showLabel={showLabels || activeAcupointId === point.id}
+          onClick={() => onAcupointClick(point, meridian)}
+        />
+      ))}
+    </group>
+  );
+}
+
+// Akupunkturpunkt-Mesh
+function AcupuncturePointMesh({
+  point,
+  meridian,
+  isActive,
+  showLabel,
+  onClick,
+}: {
+  point: AcupuncturePoint;
+  meridian: MeridianPath;
+  isActive: boolean;
+  showLabel: boolean;
+  onClick: () => void;
+}) {
+  const meshRef = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    if (meshRef.current) {
+      const pulse = Math.sin(state.clock.elapsedTime * 4) * 0.002 + 0.015;
+      meshRef.current.scale.setScalar(isActive ? pulse * 1.5 : pulse);
+    }
+  });
+
+  return (
+    <>
+      {/* Linke Seite */}
+      <group position={[point.position.x, point.position.y, point.position.z]}>
+        <mesh
+          ref={meshRef}
+          onClick={(e) => { e.stopPropagation(); onClick(); }}
+          onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
+          onPointerOut={() => { document.body.style.cursor = 'default'; }}
+        >
+          <sphereGeometry args={[1, 16, 16]} />
+          <meshStandardMaterial
+            color={meridian.color}
+            emissive={meridian.color}
+            emissiveIntensity={isActive ? 1 : 0.3}
+          />
+        </mesh>
+
+        {showLabel && (
+          <Html center distanceFactor={6} position={[0, 0.05, 0]}>
+            <div className="bg-background/95 backdrop-blur-sm px-2 py-1 rounded border border-primary/40 shadow-lg min-w-[100px]">
+              <p className="text-xs font-bold text-foreground">{point.id}</p>
+              <p className="text-xs text-muted-foreground">{point.name}</p>
+              <p className="text-xs text-primary font-mono">{point.frequency} Hz</p>
+            </div>
+          </Html>
+        )}
+      </group>
+
+      {/* Rechte Seite (gespiegelt) */}
+      <group position={[-point.position.x, point.position.y, point.position.z]}>
+        <mesh
+          onClick={(e) => { e.stopPropagation(); onClick(); }}
+          onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
+          onPointerOut={() => { document.body.style.cursor = 'default'; }}
+        >
+          <sphereGeometry args={[0.015, 16, 16]} />
+          <meshStandardMaterial
+            color={meridian.color}
+            emissive={meridian.color}
+            emissiveIntensity={isActive ? 1 : 0.3}
+          />
+        </mesh>
+      </group>
+    </>
+  );
+}
+
+// Meridian-System-Modell
+function MeridianSystemModel({
+  activeMeridianId,
+  showLabels,
+  onAcupointClick,
+  activeAcupointId,
+}: {
+  activeMeridianId: string | null;
+  showLabels: boolean;
+  onAcupointClick: (point: AcupuncturePoint, meridian: MeridianPath) => void;
+  activeAcupointId: string | null;
+}) {
+  return (
+    <group>
+      {/* Körper-Silhouette als Referenz */}
+      <HumanBodyModel opacity={0.15} />
+
+      {/* Alle Meridiane */}
+      {TCM_MERIDIANS.map((meridian) => (
+        <MeridianLine
+          key={meridian.id}
+          meridian={meridian}
+          isActive={activeMeridianId === meridian.id || !activeMeridianId}
+          showLabels={showLabels && (activeMeridianId === meridian.id || !activeMeridianId)}
+          onAcupointClick={onAcupointClick}
+          activeAcupointId={activeAcupointId}
+        />
+      ))}
+    </group>
+  );
+}
+
 // Szene mit Modell und Punkten
 function AnatomyScene({
   modelType,
@@ -384,12 +850,22 @@ function AnatomyScene({
   activePointId,
   resonanceScores,
   onPointClick,
+  showMeridians,
+  activeMeridianId,
+  showMeridianLabels,
+  onAcupointClick,
+  activeAcupointId,
 }: {
   modelType: AnatomyModelType;
   anatomyPoints: AnatomyResonancePoint[];
   activePointId: string | null;
   resonanceScores: Map<string, number>;
   onPointClick: (point: AnatomyResonancePoint) => void;
+  showMeridians: boolean;
+  activeMeridianId: string | null;
+  showMeridianLabels: boolean;
+  onAcupointClick: (point: AcupuncturePoint, meridian: MeridianPath) => void;
+  activeAcupointId: string | null;
 }) {
   // Filter Punkte basierend auf Modell-Typ
   const visiblePoints = useMemo(() => {
@@ -404,6 +880,8 @@ function AnatomyScene({
           p.organAssociations.some(o => ['brain', 'pineal', 'pituitary'].includes(o)) ||
           p.bodyRegion === 'head'
         );
+      case 'meridians':
+        return []; // Meridian-Ansicht zeigt nur Akupunkturpunkte
       default:
         return anatomyPoints;
     }
@@ -425,9 +903,29 @@ function AnatomyScene({
         blur={2.5} 
       />
 
-      {/* Anatomie-Modell */}
+      {/* Anatomie-Modell oder Meridian-System */}
       <group>
-        {modelType === 'full_body' && <HumanBodyModel />}
+        {modelType === 'full_body' && (
+          <>
+            <HumanBodyModel />
+            {showMeridians && (
+              <MeridianSystemModel
+                activeMeridianId={activeMeridianId}
+                showLabels={showMeridianLabels}
+                onAcupointClick={onAcupointClick}
+                activeAcupointId={activeAcupointId}
+              />
+            )}
+          </>
+        )}
+        {modelType === 'meridians' && (
+          <MeridianSystemModel
+            activeMeridianId={activeMeridianId}
+            showLabels={showMeridianLabels}
+            onAcupointClick={onAcupointClick}
+            activeAcupointId={activeAcupointId}
+          />
+        )}
         {modelType === 'heart' && <HeartModel />}
         {modelType === 'brain' && <BrainModel />}
       </group>
@@ -449,7 +947,7 @@ function AnatomyScene({
         enableZoom={true}
         minDistance={1.5}
         maxDistance={5}
-        autoRotate={!activePointId}
+        autoRotate={!activePointId && !activeAcupointId}
         autoRotateSpeed={0.5}
       />
     </>
@@ -465,11 +963,16 @@ const AnatomyResonanceViewer = ({
   const [activePoint, setActivePoint] = useState<AnatomyResonancePoint | null>(null);
   const [showInfo, setShowInfo] = useState(false);
 
+  // Meridian-spezifische States
+  const [showMeridians, setShowMeridians] = useState(false);
+  const [activeMeridianId, setActiveMeridianId] = useState<string | null>(null);
+  const [activeAcupoint, setActiveAcupoint] = useState<{ point: AcupuncturePoint; meridian: MeridianPath } | null>(null);
+  const [showMeridianLabels, setShowMeridianLabels] = useState(true);
+
   const { 
     anatomyPoints, 
     loadAnatomyPoints, 
     isLoading,
-    analyzeResonance 
   } = useResonanceDatabase();
 
   // Punkte laden
@@ -477,19 +980,31 @@ const AnatomyResonanceViewer = ({
     loadAnatomyPoints();
   }, [loadAnatomyPoints]);
 
+  // Wenn Meridian-Ansicht aktiviert wird
+  useEffect(() => {
+    if (activeModel === 'meridians') {
+      setShowMeridians(true);
+    }
+  }, [activeModel]);
+
+  // Akupunktur-Punkt auswählen
+  const handleAcupointClick = (point: AcupuncturePoint, meridian: MeridianPath) => {
+    setActiveAcupoint({ point, meridian });
+    setActiveMeridianId(meridian.id);
+    setActivePoint(null);
+  };
+
   // Resonanz-Scores berechnen
   const resonanceScores = useMemo(() => {
     const scores = new Map<string, number>();
     
     if (vectorAnalysis) {
       anatomyPoints.forEach(point => {
-        // Score basierend auf Vektor-Dimensionen
         const physicalMatch = 1 - Math.abs(vectorAnalysis.clientVector.dimensions[0] || 0);
         const energyMatch = 1 - Math.abs(vectorAnalysis.clientVector.dimensions[3] || 0);
         
         let score = (physicalMatch + energyMatch) / 2;
         
-        // Bonus für passende Organe
         if (point.organAssociations.includes('heart') && vectorAnalysis.attractorState.phase === 'stable') {
           score += 0.2;
         }
@@ -497,7 +1012,6 @@ const AnatomyResonanceViewer = ({
         scores.set(point.id, Math.min(1, score));
       });
     } else {
-      // Default-Scores
       anatomyPoints.forEach(point => {
         scores.set(point.id, 0.5);
       });
@@ -512,11 +1026,26 @@ const AnatomyResonanceViewer = ({
     const newIndex = (currentModelIndex - 1 + MODEL_CONFIGS.length) % MODEL_CONFIGS.length;
     setActiveModel(MODEL_CONFIGS[newIndex].id);
     setActivePoint(null);
+    setActiveAcupoint(null);
   };
   const nextModel = () => {
     const newIndex = (currentModelIndex + 1) % MODEL_CONFIGS.length;
     setActiveModel(MODEL_CONFIGS[newIndex].id);
     setActivePoint(null);
+    setActiveAcupoint(null);
+  };
+
+  // Element-Farbe holen
+  const getElementColor = (element: string) => {
+    switch (element) {
+      case 'wood': return 'text-green-500';
+      case 'fire': return 'text-red-500';
+      case 'fire_ministerial': return 'text-orange-500';
+      case 'earth': return 'text-yellow-500';
+      case 'metal': return 'text-gray-400';
+      case 'water': return 'text-blue-500';
+      default: return 'text-foreground';
+    }
   };
 
   const currentConfig = MODEL_CONFIGS[currentModelIndex];
@@ -582,7 +1111,12 @@ const AnatomyResonanceViewer = ({
                   anatomyPoints={anatomyPoints}
                   activePointId={activePoint?.id || null}
                   resonanceScores={resonanceScores}
-                  onPointClick={setActivePoint}
+                  onPointClick={(p) => { setActivePoint(p); setActiveAcupoint(null); }}
+                  showMeridians={showMeridians}
+                  activeMeridianId={activeMeridianId}
+                  showMeridianLabels={showMeridianLabels}
+                  onAcupointClick={handleAcupointClick}
+                  activeAcupointId={activeAcupoint?.point.id || null}
                 />
               </Canvas>
             </Suspense>
@@ -592,7 +1126,7 @@ const AnatomyResonanceViewer = ({
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setActivePoint(null)}
+                onClick={() => { setActivePoint(null); setActiveAcupoint(null); setActiveMeridianId(null); }}
                 className="bg-background/80 backdrop-blur-sm"
               >
                 <RotateCcw className="w-4 h-4" />
@@ -606,6 +1140,20 @@ const AnatomyResonanceViewer = ({
                 <Info className="w-4 h-4" />
               </Button>
             </div>
+
+            {/* Meridian-Toggle (nur bei full_body) */}
+            {activeModel === 'full_body' && (
+              <div className="absolute bottom-4 right-4 flex items-center gap-2 bg-background/80 backdrop-blur-sm px-3 py-2 rounded-lg border border-border">
+                <Switch
+                  id="show-meridians"
+                  checked={showMeridians}
+                  onCheckedChange={setShowMeridians}
+                />
+                <Label htmlFor="show-meridians" className="text-xs text-foreground">
+                  Meridiane
+                </Label>
+              </div>
+            )}
 
             {/* Info Overlay */}
             <AnimatePresence>
@@ -634,14 +1182,61 @@ const AnatomyResonanceViewer = ({
             viewport={{ once: true }}
             className="space-y-4"
           >
-            {/* Aktiver Punkt Details */}
+            {/* Aktiver Punkt / Akupunkturpunkt Details */}
             <div className="bg-card rounded-lg border border-border p-4">
               <div className="flex items-center gap-2 mb-3">
                 <Eye className="w-5 h-5 text-primary" />
                 <h3 className="font-medium text-foreground">Ausgewählter Punkt</h3>
               </div>
 
-              {activePoint ? (
+              {activeAcupoint ? (
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-bold text-foreground">{activeAcupoint.point.id}</span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${getElementColor(activeAcupoint.meridian.element)} bg-current/10`}>
+                        {activeAcupoint.meridian.yinYang === 'yin' ? 'Yin' : 'Yang'}
+                      </span>
+                    </div>
+                    <p className="text-md font-medium text-foreground">{activeAcupoint.point.name}</p>
+                    <p className="text-sm text-muted-foreground">{activeAcupoint.point.nameChinese}</p>
+                  </div>
+
+                  <div className="p-3 bg-primary/10 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Frequenz</span>
+                      <span className="font-mono text-primary text-lg">
+                        {activeAcupoint.point.frequency.toFixed(1)} Hz
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Meridian</p>
+                    <div className="flex items-center gap-2">
+                      <div 
+                        className="w-3 h-3 rounded-full" 
+                        style={{ backgroundColor: activeAcupoint.meridian.color }}
+                      />
+                      <span className="text-sm text-foreground">{activeAcupoint.meridian.name}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">{activeAcupoint.meridian.nameChinese}</p>
+                  </div>
+
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Indikation</p>
+                    <p className="text-sm text-foreground">{activeAcupoint.point.indication}</p>
+                  </div>
+
+                  <Button
+                    onClick={() => onFrequencySelect?.(activeAcupoint.point.frequency)}
+                    className="w-full gap-2"
+                  >
+                    <Volume2 className="w-4 h-4" />
+                    Frequenz anwenden
+                  </Button>
+                </div>
+              ) : activePoint ? (
                 <div className="space-y-3">
                   <div>
                     <p className="text-lg font-medium text-foreground">{activePoint.name}</p>
@@ -699,10 +1294,59 @@ const AnatomyResonanceViewer = ({
                 </div>
               ) : (
                 <p className="text-sm text-muted-foreground text-center py-6">
-                  Klicken Sie auf einen Resonanzpunkt im 3D-Modell
+                  Klicken Sie auf einen Punkt im 3D-Modell
                 </p>
               )}
             </div>
+
+            {/* Meridian-Liste (bei Meridian-Ansicht) */}
+            {(activeModel === 'meridians' || showMeridians) && (
+              <div className="bg-card rounded-lg border border-border p-4 max-h-[280px] overflow-y-auto">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <GitBranch className="w-5 h-5 text-primary" />
+                    <h3 className="font-medium text-foreground">12 Meridiane</h3>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Switch
+                      id="show-labels"
+                      checked={showMeridianLabels}
+                      onCheckedChange={setShowMeridianLabels}
+                      className="scale-75"
+                    />
+                    <Label htmlFor="show-labels" className="text-xs text-muted-foreground">Labels</Label>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  {TCM_MERIDIANS.map((meridian) => (
+                    <button
+                      key={meridian.id}
+                      onClick={() => setActiveMeridianId(activeMeridianId === meridian.id ? null : meridian.id)}
+                      className={`w-full p-2 rounded-lg text-left transition-colors flex items-center gap-2 ${
+                        activeMeridianId === meridian.id
+                          ? 'bg-primary/20 border border-primary/30'
+                          : 'bg-muted/30 hover:bg-muted/50 border border-transparent'
+                      }`}
+                    >
+                      <div 
+                        className="w-3 h-3 rounded-full flex-shrink-0" 
+                        style={{ backgroundColor: meridian.color }}
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-foreground truncate">{meridian.id}</span>
+                          <span className={`text-xs ${meridian.yinYang === 'yin' ? 'text-blue-400' : 'text-orange-400'}`}>
+                            {meridian.yinYang === 'yin' ? '陰' : '陽'}
+                          </span>
+                        </div>
+                        <p className="text-xs text-muted-foreground truncate">{meridian.name}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Resonanz-Punkte Liste */}
             <div className="bg-card rounded-lg border border-border p-4 max-h-[300px] overflow-y-auto">
