@@ -8,6 +8,7 @@ import SystemStatusDashboard from "@/components/SystemStatusDashboard";
 import ClientVectorInterface from "@/components/ClientVectorInterface";
 import ClientVectorTrajectory3D from "@/components/ClientVectorTrajectory3D";
 import AnatomyResonanceViewer from "@/components/AnatomyResonanceViewer";
+import MeridianDiagnosisPanel from "@/components/MeridianDiagnosisPanel";
 import FrequencyOutputModule from "@/components/FrequencyOutputModule";
 import RealtimeStatusWidget from "@/components/RealtimeStatusWidget";
 import ThomResources from "@/components/ThomResources";
@@ -48,6 +49,10 @@ const Index = () => {
         <ClientVectorTrajectory3D vectorAnalysis={currentVectorAnalysis} />
         <AnatomyResonanceViewer 
           vectorAnalysis={currentVectorAnalysis} 
+          onFrequencySelect={handleFrequencySelect}
+        />
+        <MeridianDiagnosisPanel
+          vectorAnalysis={currentVectorAnalysis}
           onFrequencySelect={handleFrequencySelect}
         />
         <FrequencyOutputModule />
