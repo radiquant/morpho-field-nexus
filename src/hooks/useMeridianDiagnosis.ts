@@ -67,7 +67,7 @@ export interface DiagnosisResult {
   aiRecommendation?: string;
 }
 
-// Meridian-Daten für die Diagnose
+// Meridian-Daten für die Diagnose (12 Hauptmeridiane)
 const MERIDIAN_DATA: Record<string, { 
   name: string; 
   organ: string; 
@@ -88,6 +88,108 @@ const MERIDIAN_DATA: Record<string, {
   TE: { name: 'Dreifacher Erwärmer', organ: 'San Jiao', element: 'fire_ministerial', yinYang: 'yang', frequency: 176.0, keyPoints: ['TE5', 'TE17', 'TE3'] },
   GB: { name: 'Gallenblasen-Meridian', organ: 'Gallenblase', element: 'wood', yinYang: 'yang', frequency: 164.8, keyPoints: ['GB20', 'GB34', 'GB41'] },
   LR: { name: 'Leber-Meridian', organ: 'Leber', element: 'wood', yinYang: 'yin', frequency: 183.6, keyPoints: ['LR3', 'LR14', 'LR8'] },
+};
+
+// 8 Außerordentliche Gefäße (Qi Jing Ba Mai)
+export const EXTRAORDINARY_VESSELS: Record<string, {
+  name: string;
+  nameChinese: string;
+  description: string;
+  openingPoint: string;
+  coupledPoint: string;
+  frequency: number;
+  keyPoints: string[];
+  function: string;
+  indications: string[];
+}> = {
+  DU: {
+    name: 'Du Mai (Lenkergefäß)',
+    nameChinese: '督脈',
+    description: 'Meer des Yang - verläuft entlang der Wirbelsäule zum Kopf',
+    openingPoint: 'SI3',
+    coupledPoint: 'BL62',
+    frequency: 136.1,
+    keyPoints: ['DU4', 'DU14', 'DU20', 'DU26'],
+    function: 'Regiert alle Yang-Meridiane, stärkt Wirbelsäule und Gehirn',
+    indications: ['Rückenschmerzen', 'Epilepsie', 'mentale Störungen', 'Steifheit der Wirbelsäule'],
+  },
+  REN: {
+    name: 'Ren Mai (Konzeptionsgefäß)',
+    nameChinese: '任脈',
+    description: 'Meer des Yin - verläuft entlang der vorderen Mittellinie',
+    openingPoint: 'LU7',
+    coupledPoint: 'KI6',
+    frequency: 141.3,
+    keyPoints: ['REN4', 'REN6', 'REN12', 'REN17'],
+    function: 'Regiert alle Yin-Meridiane, nährt Yin und Blut',
+    indications: ['Menstruationsstörungen', 'Unfruchtbarkeit', 'Hernie', 'Atemnot'],
+  },
+  CHONG: {
+    name: 'Chong Mai (Durchdringungsgefäß)',
+    nameChinese: '衝脈',
+    description: 'Meer des Blutes - verbindet oberes und unteres Dantian',
+    openingPoint: 'SP4',
+    coupledPoint: 'PC6',
+    frequency: 144.7,
+    keyPoints: ['REN1', 'ST30', 'KI11-21'],
+    function: 'Reguliert Qi und Blut, Verbindung zwischen Vor- und Nachgeburt',
+    indications: ['Blutmangel', 'unregelmäßige Menstruation', 'Herzbeschwerden', 'Brustschmerzen'],
+  },
+  DAI: {
+    name: 'Dai Mai (Gürtelgefäß)',
+    nameChinese: '帶脈',
+    description: 'Einziger horizontal verlaufender Meridian um die Taille',
+    openingPoint: 'GB41',
+    coupledPoint: 'TE5',
+    frequency: 147.9,
+    keyPoints: ['GB26', 'GB27', 'GB28', 'LR13'],
+    function: 'Bindet alle vertikalen Meridiane, reguliert Unterleib',
+    indications: ['Leukorrhoe', 'Prolaps', 'Hüftschmerzen', 'Schwäche der Beine'],
+  },
+  YANGQIAO: {
+    name: 'Yang Qiao Mai (Yang-Fersengefäß)',
+    nameChinese: '陽蹻脈',
+    description: 'Reguliert Yang der unteren Extremität und Augen',
+    openingPoint: 'BL62',
+    coupledPoint: 'SI3',
+    frequency: 152.8,
+    keyPoints: ['BL62', 'BL59', 'GB29', 'BL1'],
+    function: 'Kontrolliert Schlaf-Wach-Rhythmus, stärkt Yang',
+    indications: ['Schlaflosigkeit', 'Epilepsie', 'Augenschmerzen', 'laterale Beinschmerzen'],
+  },
+  YINQIAO: {
+    name: 'Yin Qiao Mai (Yin-Fersengefäß)',
+    nameChinese: '陰蹻脈',
+    description: 'Reguliert Yin der unteren Extremität',
+    openingPoint: 'KI6',
+    coupledPoint: 'LU7',
+    frequency: 158.4,
+    keyPoints: ['KI6', 'KI8', 'ST12', 'BL1'],
+    function: 'Fördert Schlaf, nährt Yin, befeuchtet Augen',
+    indications: ['Hypersomnie', 'trockene Augen', 'mediale Beinschmerzen', 'Harnprobleme'],
+  },
+  YANGWEI: {
+    name: 'Yang Wei Mai (Yang-Verbindungsgefäß)',
+    nameChinese: '陽維脈',
+    description: 'Verbindet alle Yang-Meridiane, reguliert Außen',
+    openingPoint: 'TE5',
+    coupledPoint: 'GB41',
+    frequency: 164.2,
+    keyPoints: ['TE5', 'GB35', 'SI10', 'GB20', 'DU16'],
+    function: 'Verteidigt gegen äußere pathogene Faktoren',
+    indications: ['Fieber', 'Schüttelfrost', 'Kopfschmerzen', 'Nackensteifigkeit'],
+  },
+  YINWEI: {
+    name: 'Yin Wei Mai (Yin-Verbindungsgefäß)',
+    nameChinese: '陰維脈',
+    description: 'Verbindet alle Yin-Meridiane, reguliert Innen',
+    openingPoint: 'PC6',
+    coupledPoint: 'SP4',
+    frequency: 170.6,
+    keyPoints: ['PC6', 'KI9', 'SP13-16', 'REN22-23'],
+    function: 'Reguliert Herz und Brust, beruhigt den Geist',
+    indications: ['Herzschmerzen', 'Brustbeklemmung', 'Magenschmerzen', 'Angst'],
+  },
 };
 
 // Wu Xing Zyklen

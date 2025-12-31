@@ -4,9 +4,9 @@
  */
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
-import type { MeridianImbalance } from './useMeridianDiagnosis';
+import { MeridianImbalance, EXTRAORDINARY_VESSELS } from './useMeridianDiagnosis';
 
-interface TreatmentPoint {
+export interface TreatmentPoint {
   id: string;
   meridianId: string;
   meridianName: string;
@@ -14,9 +14,10 @@ interface TreatmentPoint {
   frequency: number;
   duration: number; // Sekunden
   element: string;
+  isExtraordinaryVessel?: boolean;
 }
 
-interface TreatmentProgress {
+export interface TreatmentProgress {
   currentPointIndex: number;
   totalPoints: number;
   currentPoint: TreatmentPoint | null;
@@ -29,6 +30,18 @@ interface TreatmentProgress {
 }
 
 const DEFAULT_POINT_DURATION = 60; // 60 Sekunden pro Punkt
+
+// Mapping von Symptomen/Zuständen zu außerordentlichen Gefäßen
+const VESSEL_INDICATIONS: Record<string, string[]> = {
+  DU: ['stress', 'mental', 'spine', 'yang_deficiency'],
+  REN: ['emotional', 'yin_deficiency', 'fertility', 'breathing'],
+  CHONG: ['blood_deficiency', 'heart', 'menstruation'],
+  DAI: ['hip', 'lower_body', 'leukorrhea'],
+  YANGQIAO: ['insomnia', 'epilepsy', 'eye', 'yang_excess'],
+  YINQIAO: ['hypersomnia', 'yin_deficiency', 'eye'],
+  YANGWEI: ['fever', 'external_pathogen', 'neck'],
+  YINWEI: ['anxiety', 'heart', 'chest', 'emotional'],
+};
 
 export function useTreatmentSequence() {
   const [treatmentPoints, setTreatmentPoints] = useState<TreatmentPoint[]>([]);
@@ -60,12 +73,59 @@ export function useTreatmentSequence() {
   }, []);
 
   /**
+   * Ermittelt relevante außerordentliche Gefäße basierend auf Imbalancen
+   */
+  const selectExtraordinaryVessels = useCallback((
+    imbalances: MeridianImbalance[]
+  ): string[] => {
+    const vesselScores: Record<string, number> = {};
+
+    imbalances.forEach((imbalance) => {
+      // Prüfe jedes Gefäß auf Relevanz
+      Object.entries(VESSEL_INDICATIONS).forEach(([vesselId, indications]) => {
+        let score = 0;
+
+        // Stress -> DU, YANGWEI
+        if (imbalance.imbalanceType === 'excess' && ['DU', 'YANGWEI', 'YANGQIAO'].includes(vesselId)) {
+          score += imbalance.imbalanceScore * 0.3;
+        }
+
+        // Deficiency -> REN, YINQIAO, CHONG
+        if (imbalance.imbalanceType === 'deficiency' && ['REN', 'YINQIAO', 'CHONG', 'YINWEI'].includes(vesselId)) {
+          score += imbalance.imbalanceScore * 0.3;
+        }
+
+        // Element-spezifische Zuordnungen
+        if (imbalance.element === 'water' && ['REN', 'KI'].includes(imbalance.meridianId)) {
+          if (['REN', 'YINQIAO'].includes(vesselId)) score += 0.2;
+        }
+        if (imbalance.element === 'fire' && ['YINWEI', 'CHONG'].includes(vesselId)) {
+          score += 0.15;
+        }
+        if (imbalance.element === 'wood' && imbalance.imbalanceType === 'stagnation') {
+          if (['DAI', 'CHONG'].includes(vesselId)) score += 0.2;
+        }
+
+        vesselScores[vesselId] = (vesselScores[vesselId] || 0) + score;
+      });
+    });
+
+    // Wähle die relevantesten Gefäße (max 3)
+    return Object.entries(vesselScores)
+      .filter(([_, score]) => score > 0.1)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 3)
+      .map(([id]) => id);
+  }, []);
+
+  /**
    * Generiert Behandlungspunkte aus Meridian-Imbalancen
    */
   const generateTreatmentPoints = useCallback((
     imbalances: MeridianImbalance[],
     pointsPerMeridian: number = 2,
-    durationPerPoint: number = DEFAULT_POINT_DURATION
+    durationPerPoint: number = DEFAULT_POINT_DURATION,
+    includeExtraordinaryVessels: boolean = true
   ): TreatmentPoint[] => {
     const points: TreatmentPoint[] = [];
 
@@ -76,7 +136,7 @@ export function useTreatmentSequence() {
       // Wähle die wichtigsten Punkte pro Meridian
       const selectedPoints = imbalance.recommendedPoints.slice(0, pointsPerMeridian);
 
-      selectedPoints.forEach((pointName, idx) => {
+      selectedPoints.forEach((pointName) => {
         points.push({
           id: `${imbalance.meridianId}-${pointName}`,
           meridianId: imbalance.meridianId,
@@ -85,12 +145,61 @@ export function useTreatmentSequence() {
           frequency: imbalance.frequency,
           duration: durationPerPoint,
           element: imbalance.element,
+          isExtraordinaryVessel: false,
         });
       });
     });
 
+    // Füge außerordentliche Gefäße hinzu
+    if (includeExtraordinaryVessels) {
+      const relevantVessels = selectExtraordinaryVessels(imbalances);
+      
+      relevantVessels.forEach((vesselId) => {
+        const vessel = EXTRAORDINARY_VESSELS[vesselId];
+        if (vessel) {
+          // Öffnungspunkt
+          points.push({
+            id: `${vesselId}-opening-${vessel.openingPoint}`,
+            meridianId: vesselId,
+            meridianName: vessel.name,
+            pointName: `${vessel.openingPoint} (Öffnungspunkt)`,
+            frequency: vessel.frequency,
+            duration: durationPerPoint,
+            element: 'extraordinary',
+            isExtraordinaryVessel: true,
+          });
+
+          // Gekoppelter Punkt
+          points.push({
+            id: `${vesselId}-coupled-${vessel.coupledPoint}`,
+            meridianId: vesselId,
+            meridianName: vessel.name,
+            pointName: `${vessel.coupledPoint} (Gekoppelter Punkt)`,
+            frequency: vessel.frequency,
+            duration: durationPerPoint,
+            element: 'extraordinary',
+            isExtraordinaryVessel: true,
+          });
+
+          // Ein Schlüsselpunkt
+          if (vessel.keyPoints[0]) {
+            points.push({
+              id: `${vesselId}-key-${vessel.keyPoints[0]}`,
+              meridianId: vesselId,
+              meridianName: vessel.name,
+              pointName: vessel.keyPoints[0],
+              frequency: vessel.frequency,
+              duration: durationPerPoint,
+              element: 'extraordinary',
+              isExtraordinaryVessel: true,
+            });
+          }
+        }
+      });
+    }
+
     return points;
-  }, []);
+  }, [selectExtraordinaryVessels]);
 
   /**
    * Startet den Oszillator für eine Frequenz
