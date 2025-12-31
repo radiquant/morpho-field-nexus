@@ -1,33 +1,18 @@
-import { useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, Activity } from 'lucide-react';
+import { motion } from 'framer-motion';
 import Hero from "@/components/Hero";
 import ConceptSection from "@/components/ConceptSection";
 import CuspVisualization from "@/components/CuspVisualization";
 import CuspSurface3D from "@/components/CuspSurface3D";
 import FrequencyTherapySection from "@/components/FrequencyTherapySection";
 import SystemStatusDashboard from "@/components/SystemStatusDashboard";
-import ClientVectorInterface from "@/components/ClientVectorInterface";
-import ClientVectorTrajectory3D from "@/components/ClientVectorTrajectory3D";
-import AnatomyResonanceViewer from "@/components/AnatomyResonanceViewer";
-import MeridianDiagnosisPanel from "@/components/MeridianDiagnosisPanel";
-import FrequencyOutputModule from "@/components/FrequencyOutputModule";
-import RealtimeStatusWidget from "@/components/RealtimeStatusWidget";
 import ThomResources from "@/components/ThomResources";
 import Footer from "@/components/Footer";
 import { Helmet } from "react-helmet-async";
-import type { VectorAnalysis } from '@/services/feldengine';
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
-  const [currentVectorAnalysis, setCurrentVectorAnalysis] = useState<VectorAnalysis | null>(null);
-  const [selectedFrequency, setSelectedFrequency] = useState<number | null>(null);
-
-  const handleVectorCreated = useCallback((analysis: VectorAnalysis) => {
-    setCurrentVectorAnalysis(analysis);
-  }, []);
-
-  const handleFrequencySelect = useCallback((frequency: number) => {
-    setSelectedFrequency(frequency);
-  }, []);
-
   return (
     <>
       <Helmet>
@@ -45,23 +30,40 @@ const Index = () => {
         <CuspVisualization />
         <CuspSurface3D />
         <FrequencyTherapySection />
-        <ClientVectorInterface onVectorCreated={handleVectorCreated} />
-        <ClientVectorTrajectory3D vectorAnalysis={currentVectorAnalysis} />
-        <AnatomyResonanceViewer 
-          vectorAnalysis={currentVectorAnalysis} 
-          onFrequencySelect={handleFrequencySelect}
-        />
-        <MeridianDiagnosisPanel
-          vectorAnalysis={currentVectorAnalysis}
-          onFrequencySelect={handleFrequencySelect}
-        />
-        <FrequencyOutputModule />
+        
+        {/* Call-to-Action zur Analyse-Seite */}
+        <section className="py-16 px-4">
+          <div className="container mx-auto max-w-4xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 rounded-2xl border border-primary/20 p-8 md:p-12 text-center"
+            >
+              <Activity className="w-12 h-12 text-primary mx-auto mb-6" />
+              <h2 className="font-display text-2xl md:text-3xl text-foreground mb-4">
+                Klienten-<span className="text-gradient-primary">Feldanalyse</span> starten
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
+                Berechnen Sie den individuellen Klienten-Vektor basierend auf biometrischen Daten, 
+                analysieren Sie Meridian-Ungleichgewichte nach TCM und führen Sie eine 
+                Frequenz-Harmonisierung mit der vollständigen WHO-409-Punkte-Datenbank durch.
+              </p>
+              <Link to="/analyse">
+                <Button size="lg" className="gap-2">
+                  Zur Feldanalyse
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+              </Link>
+            </motion.div>
+          </div>
+        </section>
+        
         <section id="ressourcen">
           <ThomResources />
         </section>
         <SystemStatusDashboard />
         <Footer />
-        <RealtimeStatusWidget />
       </main>
     </>
   );
