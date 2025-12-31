@@ -143,6 +143,15 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect }: ClientVec
       const birthDate = new Date(biometric.birthDate);
       const sessionId = `session-${Date.now()}`;
 
+      // Debug: Log input values
+      console.log('[FeldEngine] Biometric Input:', {
+        firstName: biometric.firstName,
+        lastName: biometric.lastName,
+        birthDate: birthDate.toISOString(),
+        birthPlace: biometric.birthPlace,
+      });
+      console.log('[FeldEngine] State Dimensions:', dimensions);
+
       // Thom-Vektor-Analyse
       const analysis = ThomVectorEngine.calculateClientVector(
         {
@@ -155,6 +164,11 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect }: ClientVec
         dimensions,
         sessionId
       );
+
+      // Debug: Log output values
+      console.log('[FeldEngine] Field Signature:', analysis.fieldSignature);
+      console.log('[FeldEngine] Combined Vector:', analysis.clientVector.dimensions);
+      console.log('[FeldEngine] Attractor State:', analysis.attractorState);
 
       setCurrentAnalysis(analysis);
       onVectorCreated?.(analysis);
