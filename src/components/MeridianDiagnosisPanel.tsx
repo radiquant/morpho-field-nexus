@@ -1,8 +1,15 @@
 /**
- * Meridian-Diagnose Panel
+ * Meridian-Diagnose Panel - Erweiterte Version
  * Zeigt die Diagnose-Ergebnisse, KI-Empfehlungen und automatische Behandlungssequenz an
+ * 
+ * Features:
+ * - Individuelle Zeiteinstellung (sec/min) pro Punkt
+ * - Bis zu 9 Punkte pro dysreguliertem Meridian
+ * - Liste dysregulierter Punkte mit Erklärungen
+ * - Automatische Nachtestung nach Pause
+ * - Trend- und Archivierungsfunktion
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Activity,
@@ -24,18 +31,31 @@ import {
   SkipForward,
   Timer,
   Waves,
+  Clock,
+  Archive,
+  History,
+  RotateCcw,
+  Save,
+  Target,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { toast } from 'sonner';
 import { useMeridianDiagnosis, type MeridianImbalance, type DiagnosisResult } from '@/hooks/useMeridianDiagnosis';
-import { useTreatmentSequence } from '@/hooks/useTreatmentSequence';
+import { useTreatmentSequence, type TreatmentPoint } from '@/hooks/useTreatmentSequence';
+import { useTreatmentArchive, type TreatmentRecord } from '@/hooks/useTreatmentArchive';
 import type { VectorAnalysis } from '@/services/feldengine';
 
 interface MeridianDiagnosisPanelProps {
   vectorAnalysis: VectorAnalysis | null;
+  clientId?: string;
   onFrequencySelect?: (frequency: number) => void;
 }
 
@@ -47,6 +67,7 @@ const ELEMENT_COLORS: Record<string, { bg: string; text: string; border: string 
   earth: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', border: 'border-yellow-500/30' },
   metal: { bg: 'bg-gray-400/20', text: 'text-gray-300', border: 'border-gray-400/30' },
   water: { bg: 'bg-blue-500/20', text: 'text-blue-400', border: 'border-blue-500/30' },
+  extraordinary: { bg: 'bg-purple-500/20', text: 'text-purple-400', border: 'border-purple-500/30' },
 };
 
 // Element-Namen auf Deutsch
@@ -57,6 +78,7 @@ const ELEMENT_NAMES: Record<string, string> = {
   earth: 'Erde',
   metal: 'Metall',
   water: 'Wasser',
+  extraordinary: 'Außerordentlich',
 };
 
 // Imbalance-Typ Icons und Farben
@@ -72,10 +94,24 @@ const formatTime = (seconds: number): string => {
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
 
-const MeridianDiagnosisPanel = ({ vectorAnalysis, onFrequencySelect }: MeridianDiagnosisPanelProps) => {
+// Zeit-Einheit für Eingabe
+type TimeUnit = 'seconds' | 'minutes';
+
+const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect }: MeridianDiagnosisPanelProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [treatmentDuration, setTreatmentDuration] = useState(60);
-  const [pointsPerMeridian, setPointsPerMeridian] = useState(2);
+  const [activeTab, setActiveTab] = useState<'treatment' | 'archive' | 'retest'>('treatment');
+  
+  // Zeiteinstellung: Sekunden oder Minuten
+  const [timeUnit, setTimeUnit] = useState<TimeUnit>('seconds');
+  const [durationValue, setDurationValue] = useState(60); // 60 Sekunden oder 1 Minute
+  const [pointsPerMeridian, setPointsPerMeridian] = useState(3);
+  
+  // Nachtestungs-Einstellungen
+  const [retestEnabled, setRetestEnabled] = useState(true);
+  const [retestPauseMinutes, setRetestPauseMinutes] = useState(5);
+  const [isRetestPending, setIsRetestPending] = useState(false);
+  const [retestCountdown, setRetestCountdown] = useState(0);
+  const [preHarmonizationPoints, setPreHarmonizationPoints] = useState<TreatmentPoint[]>([]);
   
   const {
     isAnalyzing,
@@ -93,7 +129,18 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, onFrequencySelect }: MeridianD
     resumeSequence,
     stopSequence,
     skipToPoint,
+    generateTreatmentPoints,
   } = useTreatmentSequence();
+
+  const {
+    records,
+    isLoading: isArchiveLoading,
+    saveTreatment,
+    loadTreatments,
+  } = useTreatmentArchive();
+
+  // Berechne tatsächliche Dauer in Sekunden
+  const treatmentDuration = timeUnit === 'minutes' ? durationValue * 60 : durationValue;
 
   // Automatische Analyse bei neuem Vektor
   useEffect(() => {
@@ -102,20 +149,85 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, onFrequencySelect }: MeridianD
     }
   }, [vectorAnalysis, diagnosisResult, analyzeMeridians]);
 
-  const handleStartTreatment = () => {
+  // Lade Archiv wenn clientId vorhanden
+  useEffect(() => {
+    if (clientId) {
+      loadTreatments(clientId);
+    }
+  }, [clientId, loadTreatments]);
+
+  // Nachtestungs-Countdown
+  useEffect(() => {
+    if (!isRetestPending) return;
+
+    const interval = setInterval(() => {
+      setRetestCountdown(prev => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setIsRetestPending(false);
+          // Starte Nachtestung
+          if (vectorAnalysis) {
+            analyzeMeridians(vectorAnalysis);
+            toast.info('Nachtestung gestartet', {
+              description: 'Die Meridiane werden erneut analysiert...'
+            });
+          }
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isRetestPending, vectorAnalysis, analyzeMeridians]);
+
+  // Bei Behandlungsabschluss
+  useEffect(() => {
+    if (progress.isComplete && retestEnabled && treatmentPoints.length > 0) {
+      // Speichere Behandlung im Archiv
+      if (clientId && diagnosisResult) {
+        saveTreatment(clientId, treatmentPoints, diagnosisResult, vectorAnalysis?.attractorState.stability || 0);
+      }
+      
+      // Starte Nachtestungs-Countdown
+      setPreHarmonizationPoints(treatmentPoints);
+      setRetestCountdown(retestPauseMinutes * 60);
+      setIsRetestPending(true);
+      
+      toast.success('Behandlung abgeschlossen', {
+        description: `Nachtestung in ${retestPauseMinutes} Minuten...`
+      });
+    }
+  }, [progress.isComplete, retestEnabled, treatmentPoints, clientId, diagnosisResult, vectorAnalysis, retestPauseMinutes, saveTreatment]);
+
+  const handleStartTreatment = useCallback(() => {
     if (diagnosisResult?.imbalances) {
       startSequence(diagnosisResult.imbalances, {
         pointsPerMeridian,
         durationPerPoint: treatmentDuration,
       });
     }
-  };
+  }, [diagnosisResult, startSequence, pointsPerMeridian, treatmentDuration]);
 
-  const handleReanalyze = () => {
+  const handleReanalyze = useCallback(() => {
     if (vectorAnalysis) {
       analyzeMeridians(vectorAnalysis);
     }
-  };
+  }, [vectorAnalysis, analyzeMeridians]);
+
+  const handleSkipRetest = useCallback(() => {
+    setIsRetestPending(false);
+    setRetestCountdown(0);
+  }, []);
+
+  const handleStartRetestNow = useCallback(() => {
+    setIsRetestPending(false);
+    setRetestCountdown(0);
+    if (vectorAnalysis) {
+      analyzeMeridians(vectorAnalysis);
+      toast.info('Nachtestung gestartet');
+    }
+  }, [vectorAnalysis, analyzeMeridians]);
 
   if (!vectorAnalysis) {
     return (
@@ -143,7 +255,7 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, onFrequencySelect }: MeridianD
             <span className="text-gradient-primary">Meridian</span>-Diagnose
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            KI-gestützte Analyse der Meridian-Imbalancen mit Behandlungsempfehlungen
+            KI-gestützte Analyse der Meridian-Imbalancen mit automatischer Behandlungssequenz
           </p>
         </motion.div>
 
@@ -273,7 +385,7 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, onFrequencySelect }: MeridianD
               </CardContent>
             </Card>
 
-            {/* Automatische Behandlungssequenz */}
+            {/* Behandlungssequenz mit Tabs */}
             <Card className="border-border bg-card">
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg flex items-center gap-2">
@@ -282,216 +394,243 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, onFrequencySelect }: MeridianD
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Behandlung läuft */}
-                {(progress.isPlaying || progress.isPaused) && !progress.isComplete && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="space-y-4"
-                  >
-                    {/* Aktueller Punkt */}
-                    <div className="p-4 rounded-lg bg-primary/10 border border-primary/30">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-full bg-primary/30 flex items-center justify-center">
-                            <Waves className="w-4 h-4 text-primary animate-pulse" />
-                          </div>
-                          <div>
-                            <p className="font-medium text-foreground">
-                              {progress.currentPoint?.meridianName}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              Punkt: {progress.currentPoint?.pointName}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-2xl font-mono text-primary">
-                            {progress.currentPoint?.frequency} Hz
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {formatTime(progress.remainingTime)} verbleibend
-                          </p>
-                        </div>
-                      </div>
+                <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="treatment" className="gap-2">
+                      <Waves className="w-4 h-4" />
+                      Behandlung
+                    </TabsTrigger>
+                    <TabsTrigger value="retest" className="gap-2">
+                      <RotateCcw className="w-4 h-4" />
+                      Nachtestung
+                    </TabsTrigger>
+                    <TabsTrigger value="archive" className="gap-2">
+                      <Archive className="w-4 h-4" />
+                      Archiv
+                    </TabsTrigger>
+                  </TabsList>
 
-                      {/* Point Progress */}
-                      <Progress 
-                        value={(progress.elapsedTime / (progress.currentPoint?.duration || 60)) * 100} 
-                        className="h-2"
+                  {/* Behandlung Tab */}
+                  <TabsContent value="treatment" className="space-y-4 mt-4">
+                    {/* Behandlung läuft */}
+                    {(progress.isPlaying || progress.isPaused) && !progress.isComplete && (
+                      <TreatmentInProgress
+                        progress={progress}
+                        treatmentPoints={treatmentPoints}
+                        onPause={pauseSequence}
+                        onResume={resumeSequence}
+                        onStop={stopSequence}
+                        onSkip={skipToPoint}
                       />
-                    </div>
+                    )}
 
-                    {/* Gesamt-Fortschritt */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">
-                          Punkt {progress.currentPointIndex + 1} von {progress.totalPoints}
-                        </span>
-                        <span className="text-foreground font-mono">
-                          {progress.overallProgress.toFixed(0)}%
-                        </span>
-                      </div>
-                      <Progress value={progress.overallProgress} className="h-1" />
-                    </div>
-
-                    {/* Kontrollen */}
-                    <div className="flex items-center gap-2">
-                      {progress.isPaused ? (
-                        <Button onClick={resumeSequence} className="flex-1 gap-2">
-                          <Play className="w-4 h-4" />
-                          Fortsetzen
-                        </Button>
-                      ) : (
-                        <Button onClick={pauseSequence} variant="secondary" className="flex-1 gap-2">
-                          <Pause className="w-4 h-4" />
-                          Pause
-                        </Button>
-                      )}
-                      <Button onClick={stopSequence} variant="destructive" size="icon">
-                        <Square className="w-4 h-4" />
-                      </Button>
-                      <Button 
-                        onClick={() => skipToPoint(progress.currentPointIndex + 1)} 
-                        variant="outline" 
-                        size="icon"
-                        disabled={progress.currentPointIndex >= progress.totalPoints - 1}
+                    {/* Behandlung abgeschlossen */}
+                    {progress.isComplete && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="text-center py-6"
                       >
-                        <SkipForward className="w-4 h-4" />
-                      </Button>
-                    </div>
-
-                    {/* Punkt-Liste */}
-                    <div className="max-h-40 overflow-y-auto space-y-1">
-                      {treatmentPoints.map((point, idx) => {
-                        const elementColor = ELEMENT_COLORS[point.element] || ELEMENT_COLORS.earth;
-                        const isActive = idx === progress.currentPointIndex;
-                        const isDone = idx < progress.currentPointIndex;
-
-                        return (
-                          <button
-                            key={point.id}
-                            onClick={() => skipToPoint(idx)}
-                            className={`w-full flex items-center gap-2 p-2 rounded text-left text-sm transition-colors ${
-                              isActive 
-                                ? 'bg-primary/20 border border-primary/40' 
-                                : isDone 
-                                  ? 'bg-green-500/10 text-muted-foreground' 
-                                  : 'hover:bg-muted/50'
-                            }`}
-                          >
-                            <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs ${
-                              isDone ? 'bg-green-500/30 text-green-400' : isActive ? 'bg-primary/30 text-primary' : 'bg-muted'
-                            }`}>
-                              {isDone ? <CheckCircle className="w-3 h-3" /> : idx + 1}
+                        <CheckCircle className="w-12 h-12 mx-auto text-green-500 mb-3" />
+                        <h4 className="text-lg font-medium text-foreground mb-1">
+                          Behandlung abgeschlossen
+                        </h4>
+                        <p className="text-sm text-muted-foreground mb-4">
+                          Alle {treatmentPoints.length} Akupunkturpunkte wurden harmonisiert
+                        </p>
+                        
+                        {isRetestPending && (
+                          <div className="p-4 rounded-lg bg-primary/10 border border-primary/30 mb-4">
+                            <div className="flex items-center justify-center gap-2 mb-2">
+                              <Clock className="w-5 h-5 text-primary animate-pulse" />
+                              <span className="text-foreground font-medium">Nachtestung in</span>
+                              <span className="text-2xl font-mono text-primary">
+                                {formatTime(retestCountdown)}
+                              </span>
                             </div>
-                            <span className={isDone ? 'line-through' : ''}>
-                              {point.meridianName} - {point.pointName}
-                            </span>
-                            <span className={`ml-auto text-xs ${elementColor.text}`}>
-                              {point.frequency} Hz
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </motion.div>
-                )}
+                            <div className="flex gap-2 justify-center">
+                              <Button size="sm" onClick={handleStartRetestNow}>
+                                Jetzt testen
+                              </Button>
+                              <Button size="sm" variant="outline" onClick={handleSkipRetest}>
+                                Überspringen
+                              </Button>
+                            </div>
+                          </div>
+                        )}
+                        
+                        <Button onClick={handleStartTreatment} variant="outline">
+                          Erneut starten
+                        </Button>
+                      </motion.div>
+                    )}
 
-                {/* Behandlung abgeschlossen */}
-                {progress.isComplete && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="text-center py-6"
-                  >
-                    <CheckCircle className="w-12 h-12 mx-auto text-green-500 mb-3" />
-                    <h4 className="text-lg font-medium text-foreground mb-1">
-                      Behandlung abgeschlossen
-                    </h4>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Alle {treatmentPoints.length} Akupunkturpunkte wurden harmonisiert
-                    </p>
-                    <Button onClick={handleStartTreatment} variant="outline">
-                      Erneut starten
-                    </Button>
-                  </motion.div>
-                )}
+                    {/* Behandlung starten */}
+                    {!progress.isPlaying && !progress.isPaused && !progress.isComplete && diagnosisResult?.imbalances.length && (
+                      <div className="space-y-4">
+                        {/* Erweiterte Einstellungen */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {/* Zeit pro Punkt */}
+                          <div className="space-y-3 p-4 rounded-lg bg-muted/30 border border-border">
+                            <Label className="flex items-center gap-2 text-sm">
+                              <Timer className="w-4 h-4" />
+                              Dauer pro Punkt
+                            </Label>
+                            <div className="flex items-center gap-2">
+                              <Input
+                                type="number"
+                                value={durationValue}
+                                onChange={(e) => setDurationValue(Math.max(1, parseInt(e.target.value) || 1))}
+                                className="w-20 font-mono"
+                                min={1}
+                                max={timeUnit === 'minutes' ? 30 : 600}
+                              />
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  variant={timeUnit === 'seconds' ? 'default' : 'outline'}
+                                  size="sm"
+                                  onClick={() => {
+                                    if (timeUnit === 'minutes') {
+                                      setDurationValue(prev => prev * 60);
+                                    }
+                                    setTimeUnit('seconds');
+                                  }}
+                                >
+                                  Sek
+                                </Button>
+                                <Button
+                                  variant={timeUnit === 'minutes' ? 'default' : 'outline'}
+                                  size="sm"
+                                  onClick={() => {
+                                    if (timeUnit === 'seconds') {
+                                      setDurationValue(prev => Math.ceil(prev / 60));
+                                    }
+                                    setTimeUnit('minutes');
+                                  }}
+                                >
+                                  Min
+                                </Button>
+                              </div>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              = {formatTime(treatmentDuration)} pro Punkt
+                            </p>
+                          </div>
 
-                {/* Behandlung starten */}
-                {!progress.isPlaying && !progress.isPaused && !progress.isComplete && diagnosisResult?.imbalances.length && (
-                  <div className="space-y-4">
-                    {/* Einstellungen */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-sm text-muted-foreground flex items-center gap-2">
-                          <Timer className="w-4 h-4" />
-                          Dauer pro Punkt
-                        </label>
-                        <div className="flex items-center gap-3">
-                          <Slider
-                            value={[treatmentDuration]}
-                            onValueChange={(v) => setTreatmentDuration(v[0])}
-                            min={15}
-                            max={180}
-                            step={15}
-                            className="flex-1"
-                          />
-                          <span className="text-sm font-mono w-12">{treatmentDuration}s</span>
+                          {/* Punkte pro Meridian */}
+                          <div className="space-y-3 p-4 rounded-lg bg-muted/30 border border-border">
+                            <Label className="flex items-center gap-2 text-sm">
+                              <Target className="w-4 h-4" />
+                              Punkte pro Meridian (max 9)
+                            </Label>
+                            <div className="flex items-center gap-3">
+                              <Slider
+                                value={[pointsPerMeridian]}
+                                onValueChange={(v) => setPointsPerMeridian(v[0])}
+                                min={1}
+                                max={9}
+                                step={1}
+                                className="flex-1"
+                              />
+                              <span className="text-xl font-mono w-8 text-center text-primary">{pointsPerMeridian}</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              Bei dysregulierten Meridianen
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-sm text-muted-foreground flex items-center gap-2">
-                          <Zap className="w-4 h-4" />
-                          Punkte pro Meridian
-                        </label>
-                        <div className="flex items-center gap-3">
-                          <Slider
-                            value={[pointsPerMeridian]}
-                            onValueChange={(v) => setPointsPerMeridian(v[0])}
-                            min={1}
-                            max={3}
-                            step={1}
-                            className="flex-1"
-                          />
-                          <span className="text-sm font-mono w-8">{pointsPerMeridian}</span>
+
+                        {/* Nachtestung-Einstellung */}
+                        <div className="flex items-center justify-between p-4 rounded-lg bg-muted/30 border border-border">
+                          <div className="flex items-center gap-3">
+                            <RotateCcw className="w-5 h-5 text-primary" />
+                            <div>
+                              <p className="text-sm font-medium">Automatische Nachtestung</p>
+                              <p className="text-xs text-muted-foreground">
+                                Nach Behandlungsende und {retestPauseMinutes} Min. Pause
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <Input
+                              type="number"
+                              value={retestPauseMinutes}
+                              onChange={(e) => setRetestPauseMinutes(Math.max(1, parseInt(e.target.value) || 5))}
+                              className="w-16 font-mono"
+                              min={1}
+                              max={60}
+                              disabled={!retestEnabled}
+                            />
+                            <span className="text-xs text-muted-foreground">Min</span>
+                            <Switch
+                              checked={retestEnabled}
+                              onCheckedChange={setRetestEnabled}
+                            />
+                          </div>
                         </div>
+
+                        {/* Dysregulierte Punkte Vorschau */}
+                        <DysregulatedPointsPreview
+                          imbalances={diagnosisResult.imbalances}
+                          pointsPerMeridian={pointsPerMeridian}
+                        />
+
+                        {/* Behandlungsplan Preview */}
+                        <div className="p-3 rounded-lg bg-primary/10 border border-primary/30">
+                          <p className="text-sm text-muted-foreground mb-1">Behandlungsplan:</p>
+                          <p className="text-foreground">
+                            <span className="font-mono text-primary">
+                              {Math.min(5, diagnosisResult.imbalances.length) * pointsPerMeridian}
+                            </span> Akupunkturpunkte • Gesamtdauer: {' '}
+                            <span className="font-mono text-primary">
+                              {formatTime(Math.min(5, diagnosisResult.imbalances.length) * pointsPerMeridian * treatmentDuration)}
+                            </span>
+                          </p>
+                        </div>
+
+                        <Button 
+                          onClick={handleStartTreatment} 
+                          className="w-full gap-2"
+                          size="lg"
+                        >
+                          <Play className="w-5 h-5" />
+                          Behandlungssequenz starten
+                        </Button>
                       </div>
-                    </div>
+                    )}
 
-                    {/* Preview */}
-                    <div className="p-3 rounded-lg bg-muted/30 border border-border">
-                      <p className="text-sm text-muted-foreground mb-1">Behandlungsplan:</p>
-                      <p className="text-foreground">
-                        <span className="font-mono text-primary">
-                          {Math.min(5, diagnosisResult.imbalances.length) * pointsPerMeridian}
-                        </span> Akupunkturpunkte • Gesamtdauer: {' '}
-                        <span className="font-mono text-primary">
-                          {formatTime(Math.min(5, diagnosisResult.imbalances.length) * pointsPerMeridian * treatmentDuration)}
-                        </span>
-                      </p>
-                    </div>
+                    {/* Keine Imbalancen */}
+                    {!diagnosisResult?.imbalances.length && !progress.isPlaying && (
+                      <div className="text-center py-6 text-muted-foreground">
+                        <Activity className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                        <p className="text-sm">
+                          Keine Behandlung erforderlich
+                        </p>
+                      </div>
+                    )}
+                  </TabsContent>
 
-                    <Button 
-                      onClick={handleStartTreatment} 
-                      className="w-full gap-2"
-                      size="lg"
-                    >
-                      <Play className="w-5 h-5" />
-                      Behandlungssequenz starten
-                    </Button>
-                  </div>
-                )}
+                  {/* Nachtestung Tab */}
+                  <TabsContent value="retest" className="space-y-4 mt-4">
+                    <RetestComparison
+                      preHarmonization={preHarmonizationPoints}
+                      currentImbalances={diagnosisResult?.imbalances || []}
+                      isRetestPending={isRetestPending}
+                      retestCountdown={retestCountdown}
+                      onStartRetest={handleStartRetestNow}
+                      onSkipRetest={handleSkipRetest}
+                    />
+                  </TabsContent>
 
-                {/* Keine Imbalancen */}
-                {!diagnosisResult?.imbalances.length && !progress.isPlaying && (
-                  <div className="text-center py-6 text-muted-foreground">
-                    <Activity className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">
-                      Keine Behandlung erforderlich
-                    </p>
-                  </div>
-                )}
+                  {/* Archiv Tab */}
+                  <TabsContent value="archive" className="space-y-4 mt-4">
+                    <TreatmentArchive
+                      records={records}
+                      isLoading={isArchiveLoading}
+                      clientId={clientId}
+                    />
+                  </TabsContent>
+                </Tabs>
               </CardContent>
             </Card>
           </div>
@@ -544,6 +683,388 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, onFrequencySelect }: MeridianD
   );
 };
 
+// Behandlung läuft Komponente
+function TreatmentInProgress({
+  progress,
+  treatmentPoints,
+  onPause,
+  onResume,
+  onStop,
+  onSkip,
+}: {
+  progress: ReturnType<typeof useTreatmentSequence>['progress'];
+  treatmentPoints: TreatmentPoint[];
+  onPause: () => void;
+  onResume: () => void;
+  onStop: () => void;
+  onSkip: (index: number) => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="space-y-4"
+    >
+      {/* Aktueller Punkt */}
+      <div className="p-4 rounded-lg bg-primary/10 border border-primary/30">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-primary/30 flex items-center justify-center">
+              <Waves className="w-4 h-4 text-primary animate-pulse" />
+            </div>
+            <div>
+              <p className="font-medium text-foreground">
+                {progress.currentPoint?.meridianName}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Punkt: {progress.currentPoint?.pointName}
+              </p>
+            </div>
+          </div>
+          <div className="text-right">
+            <p className="text-2xl font-mono text-primary">
+              {progress.currentPoint?.frequency} Hz
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {formatTime(progress.remainingTime)} verbleibend
+            </p>
+          </div>
+        </div>
+
+        <Progress 
+          value={(progress.elapsedTime / (progress.currentPoint?.duration || 60)) * 100} 
+          className="h-2"
+        />
+      </div>
+
+      {/* Gesamt-Fortschritt */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-muted-foreground">
+            Punkt {progress.currentPointIndex + 1} von {progress.totalPoints}
+          </span>
+          <span className="text-foreground font-mono">
+            {progress.overallProgress.toFixed(0)}%
+          </span>
+        </div>
+        <Progress value={progress.overallProgress} className="h-1" />
+      </div>
+
+      {/* Kontrollen */}
+      <div className="flex items-center gap-2">
+        {progress.isPaused ? (
+          <Button onClick={onResume} className="flex-1 gap-2">
+            <Play className="w-4 h-4" />
+            Fortsetzen
+          </Button>
+        ) : (
+          <Button onClick={onPause} variant="secondary" className="flex-1 gap-2">
+            <Pause className="w-4 h-4" />
+            Pause
+          </Button>
+        )}
+        <Button onClick={onStop} variant="destructive" size="icon">
+          <Square className="w-4 h-4" />
+        </Button>
+        <Button 
+          onClick={() => onSkip(progress.currentPointIndex + 1)} 
+          variant="outline" 
+          size="icon"
+          disabled={progress.currentPointIndex >= progress.totalPoints - 1}
+        >
+          <SkipForward className="w-4 h-4" />
+        </Button>
+      </div>
+
+      {/* Punkt-Liste */}
+      <div className="max-h-40 overflow-y-auto space-y-1">
+        {treatmentPoints.map((point, idx) => {
+          const elementColor = ELEMENT_COLORS[point.element] || ELEMENT_COLORS.earth;
+          const isActive = idx === progress.currentPointIndex;
+          const isDone = idx < progress.currentPointIndex;
+
+          return (
+            <button
+              key={point.id}
+              onClick={() => onSkip(idx)}
+              className={`w-full flex items-center gap-2 p-2 rounded text-left text-sm transition-colors ${
+                isActive 
+                  ? 'bg-primary/20 border border-primary/40' 
+                  : isDone 
+                    ? 'bg-green-500/10 text-muted-foreground' 
+                    : 'hover:bg-muted/50'
+              }`}
+            >
+              <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs ${
+                isDone ? 'bg-green-500/30 text-green-400' : isActive ? 'bg-primary/30 text-primary' : 'bg-muted'
+              }`}>
+                {isDone ? <CheckCircle className="w-3 h-3" /> : idx + 1}
+              </div>
+              <span className={isDone ? 'line-through' : ''}>
+                {point.meridianName} - {point.pointName}
+              </span>
+              <span className={`ml-auto text-xs ${elementColor.text}`}>
+                {point.frequency} Hz
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
+}
+
+// Dysregulierte Punkte Vorschau
+function DysregulatedPointsPreview({
+  imbalances,
+  pointsPerMeridian,
+}: {
+  imbalances: MeridianImbalance[];
+  pointsPerMeridian: number;
+}) {
+  return (
+    <div className="space-y-2">
+      <Label className="text-sm flex items-center gap-2">
+        <Target className="w-4 h-4" />
+        Dysregulierte Punkte zur Harmonisierung
+      </Label>
+      <div className="max-h-48 overflow-y-auto space-y-2 p-3 rounded-lg bg-muted/20 border border-border">
+        {imbalances.slice(0, 5).map((imbalance) => {
+          const elementColor = ELEMENT_COLORS[imbalance.element] || ELEMENT_COLORS.earth;
+          const points = imbalance.recommendedPoints.slice(0, pointsPerMeridian);
+          
+          return (
+            <div key={imbalance.meridianId} className={`p-2 rounded ${elementColor.bg} ${elementColor.border} border`}>
+              <div className="flex items-center justify-between mb-1">
+                <span className={`font-medium text-sm ${elementColor.text}`}>
+                  {imbalance.meridianName}
+                </span>
+                <Badge variant="outline" className="text-xs">
+                  {IMBALANCE_CONFIG[imbalance.imbalanceType].label}
+                </Badge>
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {points.map((point) => (
+                  <span 
+                    key={point} 
+                    className="text-xs px-1.5 py-0.5 rounded bg-background/50 text-foreground/80"
+                    title={getPointDescription(point)}
+                  >
+                    {point}
+                  </span>
+                ))}
+                {imbalance.recommendedPoints.length > pointsPerMeridian && (
+                  <span className="text-xs text-muted-foreground">
+                    +{imbalance.recommendedPoints.length - pointsPerMeridian} mehr
+                  </span>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// Nachtestungs-Vergleich
+function RetestComparison({
+  preHarmonization,
+  currentImbalances,
+  isRetestPending,
+  retestCountdown,
+  onStartRetest,
+  onSkipRetest,
+}: {
+  preHarmonization: TreatmentPoint[];
+  currentImbalances: MeridianImbalance[];
+  isRetestPending: boolean;
+  retestCountdown: number;
+  onStartRetest: () => void;
+  onSkipRetest: () => void;
+}) {
+  if (isRetestPending) {
+    return (
+      <div className="text-center py-8">
+        <Clock className="w-12 h-12 mx-auto text-primary mb-4 animate-pulse" />
+        <h4 className="text-lg font-medium text-foreground mb-2">Nachtestung wartet</h4>
+        <p className="text-3xl font-mono text-primary mb-4">{formatTime(retestCountdown)}</p>
+        <p className="text-sm text-muted-foreground mb-6">
+          Nach der Pause werden die Meridiane erneut analysiert
+        </p>
+        <div className="flex gap-2 justify-center">
+          <Button onClick={onStartRetest} className="gap-2">
+            <RotateCcw className="w-4 h-4" />
+            Jetzt testen
+          </Button>
+          <Button variant="outline" onClick={onSkipRetest}>
+            Überspringen
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (preHarmonization.length === 0) {
+    return (
+      <div className="text-center py-8 text-muted-foreground">
+        <History className="w-8 h-8 mx-auto mb-2 opacity-50" />
+        <p className="text-sm">
+          Keine vorherige Behandlung für Vergleich verfügbar
+        </p>
+      </div>
+    );
+  }
+
+  // Berechne Verbesserungen
+  const treatedMeridians = [...new Set(preHarmonization.map(p => p.meridianId))];
+  const improvedCount = treatedMeridians.filter(m => 
+    !currentImbalances.find(i => i.meridianId === m)
+  ).length;
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-4">
+        <Card className="border-green-500/30 bg-green-500/10">
+          <CardContent className="pt-4 text-center">
+            <CheckCircle className="w-8 h-8 mx-auto text-green-500 mb-2" />
+            <p className="text-2xl font-mono text-green-400">{improvedCount}</p>
+            <p className="text-xs text-muted-foreground">Verbessert</p>
+          </CardContent>
+        </Card>
+        <Card className="border-yellow-500/30 bg-yellow-500/10">
+          <CardContent className="pt-4 text-center">
+            <AlertTriangle className="w-8 h-8 mx-auto text-yellow-500 mb-2" />
+            <p className="text-2xl font-mono text-yellow-400">{currentImbalances.length}</p>
+            <p className="text-xs text-muted-foreground">Verbleibend</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="space-y-2">
+        <p className="text-sm font-medium">Behandelte Punkte:</p>
+        <div className="max-h-32 overflow-y-auto space-y-1">
+          {preHarmonization.map((point, idx) => {
+            const stillImbalanced = currentImbalances.some(i => i.meridianId === point.meridianId);
+            return (
+              <div 
+                key={idx}
+                className={`flex items-center gap-2 text-sm p-2 rounded ${
+                  stillImbalanced ? 'bg-yellow-500/10' : 'bg-green-500/10'
+                }`}
+              >
+                {stillImbalanced ? (
+                  <AlertTriangle className="w-4 h-4 text-yellow-500" />
+                ) : (
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                )}
+                <span>{point.meridianName}</span>
+                <span className="text-muted-foreground">-</span>
+                <span>{point.pointName}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Behandlungs-Archiv
+function TreatmentArchive({
+  records,
+  isLoading,
+  clientId,
+}: {
+  records: TreatmentRecord[];
+  isLoading: boolean;
+  clientId?: string;
+}) {
+  if (!clientId) {
+    return (
+      <div className="text-center py-8 text-muted-foreground">
+        <Archive className="w-8 h-8 mx-auto mb-2 opacity-50" />
+        <p className="text-sm">
+          Wählen Sie einen Klienten für das Behandlungs-Archiv
+        </p>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  if (records.length === 0) {
+    return (
+      <div className="text-center py-8 text-muted-foreground">
+        <History className="w-8 h-8 mx-auto mb-2 opacity-50" />
+        <p className="text-sm">
+          Noch keine Behandlungen archiviert
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3 max-h-64 overflow-y-auto">
+      {records.map((record) => (
+        <div key={record.id} className="p-3 rounded-lg bg-muted/30 border border-border">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium">
+              {new Date(record.createdAt).toLocaleDateString('de-DE', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
+            </span>
+            <Badge variant="outline" className="text-xs">
+              {record.pointCount} Punkte
+            </Badge>
+          </div>
+          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+            <span>Dauer: {formatTime(record.totalDuration)}</span>
+            <span>Pattern: {record.pattern}</span>
+          </div>
+          <Progress 
+            value={record.improvementScore * 100} 
+            className="h-1 mt-2"
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Hilfsfunktion für Punkt-Beschreibungen
+function getPointDescription(pointId: string): string {
+  // Kurze Beschreibungen für häufige Punkte
+  const descriptions: Record<string, string> = {
+    'LU1': 'Zhongfu - Nährt Lungen-Qi, öffnet Brust',
+    'LU7': 'Lieque - Luo-Punkt, reguliert Lunge und Wasserwege',
+    'LU9': 'Taiyuan - Yuan-Punkt, stärkt Lungen-Qi',
+    'LI4': 'Hegu - Befreit Oberfläche, lindert Schmerzen',
+    'LI11': 'Quchi - Klärt Hitze, reguliert Qi und Blut',
+    'ST36': 'Zusanli - Stärkt Qi, nährt Blut, harmonisiert Magen',
+    'SP6': 'Sanyinjiao - Stärkt Milz, nährt Blut und Yin',
+    'HT7': 'Shenmen - Beruhigt Geist, reguliert Herz-Qi',
+    'KI3': 'Taixi - Yuan-Punkt, stärkt Nieren-Yin und Yang',
+    'LR3': 'Taichong - Yuan-Punkt, reguliert Leber-Qi',
+    'PC6': 'Neiguan - Öffnet Brust, beruhigt Geist',
+    'GB34': 'Yanglingquan - He-Punkt, entspannt Sehnen',
+    'BL23': 'Shenshu - Shu-Punkt der Niere, stärkt Nieren',
+    'BL60': 'Kunlun - Lindert Schmerzen, entspannt Sehnen',
+  };
+  
+  return descriptions[pointId] || `Akupunkturpunkt ${pointId}`;
+}
+
 // Einzelne Imbalance-Karte
 function ImbalanceCard({ 
   imbalance, 
@@ -581,10 +1102,16 @@ function ImbalanceCard({
                 <span 
                   key={point} 
                   className="text-xs px-1.5 py-0.5 rounded bg-background/50 text-foreground/80"
+                  title={getPointDescription(point)}
                 >
                   {point}
                 </span>
               ))}
+              {imbalance.recommendedPoints.length > 3 && (
+                <span className="text-xs text-muted-foreground">
+                  +{imbalance.recommendedPoints.length - 3}
+                </span>
+              )}
             </div>
           </div>
         </div>
