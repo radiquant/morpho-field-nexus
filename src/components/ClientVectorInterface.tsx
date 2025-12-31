@@ -1,6 +1,9 @@
 /**
  * Erweitertes Klienten-Vektor-Interface mit biometrischer Identifikation
  * Basierend auf René Thoms Feldengine-Theorie
+ * 
+ * Die State-Dimensionen werden primär durch Hardware-Entropie-Messungen bestimmt.
+ * Manuelle Slider dienen nur als optionale Feinabstimmung.
  */
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -20,17 +23,21 @@ import {
   Upload,
   Sparkles,
   TrendingUp,
-  Users
+  Users,
+  Cpu,
+  Radio
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Slider } from '@/components/ui/slider';
+import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { ThomVectorEngine, type VectorAnalysis, type RecommendedFrequency } from '@/services/feldengine';
 import { useClientDatabase, type ClientRecord } from '@/hooks/useClientDatabase';
+import { useRealtimeHarmonization } from '@/hooks/useRealtimeHarmonization';
 
 // Biometrische Klienten-Daten
 interface BiometricData {
@@ -73,10 +80,40 @@ const defaultDimensions: StateDimensions = {
   stress: 50,
 };
 
+// Hardware-Entropie zu State-Dimensionen Konverter
+const convertHardwareToStateDimensions = (
+  cpuUsage: number,
+  gpuUsage: number,
+  gpuMemory: number,
+  audioLatency: number,
+  timestamp: number
+): StateDimensions => {
+  // Nutze Hardware-Entropie und Zeit-Varianz für realistische Werte
+  const timeEntropy = (timestamp % 10000) / 10000;
+  const combinedEntropy = (cpuUsage + gpuUsage + gpuMemory + audioLatency) / 4;
+  
+  // Berechne State-Dimensionen aus Hardware-Entropie mit Variation
+  const baseVariation = Math.sin(timestamp / 1000) * 15;
+  
+  return {
+    // Physical: Beeinflusst durch CPU-Last und Latenz
+    physical: Math.max(10, Math.min(90, 50 + (cpuUsage - 50) * 0.5 + baseVariation)),
+    // Emotional: Beeinflusst durch GPU-Speicher und Zeit-Entropie
+    emotional: Math.max(10, Math.min(90, 50 + (gpuMemory - 50) * 0.4 + Math.cos(timestamp / 1500) * 20)),
+    // Mental: Beeinflusst durch GPU-Nutzung
+    mental: Math.max(10, Math.min(90, 50 + (gpuUsage - 50) * 0.6 + Math.sin(timestamp / 2000) * 10)),
+    // Energy: Kombinierte Entropie
+    energy: Math.max(10, Math.min(90, 50 + (combinedEntropy - 50) * 0.5 + timeEntropy * 20)),
+    // Stress: Inverse von Latenz (hohe Latenz = weniger Stress-Kapazität)
+    stress: Math.max(10, Math.min(90, 50 - audioLatency * 0.1 + Math.sin(timestamp / 800) * 15)),
+  };
+};
+
 const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect }: ClientVectorInterfaceProps) => {
   // State
   const [biometric, setBiometric] = useState<BiometricData>(defaultBiometric);
   const [dimensions, setDimensions] = useState<StateDimensions>(defaultDimensions);
+  const [manualOverride, setManualOverride] = useState(false); // Manueller Modus deaktiviert
   const [primaryConcern, setPrimaryConcern] = useState('');
   const [notes, setNotes] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -87,11 +124,32 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect }: ClientVec
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { createClient, loadClients, saveClientVector, uploadClientPhoto, isLoading } = useClientDatabase();
+  const { state: hardwareState, initialize: initializeHardware } = useRealtimeHarmonization();
+
+  // Hardware initialisieren beim Mount
+  useEffect(() => {
+    initializeHardware();
+  }, [initializeHardware]);
 
   // Klienten laden
   useEffect(() => {
     loadClients().then(setExistingClients);
   }, [loadClients]);
+
+  // Hardware-Entropie automatisch in State-Dimensionen übertragen
+  useEffect(() => {
+    if (!manualOverride && hardwareState.serverStatus.isConnected) {
+      const { cpuUsage, gpuUsage, gpuMemory, audioLatency } = hardwareState.serverStatus;
+      const newDimensions = convertHardwareToStateDimensions(
+        cpuUsage,
+        gpuUsage,
+        gpuMemory,
+        audioLatency,
+        Date.now()
+      );
+      setDimensions(newDimensions);
+    }
+  }, [hardwareState.serverStatus, manualOverride]);
 
   // Biometrische Daten aktualisieren
   const updateBiometric = useCallback((key: keyof BiometricData, value: unknown) => {
@@ -456,10 +514,44 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect }: ClientVec
             viewport={{ once: true }}
             className="bg-card rounded-lg border border-border p-6 shadow-card"
           >
-            <div className="flex items-center gap-3 mb-6">
-              <FileText className="w-6 h-6 text-primary" />
-              <h3 className="font-display text-xl text-foreground">Anamnese</h3>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <FileText className="w-6 h-6 text-primary" />
+                <h3 className="font-display text-xl text-foreground">Echtzeit-Messung</h3>
+              </div>
+              {/* Hardware-Status Indikator */}
+              <div className="flex items-center gap-2">
+                {hardwareState.serverStatus.isConnected ? (
+                  <div className="flex items-center gap-2 px-2 py-1 bg-green-500/10 border border-green-500/30 rounded-md">
+                    <Radio className="w-3 h-3 text-green-500 animate-pulse" />
+                    <span className="text-xs text-green-500">Hardware verbunden</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 px-2 py-1 bg-yellow-500/10 border border-yellow-500/30 rounded-md">
+                    <Cpu className="w-3 h-3 text-yellow-500" />
+                    <span className="text-xs text-yellow-500">Lokal</span>
+                  </div>
+                )}
+              </div>
             </div>
+
+            {/* Modus-Umschalter */}
+            <div className="flex items-center justify-between p-3 mb-4 bg-muted/30 rounded-lg border border-border">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-primary" />
+                <span className="text-sm text-foreground">Manuelle Anpassung</span>
+              </div>
+              <Switch
+                checked={manualOverride}
+                onCheckedChange={setManualOverride}
+              />
+            </div>
+
+            {!manualOverride && (
+              <p className="text-xs text-muted-foreground mb-4 italic">
+                Werte werden automatisch durch Hardware-Entropie-Analyse ermittelt
+              </p>
+            )}
 
             <div className="space-y-5">
               {/* Dimensionen */}
@@ -470,7 +562,12 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect }: ClientVec
                   icon={dim.icon}
                   color={dim.color}
                   value={dimensions[dim.key]}
-                  onChange={(val) => setDimensions(prev => ({ ...prev, [dim.key]: val }))}
+                  onChange={(val) => {
+                    if (manualOverride) {
+                      setDimensions(prev => ({ ...prev, [dim.key]: val }));
+                    }
+                  }}
+                  disabled={!manualOverride}
                 />
               ))}
 
@@ -648,16 +745,20 @@ interface DimensionSliderProps {
   color: string;
   value: number;
   onChange: (value: number) => void;
+  disabled?: boolean;
 }
 
-const DimensionSlider = ({ label, icon: Icon, color, value, onChange }: DimensionSliderProps) => (
-  <div className="space-y-2">
+const DimensionSlider = ({ label, icon: Icon, color, value, onChange, disabled = false }: DimensionSliderProps) => (
+  <div className={cn("space-y-2", disabled && "opacity-75")}>
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2">
         <Icon className={cn("w-4 h-4", color)} />
         <span className="text-sm text-foreground">{label}</span>
+        {!disabled && (
+          <span className="text-[10px] text-muted-foreground">(Auto)</span>
+        )}
       </div>
-      <span className="text-sm font-mono text-muted-foreground">{value}%</span>
+      <span className="text-sm font-mono text-muted-foreground">{Math.round(value)}%</span>
     </div>
     <Slider
       value={[value]}
@@ -665,6 +766,7 @@ const DimensionSlider = ({ label, icon: Icon, color, value, onChange }: Dimensio
       max={100}
       step={1}
       className="w-full"
+      disabled={disabled}
     />
   </div>
 );
