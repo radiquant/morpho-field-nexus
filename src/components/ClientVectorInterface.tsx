@@ -114,6 +114,7 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect }: ClientVec
   const [biometric, setBiometric] = useState<BiometricData>(defaultBiometric);
   const [dimensions, setDimensions] = useState<StateDimensions>(defaultDimensions);
   const [manualOverride, setManualOverride] = useState(false); // Manueller Modus deaktiviert
+  const [continuousUpdate, setContinuousUpdate] = useState(false); // Optionales Intervall
   const [primaryConcern, setPrimaryConcern] = useState('');
   const [notes, setNotes] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -136,34 +137,54 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect }: ClientVec
     loadClients().then(setExistingClients);
   }, [loadClients]);
 
-  // Kontinuierliche Hardware-Entropie-Aktualisierung alle 2 Sekunden
-  useEffect(() => {
+  // Funktion zur Hardware-Entropie-Messung (wird bei Analyse/Nachtest aufgerufen)
+  const captureHardwareEntropy = useCallback(() => {
     if (manualOverride) return;
+    
+    const { cpuUsage, gpuUsage, gpuMemory, audioLatency, isConnected } = hardwareState.serverStatus;
+    
+    // Nutze aktuelle Hardware-Werte oder simulierte Entropie
+    const newDimensions = convertHardwareToStateDimensions(
+      isConnected ? cpuUsage : Math.random() * 30 + 35,
+      isConnected ? gpuUsage : Math.random() * 25 + 40,
+      isConnected ? gpuMemory : Math.random() * 20 + 45,
+      isConnected ? audioLatency : Math.random() * 10 + 5,
+      Date.now()
+    );
+    
+    setDimensions(newDimensions);
+    
+    // Log aktive Hardware-Komponenten
+    console.log('[FeldEngine] Hardware-Entropie erfasst:', {
+      source: isConnected ? 'Echte Hardware' : 'Simuliert',
+      components: {
+        cpu: isConnected ? `AMD Ryzen (${cpuUsage.toFixed(1)}% Auslastung)` : 'Simuliert',
+        gpu: isConnected ? `GPU (${gpuUsage.toFixed(1)}% Auslastung, ${gpuMemory.toFixed(0)}MB VRAM)` : 'Simuliert',
+        latency: isConnected ? `${audioLatency.toFixed(1)}ms` : 'Simuliert',
+      },
+      dimensions: newDimensions,
+    });
+    
+    return newDimensions;
+  }, [hardwareState.serverStatus, manualOverride]);
 
-    const updateDimensions = () => {
-      const { cpuUsage, gpuUsage, gpuMemory, audioLatency, isConnected } = hardwareState.serverStatus;
-      
-      // Nutze Timestamp für kontinuierliche Variation
-      const newDimensions = convertHardwareToStateDimensions(
-        isConnected ? cpuUsage : Math.random() * 30 + 35, // Simulierte Werte wenn nicht verbunden
-        isConnected ? gpuUsage : Math.random() * 25 + 40,
-        isConnected ? gpuMemory : Math.random() * 20 + 45,
-        isConnected ? audioLatency : Math.random() * 10 + 5,
-        Date.now()
-      );
-      
-      setDimensions(newDimensions);
-      console.log('[FeldEngine] Hardware-Entropie Update:', newDimensions);
-    };
+  // Optionales kontinuierliches Update (nur wenn aktiviert)
+  useEffect(() => {
+    if (manualOverride || !continuousUpdate) return;
 
-    // Initialer Update
-    updateDimensions();
-
-    // Kontinuierliches Update alle 2 Sekunden
-    const intervalId = setInterval(updateDimensions, 2000);
+    const intervalId = setInterval(() => {
+      captureHardwareEntropy();
+    }, 2000);
 
     return () => clearInterval(intervalId);
-  }, [hardwareState.serverStatus, manualOverride]);
+  }, [continuousUpdate, manualOverride, captureHardwareEntropy]);
+
+  // Initiale Entropie-Erfassung beim Mount
+  useEffect(() => {
+    if (!manualOverride) {
+      captureHardwareEntropy();
+    }
+  }, []);
 
   // Biometrische Daten aktualisieren
   const updateBiometric = useCallback((key: keyof BiometricData, value: unknown) => {
@@ -212,6 +233,9 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect }: ClientVec
     setIsProcessing(true);
 
     try {
+      // ⚡ NEUE HARDWARE-ENTROPIE bei jeder Analyse/Nachtest erfassen
+      const capturedDimensions = !manualOverride ? captureHardwareEntropy() ?? dimensions : dimensions;
+      
       const birthDate = new Date(biometric.birthDate);
       const sessionId = `session-${Date.now()}`;
 
@@ -222,9 +246,9 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect }: ClientVec
         birthDate: birthDate.toISOString(),
         birthPlace: biometric.birthPlace,
       });
-      console.log('[FeldEngine] State Dimensions:', dimensions);
+      console.log('[FeldEngine] State Dimensions (frisch erfasst):', capturedDimensions);
 
-      // Thom-Vektor-Analyse
+      // Thom-Vektor-Analyse mit frisch erfassten Dimensionen
       const analysis = ThomVectorEngine.calculateClientVector(
         {
           firstName: biometric.firstName,
@@ -233,7 +257,7 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect }: ClientVec
           birthPlace: biometric.birthPlace,
           photoData: biometric.photoPreview || undefined,
         },
-        dimensions,
+        capturedDimensions,
         sessionId
       );
 
@@ -252,7 +276,7 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect }: ClientVec
     } finally {
       setIsProcessing(false);
     }
-  }, [biometric, dimensions, onVectorCreated]);
+  }, [biometric, dimensions, manualOverride, captureHardwareEntropy, onVectorCreated]);
 
   // Klient und Vektor speichern
   const saveToDatabase = useCallback(async () => {
@@ -550,20 +574,38 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect }: ClientVec
             </div>
 
             {/* Modus-Umschalter */}
-            <div className="flex items-center justify-between p-3 mb-4 bg-muted/30 rounded-lg border border-border">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-primary" />
-                <span className="text-sm text-foreground">Manuelle Anpassung</span>
+            <div className="space-y-3 mb-4">
+              <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg border border-border">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-primary" />
+                  <span className="text-sm text-foreground">Manuelle Anpassung</span>
+                </div>
+                <Switch
+                  checked={manualOverride}
+                  onCheckedChange={setManualOverride}
+                />
               </div>
-              <Switch
-                checked={manualOverride}
-                onCheckedChange={setManualOverride}
-              />
+              
+              {/* Optional: Kontinuierliches Intervall */}
+              {!manualOverride && (
+                <div className="flex items-center justify-between p-3 bg-blue-500/5 rounded-lg border border-blue-500/20">
+                  <div className="flex items-center gap-2">
+                    <Radio className="w-4 h-4 text-blue-400" />
+                    <span className="text-sm text-foreground">Kontinuierliches Intervall (2s)</span>
+                  </div>
+                  <Switch
+                    checked={continuousUpdate}
+                    onCheckedChange={setContinuousUpdate}
+                  />
+                </div>
+              )}
             </div>
 
             {!manualOverride && (
               <p className="text-xs text-muted-foreground mb-4 italic">
-                Werte werden automatisch durch Hardware-Entropie-Analyse ermittelt
+                {continuousUpdate 
+                  ? 'Werte werden alle 2 Sekunden automatisch aktualisiert'
+                  : 'Neue Werte werden bei jeder Analyse/Nachtest erfasst'}
               </p>
             )}
 
