@@ -148,7 +148,7 @@ function calculatePointFrequency(
 }
 
 // Berechnet harmonische Frequenzen (Obertöne)
-function calculateHarmonics(baseFreq: number, count: number = 4): number[] {
+export function calculateHarmonics(baseFreq: number, count: number = 4): number[] {
   const harmonics: number[] = [];
   for (let i = 2; i <= count + 1; i++) {
     harmonics.push(Math.round(baseFreq * i * 100) / 100);
