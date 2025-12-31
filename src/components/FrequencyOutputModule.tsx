@@ -20,7 +20,8 @@ import {
   Activity,
   Check,
   Timer,
-  BarChart3
+  BarChart3,
+  Search
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
@@ -33,9 +34,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import type { FrequencyOutput } from '@/types/hardware';
+import { AcupuncturePointSearch } from './AcupuncturePointSearch';
 
 type WaveformType = 'sine' | 'square' | 'triangle' | 'sawtooth' | 'bipolar_sine' | 'harmonic_complex';
 
@@ -591,38 +594,61 @@ const FrequencyOutputModule = ({ onFrequencyChange }: FrequencyOutputModuleProps
             </div>
           </motion.div>
 
-          {/* Presets & EM Output */}
+          {/* Presets & Punktsuche */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             className="space-y-6"
           >
-            {/* Presets */}
+            {/* Tabs für Presets und Akupunkturpunkt-Suche */}
             <div className="bg-card rounded-lg border border-border p-6 shadow-card">
-              <div className="flex items-center gap-3 mb-4">
-                <Zap className="w-5 h-5 text-primary" />
-                <h4 className="font-medium text-foreground">Therapeutische Presets</h4>
-              </div>
-              <div className="space-y-2 max-h-64 overflow-y-auto">
-                {THERAPEUTIC_FREQUENCIES.map((preset) => (
-                  <button
-                    key={preset.name}
-                    onClick={() => selectPreset(preset)}
-                    className={cn(
-                      "w-full p-3 rounded-lg text-left transition-colors",
-                      "bg-muted/30 hover:bg-primary/10 border border-transparent",
-                      frequency === preset.frequency && "border-primary/50 bg-primary/10"
-                    )}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-foreground">{preset.name}</span>
-                      <span className="text-xs font-mono text-primary">{preset.frequency} Hz</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-1">{preset.description}</p>
-                  </button>
-                ))}
-              </div>
+              <Tabs defaultValue="presets" className="w-full">
+                <TabsList className="w-full mb-4">
+                  <TabsTrigger value="presets" className="flex-1">
+                    <Zap className="w-4 h-4 mr-2" />
+                    Presets
+                  </TabsTrigger>
+                  <TabsTrigger value="acupoints" className="flex-1">
+                    <Search className="w-4 h-4 mr-2" />
+                    Akupunktur
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="presets" className="mt-0">
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                    {THERAPEUTIC_FREQUENCIES.map((preset) => (
+                      <button
+                        key={preset.name}
+                        onClick={() => selectPreset(preset)}
+                        className={cn(
+                          "w-full p-3 rounded-lg text-left transition-colors",
+                          "bg-muted/30 hover:bg-primary/10 border border-transparent",
+                          frequency === preset.frequency && "border-primary/50 bg-primary/10"
+                        )}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-foreground">{preset.name}</span>
+                          <span className="text-xs font-mono text-primary">{preset.frequency} Hz</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">{preset.description}</p>
+                      </button>
+                    ))}
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="acupoints" className="mt-0">
+                  <AcupuncturePointSearch
+                    compact
+                    onSelectPoint={(freq, pointInfo) => {
+                      setFrequency(freq);
+                      toast.success(`${pointInfo.id}: ${pointInfo.name}`, {
+                        description: `Frequenz: ${freq.toFixed(2)} Hz • Element: ${pointInfo.element}`
+                      });
+                    }}
+                  />
+                </TabsContent>
+              </Tabs>
             </div>
 
             {/* EM Output */}
