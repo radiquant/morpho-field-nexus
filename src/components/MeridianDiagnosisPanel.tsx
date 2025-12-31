@@ -37,6 +37,7 @@ import {
   RotateCcw,
   Save,
   Target,
+  Settings2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -47,10 +48,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { toast } from 'sonner';
 import { useMeridianDiagnosis, type MeridianImbalance, type DiagnosisResult } from '@/hooks/useMeridianDiagnosis';
 import { useTreatmentSequence, type TreatmentPoint } from '@/hooks/useTreatmentSequence';
 import { useTreatmentArchive, type TreatmentRecord } from '@/hooks/useTreatmentArchive';
+import HardwareMethodSelector from '@/components/HardwareMethodSelector';
 import type { VectorAnalysis } from '@/services/feldengine';
 
 interface MeridianDiagnosisPanelProps {
@@ -100,11 +103,16 @@ type TimeUnit = 'seconds' | 'minutes';
 const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect }: MeridianDiagnosisPanelProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<'treatment' | 'archive' | 'retest'>('treatment');
+  const [showMethodSettings, setShowMethodSettings] = useState(false);
   
   // Zeiteinstellung: Sekunden oder Minuten
   const [timeUnit, setTimeUnit] = useState<TimeUnit>('seconds');
   const [durationValue, setDurationValue] = useState(60); // 60 Sekunden oder 1 Minute
   const [pointsPerMeridian, setPointsPerMeridian] = useState(3);
+  
+  // Hardware-Methoden Auswahl
+  const [selectedMethods, setSelectedMethods] = useState<string[]>(['webaudio']);
+  const [serverHardwareEnabled, setServerHardwareEnabled] = useState(false);
   
   // Nachtestungs-Einstellungen
   const [retestEnabled, setRetestEnabled] = useState(true);
@@ -202,12 +210,20 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect }:
 
   const handleStartTreatment = useCallback(() => {
     if (diagnosisResult?.imbalances) {
+      // Log selected methods for treatment
+      const methodNames = selectedMethods.join(', ');
+      console.log(`Starting treatment with methods: ${methodNames}, Server-GPU: ${serverHardwareEnabled}`);
+      
       startSequence(diagnosisResult.imbalances, {
         pointsPerMeridian,
         durationPerPoint: treatmentDuration,
       });
+      
+      toast.success('Behandlung gestartet', {
+        description: `Methoden: ${methodNames}${serverHardwareEnabled ? ' + Server-GPU' : ''}`
+      });
     }
-  }, [diagnosisResult, startSequence, pointsPerMeridian, treatmentDuration]);
+  }, [diagnosisResult, startSequence, pointsPerMeridian, treatmentDuration, selectedMethods, serverHardwareEnabled]);
 
   const handleReanalyze = useCallback(() => {
     if (vectorAnalysis) {
@@ -468,6 +484,37 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect }:
                     {/* Behandlung starten */}
                     {!progress.isPlaying && !progress.isPaused && !progress.isComplete && diagnosisResult?.imbalances.length && (
                       <div className="space-y-4">
+                        {/* Hardware-Methoden Auswahl (Collapsible) */}
+                        <Collapsible open={showMethodSettings} onOpenChange={setShowMethodSettings}>
+                          <CollapsibleTrigger asChild>
+                            <Button variant="outline" className="w-full justify-between">
+                              <span className="flex items-center gap-2">
+                                <Settings2 className="w-4 h-4" />
+                                Harmonisierungs-Methoden
+                                {selectedMethods.length > 0 && (
+                                  <Badge variant="secondary" className="ml-2">
+                                    {selectedMethods.length} aktiv
+                                  </Badge>
+                                )}
+                                {serverHardwareEnabled && (
+                                  <Badge variant="default" className="ml-1">
+                                    GPU
+                                  </Badge>
+                                )}
+                              </span>
+                              <ChevronDown className={`w-4 h-4 transition-transform ${showMethodSettings ? 'rotate-180' : ''}`} />
+                            </Button>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent className="pt-4">
+                            <HardwareMethodSelector
+                              selectedMethods={selectedMethods}
+                              onMethodsChange={setSelectedMethods}
+                              onServerHardwareToggle={setServerHardwareEnabled}
+                              serverHardwareEnabled={serverHardwareEnabled}
+                            />
+                          </CollapsibleContent>
+                        </Collapsible>
+
                         {/* Erweiterte Einstellungen */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {/* Zeit pro Punkt */}
