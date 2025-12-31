@@ -1,10 +1,16 @@
 /**
  * Treatment Sequence Hook
  * Automatische Behandlungssequenz für Meridian-Akupunkturpunkte
+ * Nutzt die vollständige WHO-409-Punkte-Datenbank
  */
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
 import { MeridianImbalance, EXTRAORDINARY_VESSELS } from './useMeridianDiagnosis';
+import { 
+  COMPLETE_ACUPUNCTURE_DATABASE, 
+  getCompletePointsByMeridian,
+  getPointsByIndication 
+} from '@/utils/meridianPoints';
 
 export interface TreatmentPoint {
   id: string;
@@ -120,6 +126,7 @@ export function useTreatmentSequence() {
 
   /**
    * Generiert Behandlungspunkte aus Meridian-Imbalancen
+   * Nutzt die vollständige WHO-409-Punkte-Datenbank
    */
   const generateTreatmentPoints = useCallback((
     imbalances: MeridianImbalance[],
@@ -133,18 +140,44 @@ export function useTreatmentSequence() {
     const topImbalances = imbalances.slice(0, 5);
 
     topImbalances.forEach((imbalance) => {
-      // Wähle die wichtigsten Punkte pro Meridian
-      const selectedPoints = imbalance.recommendedPoints.slice(0, pointsPerMeridian);
+      // Hole alle Punkte dieses Meridians aus der WHO-Datenbank
+      const meridianPoints = getCompletePointsByMeridian(imbalance.meridianId);
+      
+      // Filtere nach Punkttypen basierend auf Imbalance-Typ
+      let selectedPoints = meridianPoints;
+      if (imbalance.imbalanceType === 'excess') {
+        // Bei Überschuss: Sedierungspunkte und He-Sea-Punkte
+        selectedPoints = meridianPoints.filter(p => 
+          p.pointTypes?.some(t => ['he_sea', 'xi_cleft', 'luo_connecting'].includes(t))
+        );
+      } else if (imbalance.imbalanceType === 'deficiency') {
+        // Bei Mangel: Tonisierungspunkte und Yuan-Punkte
+        selectedPoints = meridianPoints.filter(p => 
+          p.pointTypes?.some(t => ['yuan_source', 'shu_stream', 'jing_well'].includes(t))
+        );
+      }
+      
+      // Fallback auf empfohlene Punkte wenn keine speziellen gefunden
+      if (selectedPoints.length === 0) {
+        selectedPoints = meridianPoints.filter(p => 
+          imbalance.recommendedPoints.includes(p.id)
+        );
+      }
+      
+      // Nimm die ersten X Punkte
+      const finalPoints = selectedPoints.length > 0 
+        ? selectedPoints.slice(0, pointsPerMeridian)
+        : meridianPoints.slice(0, pointsPerMeridian);
 
-      selectedPoints.forEach((pointName) => {
+      finalPoints.forEach((point) => {
         points.push({
-          id: `${imbalance.meridianId}-${pointName}`,
+          id: point.id,
           meridianId: imbalance.meridianId,
           meridianName: imbalance.meridianName,
-          pointName,
-          frequency: imbalance.frequency,
+          pointName: `${point.id} - ${point.nameGerman}`,
+          frequency: point.frequency, // Nutze die spezifische Punkt-Frequenz aus der WHO-DB
           duration: durationPerPoint,
-          element: imbalance.element,
+          element: point.element,
           isExtraordinaryVessel: false,
         });
       });
