@@ -1,6 +1,6 @@
 /**
  * Meridian-Diagnose Panel
- * Zeigt die Diagnose-Ergebnisse und KI-Empfehlungen an
+ * Zeigt die Diagnose-Ergebnisse, KI-Empfehlungen und automatische Behandlungssequenz an
  */
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -18,18 +18,20 @@ import {
   ChevronDown,
   ChevronUp,
   Volume2,
+  Play,
+  Pause,
+  Square,
+  SkipForward,
+  Timer,
+  Waves,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
+import { Slider } from '@/components/ui/slider';
 import { useMeridianDiagnosis, type MeridianImbalance, type DiagnosisResult } from '@/hooks/useMeridianDiagnosis';
+import { useTreatmentSequence } from '@/hooks/useTreatmentSequence';
 import type { VectorAnalysis } from '@/services/feldengine';
 
 interface MeridianDiagnosisPanelProps {
@@ -64,8 +66,17 @@ const IMBALANCE_CONFIG = {
   stagnation: { icon: Minus, color: 'text-yellow-400', label: 'Stagnation' },
 };
 
+const formatTime = (seconds: number): string => {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+};
+
 const MeridianDiagnosisPanel = ({ vectorAnalysis, onFrequencySelect }: MeridianDiagnosisPanelProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [treatmentDuration, setTreatmentDuration] = useState(60);
+  const [pointsPerMeridian, setPointsPerMeridian] = useState(2);
+  
   const {
     isAnalyzing,
     isLoadingAI,
@@ -74,12 +85,31 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, onFrequencySelect }: MeridianD
     analyzeMeridians,
   } = useMeridianDiagnosis();
 
+  const {
+    treatmentPoints,
+    progress,
+    startSequence,
+    pauseSequence,
+    resumeSequence,
+    stopSequence,
+    skipToPoint,
+  } = useTreatmentSequence();
+
   // Automatische Analyse bei neuem Vektor
   useEffect(() => {
     if (vectorAnalysis && !diagnosisResult) {
       analyzeMeridians(vectorAnalysis);
     }
   }, [vectorAnalysis, diagnosisResult, analyzeMeridians]);
+
+  const handleStartTreatment = () => {
+    if (diagnosisResult?.imbalances) {
+      startSequence(diagnosisResult.imbalances, {
+        pointsPerMeridian,
+        durationPerPoint: treatmentDuration,
+      });
+    }
+  };
 
   const handleReanalyze = () => {
     if (vectorAnalysis) {
@@ -238,6 +268,228 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, onFrequencySelect }: MeridianD
                   <div className="text-center py-6">
                     <CheckCircle className="w-10 h-10 mx-auto text-green-500 mb-2" />
                     <p className="text-muted-foreground">Keine signifikanten Imbalancen gefunden</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Automatische Behandlungssequenz */}
+            <Card className="border-border bg-card">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Waves className="w-5 h-5 text-primary" />
+                  Automatische Behandlungssequenz
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Behandlung läuft */}
+                {(progress.isPlaying || progress.isPaused) && !progress.isComplete && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="space-y-4"
+                  >
+                    {/* Aktueller Punkt */}
+                    <div className="p-4 rounded-lg bg-primary/10 border border-primary/30">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-primary/30 flex items-center justify-center">
+                            <Waves className="w-4 h-4 text-primary animate-pulse" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-foreground">
+                              {progress.currentPoint?.meridianName}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              Punkt: {progress.currentPoint?.pointName}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-2xl font-mono text-primary">
+                            {progress.currentPoint?.frequency} Hz
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {formatTime(progress.remainingTime)} verbleibend
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Point Progress */}
+                      <Progress 
+                        value={(progress.elapsedTime / (progress.currentPoint?.duration || 60)) * 100} 
+                        className="h-2"
+                      />
+                    </div>
+
+                    {/* Gesamt-Fortschritt */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">
+                          Punkt {progress.currentPointIndex + 1} von {progress.totalPoints}
+                        </span>
+                        <span className="text-foreground font-mono">
+                          {progress.overallProgress.toFixed(0)}%
+                        </span>
+                      </div>
+                      <Progress value={progress.overallProgress} className="h-1" />
+                    </div>
+
+                    {/* Kontrollen */}
+                    <div className="flex items-center gap-2">
+                      {progress.isPaused ? (
+                        <Button onClick={resumeSequence} className="flex-1 gap-2">
+                          <Play className="w-4 h-4" />
+                          Fortsetzen
+                        </Button>
+                      ) : (
+                        <Button onClick={pauseSequence} variant="secondary" className="flex-1 gap-2">
+                          <Pause className="w-4 h-4" />
+                          Pause
+                        </Button>
+                      )}
+                      <Button onClick={stopSequence} variant="destructive" size="icon">
+                        <Square className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        onClick={() => skipToPoint(progress.currentPointIndex + 1)} 
+                        variant="outline" 
+                        size="icon"
+                        disabled={progress.currentPointIndex >= progress.totalPoints - 1}
+                      >
+                        <SkipForward className="w-4 h-4" />
+                      </Button>
+                    </div>
+
+                    {/* Punkt-Liste */}
+                    <div className="max-h-40 overflow-y-auto space-y-1">
+                      {treatmentPoints.map((point, idx) => {
+                        const elementColor = ELEMENT_COLORS[point.element] || ELEMENT_COLORS.earth;
+                        const isActive = idx === progress.currentPointIndex;
+                        const isDone = idx < progress.currentPointIndex;
+
+                        return (
+                          <button
+                            key={point.id}
+                            onClick={() => skipToPoint(idx)}
+                            className={`w-full flex items-center gap-2 p-2 rounded text-left text-sm transition-colors ${
+                              isActive 
+                                ? 'bg-primary/20 border border-primary/40' 
+                                : isDone 
+                                  ? 'bg-green-500/10 text-muted-foreground' 
+                                  : 'hover:bg-muted/50'
+                            }`}
+                          >
+                            <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs ${
+                              isDone ? 'bg-green-500/30 text-green-400' : isActive ? 'bg-primary/30 text-primary' : 'bg-muted'
+                            }`}>
+                              {isDone ? <CheckCircle className="w-3 h-3" /> : idx + 1}
+                            </div>
+                            <span className={isDone ? 'line-through' : ''}>
+                              {point.meridianName} - {point.pointName}
+                            </span>
+                            <span className={`ml-auto text-xs ${elementColor.text}`}>
+                              {point.frequency} Hz
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Behandlung abgeschlossen */}
+                {progress.isComplete && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-center py-6"
+                  >
+                    <CheckCircle className="w-12 h-12 mx-auto text-green-500 mb-3" />
+                    <h4 className="text-lg font-medium text-foreground mb-1">
+                      Behandlung abgeschlossen
+                    </h4>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Alle {treatmentPoints.length} Akupunkturpunkte wurden harmonisiert
+                    </p>
+                    <Button onClick={handleStartTreatment} variant="outline">
+                      Erneut starten
+                    </Button>
+                  </motion.div>
+                )}
+
+                {/* Behandlung starten */}
+                {!progress.isPlaying && !progress.isPaused && !progress.isComplete && diagnosisResult?.imbalances.length && (
+                  <div className="space-y-4">
+                    {/* Einstellungen */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-sm text-muted-foreground flex items-center gap-2">
+                          <Timer className="w-4 h-4" />
+                          Dauer pro Punkt
+                        </label>
+                        <div className="flex items-center gap-3">
+                          <Slider
+                            value={[treatmentDuration]}
+                            onValueChange={(v) => setTreatmentDuration(v[0])}
+                            min={15}
+                            max={180}
+                            step={15}
+                            className="flex-1"
+                          />
+                          <span className="text-sm font-mono w-12">{treatmentDuration}s</span>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm text-muted-foreground flex items-center gap-2">
+                          <Zap className="w-4 h-4" />
+                          Punkte pro Meridian
+                        </label>
+                        <div className="flex items-center gap-3">
+                          <Slider
+                            value={[pointsPerMeridian]}
+                            onValueChange={(v) => setPointsPerMeridian(v[0])}
+                            min={1}
+                            max={3}
+                            step={1}
+                            className="flex-1"
+                          />
+                          <span className="text-sm font-mono w-8">{pointsPerMeridian}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Preview */}
+                    <div className="p-3 rounded-lg bg-muted/30 border border-border">
+                      <p className="text-sm text-muted-foreground mb-1">Behandlungsplan:</p>
+                      <p className="text-foreground">
+                        <span className="font-mono text-primary">
+                          {Math.min(5, diagnosisResult.imbalances.length) * pointsPerMeridian}
+                        </span> Akupunkturpunkte • Gesamtdauer: {' '}
+                        <span className="font-mono text-primary">
+                          {formatTime(Math.min(5, diagnosisResult.imbalances.length) * pointsPerMeridian * treatmentDuration)}
+                        </span>
+                      </p>
+                    </div>
+
+                    <Button 
+                      onClick={handleStartTreatment} 
+                      className="w-full gap-2"
+                      size="lg"
+                    >
+                      <Play className="w-5 h-5" />
+                      Behandlungssequenz starten
+                    </Button>
+                  </div>
+                )}
+
+                {/* Keine Imbalancen */}
+                {!diagnosisResult?.imbalances.length && !progress.isPlaying && (
+                  <div className="text-center py-6 text-muted-foreground">
+                    <Activity className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                    <p className="text-sm">
+                      Keine Behandlung erforderlich
+                    </p>
                   </div>
                 )}
               </CardContent>
