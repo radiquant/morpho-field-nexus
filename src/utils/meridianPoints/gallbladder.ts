@@ -1,5 +1,5 @@
 /**
- * GALLENBLASENMERIDIAN (GB) - 44 Punkte
+ * GALLENBLASENMERIDIAN (GB) - 44 Punkte (vollständig)
  * Element: Holz (Yang), Maximalzeit: 23-1 Uhr
  * WHO Standard Acupuncture Point Locations (2008)
  */
@@ -7,6 +7,7 @@
 import { AcupuncturePoint, calculateHarmonics } from '../meridianPointsDatabase';
 
 export const GALLBLADDER_MERIDIAN: AcupuncturePoint[] = [
+  // ========== KOPF-PUNKTE (GB1-GB23) ==========
   {
     id: 'GB1',
     nameChinese: 'Tongziliao',
@@ -85,6 +86,36 @@ export const GALLBLADDER_MERIDIAN: AcupuncturePoint[] = [
     indications: ['Migräne', 'Augenrötung', 'Zahnschmerzen']
   },
   {
+    id: 'GB6',
+    nameChinese: 'Xuanli',
+    nameEnglish: 'Suspended Tuft',
+    nameGerman: 'Aufgehängter Büschel',
+    meridian: 'GB',
+    element: 'wood',
+    location: 'An der Schläfe, auf der Verbindung GB4-GB7',
+    depth: '0.3-0.5 cun schräg',
+    frequency: 310,
+    harmonicFrequencies: calculateHarmonics(310),
+    pointTypes: ['regular'],
+    functions: ['Zerstreut Wind', 'Lindert Schmerzen'],
+    indications: ['Migräne', 'Augenrötung', 'Tinnitus']
+  },
+  {
+    id: 'GB7',
+    nameChinese: 'Qubin',
+    nameEnglish: 'Temporal Hairline Curve',
+    nameGerman: 'Schläfenhaaransatzkurve',
+    meridian: 'GB',
+    element: 'wood',
+    location: 'An der Schläfe, auf der Horizontalen durch die Ohrspitze',
+    depth: '0.3-0.5 cun schräg',
+    frequency: 314.4,
+    harmonicFrequencies: calculateHarmonics(314.4),
+    pointTypes: ['regular'],
+    functions: ['Zerstreut Wind', 'Lindert Schmerzen'],
+    indications: ['Kopfschmerzen', 'Kiefergelenksprobleme', 'Schwellung der Wange']
+  },
+  {
     id: 'GB8',
     nameChinese: 'Shuaigu',
     nameEnglish: 'Leading Valley',
@@ -98,6 +129,82 @@ export const GALLBLADDER_MERIDIAN: AcupuncturePoint[] = [
     pointTypes: ['regular'],
     functions: ['Zerstreut Wind', 'Lindert Alkoholvergiftung'],
     indications: ['Migräne', 'Übelkeit', 'Erbrechen', 'Kinderkrämpfe']
+  },
+  {
+    id: 'GB9',
+    nameChinese: 'Tianchong',
+    nameEnglish: 'Celestial Hub',
+    nameGerman: 'Himmlische Nabe',
+    meridian: 'GB',
+    element: 'wood',
+    location: '0.5 cun posterior zu GB8',
+    depth: '0.3-0.5 cun schräg',
+    frequency: 323.2,
+    harmonicFrequencies: calculateHarmonics(323.2),
+    pointTypes: ['regular'],
+    functions: ['Beruhigt Geist', 'Lindert Krämpfe'],
+    indications: ['Epilepsie', 'Kopfschmerzen', 'Zahnfleischschwellung']
+  },
+  {
+    id: 'GB10',
+    nameChinese: 'Fubai',
+    nameEnglish: 'Floating White',
+    nameGerman: 'Schwebendes Weiß',
+    meridian: 'GB',
+    element: 'wood',
+    location: 'Posterior und inferior zu GB9, an der Haargrenze',
+    depth: '0.3-0.5 cun schräg',
+    frequency: 327.6,
+    harmonicFrequencies: calculateHarmonics(327.6),
+    pointTypes: ['regular'],
+    functions: ['Zerstreut Wind', 'Öffnet Ohren'],
+    indications: ['Kopfschmerzen', 'Tinnitus', 'Schwerhörigkeit']
+  },
+  {
+    id: 'GB11',
+    nameChinese: 'Head Qiaoyin',
+    nameEnglish: 'Head Orifice Yin',
+    nameGerman: 'Kopf-Öffnungs-Yin',
+    meridian: 'GB',
+    element: 'wood',
+    location: 'Zwischen GB10 und GB12, an der Haargrenze',
+    depth: '0.3-0.5 cun schräg',
+    frequency: 332,
+    harmonicFrequencies: calculateHarmonics(332),
+    pointTypes: ['regular'],
+    functions: ['Zerstreut Wind', 'Öffnet Ohren'],
+    indications: ['Kopfschmerzen', 'Tinnitus', 'Ohrenschmerzen']
+  },
+  {
+    id: 'GB12',
+    nameChinese: 'Wangu',
+    nameEnglish: 'Mastoid Process',
+    nameGerman: 'Warzenfortsatz',
+    meridian: 'GB',
+    element: 'wood',
+    location: 'In der Vertiefung posteroinferior zum Processus mastoideus',
+    depth: '0.5-0.8 cun',
+    frequency: 336.4,
+    harmonicFrequencies: calculateHarmonics(336.4),
+    pointTypes: ['regular'],
+    functions: ['Zerstreut Wind', 'Beruhigt Geist'],
+    indications: ['Kopfschmerzen', 'Schlaflosigkeit', 'Gesichtslähmung', 'Zahnschmerzen']
+  },
+  {
+    id: 'GB13',
+    nameChinese: 'Benshen',
+    nameEnglish: 'Root Spirit',
+    nameGerman: 'Wurzelgeist',
+    meridian: 'GB',
+    element: 'wood',
+    location: '0.5 cun hinter dem Haaransatz, 3 cun lateral der Mittellinie',
+    depth: '0.3-0.5 cun schräg',
+    frequency: 340.8,
+    harmonicFrequencies: calculateHarmonics(340.8),
+    pointTypes: ['regular'],
+    functions: ['Beruhigt Geist', 'Zerstreut Wind'],
+    indications: ['Kopfschmerzen', 'Schwindel', 'Epilepsie', 'Angst'],
+    chakraCorrespondence: 'ajna'
   },
   {
     id: 'GB14',
@@ -114,6 +221,81 @@ export const GALLBLADDER_MERIDIAN: AcupuncturePoint[] = [
     functions: ['Zerstreut Wind', 'Erhellt Augen'],
     indications: ['Kopfschmerzen', 'Augenschmerzen', 'Gesichtslähmung', 'Zucken der Augenlider'],
     chakraCorrespondence: 'ajna'
+  },
+  {
+    id: 'GB15',
+    nameChinese: 'Head Linqi',
+    nameEnglish: 'Head Overlooking Tears',
+    nameGerman: 'Kopf-Tränenübersicht',
+    meridian: 'GB',
+    element: 'wood',
+    location: '0.5 cun hinter dem Haaransatz, in der Pupillenlinie',
+    depth: '0.3-0.5 cun schräg',
+    frequency: 349.6,
+    harmonicFrequencies: calculateHarmonics(349.6),
+    pointTypes: ['regular'],
+    functions: ['Erhellt Augen', 'Lindert Schmerzen'],
+    indications: ['Kopfschmerzen', 'Augenerkrankungen', 'verstopfte Nase']
+  },
+  {
+    id: 'GB16',
+    nameChinese: 'Muchuang',
+    nameEnglish: 'Eye Window',
+    nameGerman: 'Augenfenster',
+    meridian: 'GB',
+    element: 'wood',
+    location: '1.5 cun hinter dem Haaransatz, in der Pupillenlinie',
+    depth: '0.3-0.5 cun schräg',
+    frequency: 354,
+    harmonicFrequencies: calculateHarmonics(354),
+    pointTypes: ['regular'],
+    functions: ['Erhellt Augen', 'Zerstreut Wind'],
+    indications: ['Kopfschmerzen', 'Augenrötung', 'Gesichtsschwellung']
+  },
+  {
+    id: 'GB17',
+    nameChinese: 'Zhengying',
+    nameEnglish: 'Upright Construction',
+    nameGerman: 'Aufrechte Konstruktion',
+    meridian: 'GB',
+    element: 'wood',
+    location: '2.5 cun hinter dem Haaransatz, in der Pupillenlinie',
+    depth: '0.3-0.5 cun schräg',
+    frequency: 358.4,
+    harmonicFrequencies: calculateHarmonics(358.4),
+    pointTypes: ['regular'],
+    functions: ['Zerstreut Wind', 'Lindert Schmerzen'],
+    indications: ['Kopfschmerzen', 'Schwindel', 'Zahnschmerzen']
+  },
+  {
+    id: 'GB18',
+    nameChinese: 'Chengling',
+    nameEnglish: 'Spirit Support',
+    nameGerman: 'Geistunterstützung',
+    meridian: 'GB',
+    element: 'wood',
+    location: '4 cun hinter dem Haaransatz, in der Pupillenlinie',
+    depth: '0.3-0.5 cun schräg',
+    frequency: 362.8,
+    harmonicFrequencies: calculateHarmonics(362.8),
+    pointTypes: ['regular'],
+    functions: ['Beruhigt Geist', 'Öffnet Nase'],
+    indications: ['Kopfschmerzen', 'Rhinitis', 'Nasenbluten', 'Asthma']
+  },
+  {
+    id: 'GB19',
+    nameChinese: 'Naokong',
+    nameEnglish: 'Brain Hollow',
+    nameGerman: 'Gehirnhöhle',
+    meridian: 'GB',
+    element: 'wood',
+    location: 'Auf Höhe von DU17, 2.25 cun lateral der Mittellinie',
+    depth: '0.3-0.5 cun schräg',
+    frequency: 367.2,
+    harmonicFrequencies: calculateHarmonics(367.2),
+    pointTypes: ['regular'],
+    functions: ['Zerstreut Wind', 'Lindert Schmerzen'],
+    indications: ['Kopfschmerzen', 'Nackensteifigkeit', 'Schwindel', 'Epilepsie']
   },
   {
     id: 'GB20',
@@ -148,6 +330,40 @@ export const GALLBLADDER_MERIDIAN: AcupuncturePoint[] = [
     precautions: ['Kontraindiziert in der Schwangerschaft - kann Wehen auslösen'],
     chakraCorrespondence: 'vishuddha'
   },
+  {
+    id: 'GB22',
+    nameChinese: 'Yuanye',
+    nameEnglish: 'Armpit Abyss',
+    nameGerman: 'Achselhöhlenabgrund',
+    meridian: 'GB',
+    element: 'wood',
+    location: '3 cun unter der Achselhöhle, auf der mittleren Axillarlinie',
+    depth: '0.3-0.5 cun schräg',
+    frequency: 380.4,
+    harmonicFrequencies: calculateHarmonics(380.4),
+    pointTypes: ['regular'],
+    functions: ['Reguliert Qi', 'Lindert Schwellung'],
+    indications: ['Rippenschmerzen', 'Armschwellung', 'Achselschwellung'],
+    precautions: ['Nicht tief stechen']
+  },
+  {
+    id: 'GB23',
+    nameChinese: 'Zhejin',
+    nameEnglish: 'Sinew Seat',
+    nameGerman: 'Sehnensitz',
+    meridian: 'GB',
+    element: 'wood',
+    location: '1 cun anterior zu GB22, auf Höhe der Brustwarze',
+    depth: '0.3-0.5 cun schräg',
+    frequency: 384.8,
+    harmonicFrequencies: calculateHarmonics(384.8),
+    pointTypes: ['regular'],
+    functions: ['Reguliert Qi', 'Entspannt Sehnen'],
+    indications: ['Rippenschmerzen', 'Asthma', 'Erbrechen'],
+    precautions: ['Nicht tief stechen']
+  },
+
+  // ========== RUMPF-PUNKTE (GB24-GB30) ==========
   {
     id: 'GB24',
     nameChinese: 'Riyue',
@@ -195,6 +411,51 @@ export const GALLBLADDER_MERIDIAN: AcupuncturePoint[] = [
     indications: ['Menstruationsstörungen', 'Leukorr', 'Lendenschmerzen', 'Hernie']
   },
   {
+    id: 'GB27',
+    nameChinese: 'Wushu',
+    nameEnglish: 'Five Pivots',
+    nameGerman: 'Fünf Drehpunkte',
+    meridian: 'GB',
+    element: 'wood',
+    location: '3 cun unter dem Nabel, auf Höhe von REN4, lateral der Spina iliaca',
+    depth: '0.5-1 cun',
+    frequency: 402.4,
+    harmonicFrequencies: calculateHarmonics(402.4),
+    pointTypes: ['regular'],
+    functions: ['Reguliert Dai Mai', 'Stärkt Lendenbereich'],
+    indications: ['Leistenschmerzen', 'Hernie', 'Leukorr', 'Verstopfung']
+  },
+  {
+    id: 'GB28',
+    nameChinese: 'Weidao',
+    nameEnglish: 'Linking Path',
+    nameGerman: 'Verbindungspfad',
+    meridian: 'GB',
+    element: 'wood',
+    location: '0.5 cun anterior und inferior zu GB27',
+    depth: '0.5-1 cun',
+    frequency: 406.8,
+    harmonicFrequencies: calculateHarmonics(406.8),
+    pointTypes: ['regular'],
+    functions: ['Reguliert Dai Mai', 'Lindert Schmerzen'],
+    indications: ['Leistenschmerzen', 'Leukorr', 'Prolaps']
+  },
+  {
+    id: 'GB29',
+    nameChinese: 'Juliao',
+    nameEnglish: 'Stationary Crevice',
+    nameGerman: 'Stationäre Spalte',
+    meridian: 'GB',
+    element: 'wood',
+    location: 'Auf der Mitte zwischen Spina iliaca anterior superior und Trochanter major',
+    depth: '1-1.5 cun',
+    frequency: 411.2,
+    harmonicFrequencies: calculateHarmonics(411.2),
+    pointTypes: ['regular'],
+    functions: ['Zerstreut Wind-Feuchtigkeit', 'Aktiviert Kanal'],
+    indications: ['Hüftschmerzen', 'Beinlähmung', 'Lendenschmerzen']
+  },
+  {
     id: 'GB30',
     nameChinese: 'Huantiao',
     nameEnglish: 'Jumping Circle',
@@ -210,6 +471,8 @@ export const GALLBLADDER_MERIDIAN: AcupuncturePoint[] = [
     indications: ['Ischias', 'Hüftschmerzen', 'Beinlähmung', 'Hauterkrankungen'],
     chakraCorrespondence: 'muladhara'
   },
+
+  // ========== OBERSCHENKEL-PUNKTE (GB31-GB34) ==========
   {
     id: 'GB31',
     nameChinese: 'Fengshi',
@@ -226,6 +489,36 @@ export const GALLBLADDER_MERIDIAN: AcupuncturePoint[] = [
     indications: ['Beinschmerzen', 'Lähmung', 'Urtikaria', 'Pruritus']
   },
   {
+    id: 'GB32',
+    nameChinese: 'Zhongdu',
+    nameEnglish: 'Central River',
+    nameGerman: 'Zentraler Fluss',
+    meridian: 'GB',
+    element: 'wood',
+    location: '5 cun über dem lateralen Kniegelenk, zwischen Vastus lateralis und Bizeps femoris',
+    depth: '1-2 cun',
+    frequency: 424.4,
+    harmonicFrequencies: calculateHarmonics(424.4),
+    pointTypes: ['regular'],
+    functions: ['Zerstreut Wind', 'Aktiviert Kanal'],
+    indications: ['Oberschenkelschmerzen', 'Beinlähmung', 'Knieschmerzen']
+  },
+  {
+    id: 'GB33',
+    nameChinese: 'Xiyangguan',
+    nameEnglish: 'Knee Yang Joint',
+    nameGerman: 'Knie-Yang-Gelenk',
+    meridian: 'GB',
+    element: 'wood',
+    location: '3 cun über GB34, in der Vertiefung zwischen Femur und Bizepssehne',
+    depth: '0.5-1 cun',
+    frequency: 428.8,
+    harmonicFrequencies: calculateHarmonics(428.8),
+    pointTypes: ['regular'],
+    functions: ['Zerstreut Wind-Feuchtigkeit', 'Lindert Knieschmerzen'],
+    indications: ['Knieschmerzen', 'Kniesteifigkeit', 'Unterschenkelschmerzen']
+  },
+  {
     id: 'GB34',
     nameChinese: 'Yanglingquan',
     nameEnglish: 'Yang Mound Spring',
@@ -240,6 +533,38 @@ export const GALLBLADDER_MERIDIAN: AcupuncturePoint[] = [
     functions: ['Entspannt Sehnen', 'Reguliert Leber und Gallenblase', 'Zerstreut Feuchtigkeit'],
     indications: ['Knieschmerzen', 'Rippenschmerzen', 'Beinlähmung', 'Gallenblasenerkrankungen'],
     chakraCorrespondence: 'manipura'
+  },
+
+  // ========== UNTERSCHENKEL-PUNKTE (GB35-GB44) ==========
+  {
+    id: 'GB35',
+    nameChinese: 'Yangjiao',
+    nameEnglish: 'Yang Intersection',
+    nameGerman: 'Yang-Kreuzung',
+    meridian: 'GB',
+    element: 'wood',
+    location: '7 cun über dem Außenknöchel, am Hinterrand der Fibula',
+    depth: '0.5-1 cun',
+    frequency: 437.6,
+    harmonicFrequencies: calculateHarmonics(437.6),
+    pointTypes: ['xi_cleft'],
+    functions: ['Beruhigt Geist', 'Aktiviert Kanal'],
+    indications: ['Knieschmerzen', 'Brustschmerzen', 'Angst', 'Manie']
+  },
+  {
+    id: 'GB36',
+    nameChinese: 'Waiqiu',
+    nameEnglish: 'Outer Hill',
+    nameGerman: 'Äußerer Hügel',
+    meridian: 'GB',
+    element: 'wood',
+    location: '7 cun über dem Außenknöchel, am Vorderrand der Fibula',
+    depth: '0.5-1 cun',
+    frequency: 442,
+    harmonicFrequencies: calculateHarmonics(442),
+    pointTypes: ['xi_cleft'],
+    functions: ['Aktiviert Kanal', 'Lindert Schmerzen'],
+    indications: ['Nackensteifigkeit', 'Brustschmerzen', 'Unterschenkelschmerzen']
   },
   {
     id: 'GB37',
