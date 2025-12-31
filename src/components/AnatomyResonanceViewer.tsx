@@ -1,6 +1,7 @@
 /**
  * 3D Anatomie-Resonanz-Visualisierung
  * Interaktives 3D-Modell mit resonierenden Körperpunkten und TCM-Meridianen
+ * Mit Dysregulations-Farbskala für Meridianpunkte
  */
 import { useRef, useState, useEffect, useMemo, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
@@ -18,12 +19,14 @@ import {
   ChevronRight,
   RotateCcw,
   Info,
-  GitBranch
+  GitBranch,
+  AlertTriangle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useResonanceDatabase, type AnatomyResonancePoint } from '@/hooks/useResonanceDatabase';
+import { DysregulationLegend, getDysregulationColor, getDysregulationLevel } from '@/components/anatomy/DysregulationLegend';
 import type { VectorAnalysis } from '@/services/feldengine';
 
 interface AnatomyResonanceViewerProps {
@@ -696,12 +699,14 @@ function MeridianLine({
   showLabels,
   onAcupointClick,
   activeAcupointId,
+  dysregulationScores,
 }: {
   meridian: MeridianPath;
   isActive: boolean;
   showLabels: boolean;
   onAcupointClick: (point: AcupuncturePoint, meridian: MeridianPath) => void;
   activeAcupointId: string | null;
+  dysregulationScores: Map<string, number>;
 }) {
   const opacity = isActive ? 0.9 : 0.5;
 
@@ -734,32 +739,48 @@ function MeridianLine({
           isActive={activeAcupointId === point.id}
           showLabel={showLabels || activeAcupointId === point.id}
           onClick={() => onAcupointClick(point, meridian)}
+          dysregulationScore={dysregulationScores.get(point.id) || 0}
         />
       ))}
     </group>
   );
 }
 
-// Akupunkturpunkt-Mesh
+// Akupunkturpunkt-Mesh mit Dysregulations-Farbe
 function AcupuncturePointMesh({
   point,
   meridian,
   isActive,
   showLabel,
   onClick,
+  dysregulationScore = 0,
 }: {
   point: AcupuncturePoint;
   meridian: MeridianPath;
   isActive: boolean;
   showLabel: boolean;
   onClick: () => void;
+  dysregulationScore?: number;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  
+  // Farbe basierend auf Dysregulation (5-Stufen-Skala) oder Standard-Meridian-Farbe
+  const pointColor = dysregulationScore > 0 
+    ? getDysregulationColor(dysregulationScore)
+    : meridian.color;
+  
+  const dysLevel = getDysregulationLevel(dysregulationScore);
 
   useFrame((state) => {
     if (meshRef.current) {
-      const pulse = Math.sin(state.clock.elapsedTime * 4) * 0.002 + 0.015;
-      meshRef.current.scale.setScalar(isActive ? pulse * 1.5 : pulse);
+      // Stärkeres Pulsieren bei höherer Dysregulation
+      const pulseSpeed = 4 + dysregulationScore * 4;
+      const pulseIntensity = 0.002 + dysregulationScore * 0.003;
+      const pulse = Math.sin(state.clock.elapsedTime * pulseSpeed) * pulseIntensity + 0.015;
+      
+      const scaleFactor = isActive ? 1.5 : isHovered ? 1.3 : 1;
+      meshRef.current.scale.setScalar(pulse * scaleFactor);
     }
   });
 
@@ -770,23 +791,52 @@ function AcupuncturePointMesh({
         <mesh
           ref={meshRef}
           onClick={(e) => { e.stopPropagation(); onClick(); }}
-          onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
-          onPointerOut={() => { document.body.style.cursor = 'default'; }}
+          onPointerOver={(e) => { 
+            e.stopPropagation(); 
+            document.body.style.cursor = 'pointer';
+            setIsHovered(true);
+          }}
+          onPointerOut={() => { 
+            document.body.style.cursor = 'default';
+            setIsHovered(false);
+          }}
         >
           <sphereGeometry args={[1, 16, 16]} />
           <meshStandardMaterial
-            color={meridian.color}
-            emissive={meridian.color}
-            emissiveIntensity={isActive ? 1 : 0.3}
+            color={pointColor}
+            emissive={pointColor}
+            emissiveIntensity={isActive ? 1.2 : isHovered ? 0.8 : 0.3 + dysregulationScore * 0.5}
           />
         </mesh>
 
-        {showLabel && (
-          <Html center distanceFactor={6} position={[0, 0.05, 0]}>
-            <div className="bg-background/95 backdrop-blur-sm px-2 py-1 rounded border border-primary/40 shadow-lg min-w-[100px]">
-              <p className="text-xs font-bold text-foreground">{point.id}</p>
+        {/* Label nur bei Hover oder aktiv */}
+        {(showLabel || isHovered || isActive) && (
+          <Html center distanceFactor={6} position={[0, 0.05, 0]} style={{ pointerEvents: 'none' }}>
+            <div className="bg-background/95 backdrop-blur-sm px-3 py-2 rounded-lg border border-primary/40 shadow-lg min-w-[120px]">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xs font-bold text-foreground">{point.id}</span>
+                {dysregulationScore > 0 && (
+                  <span 
+                    className="text-xs px-1.5 py-0.5 rounded"
+                    style={{ backgroundColor: `${pointColor}20`, color: pointColor }}
+                  >
+                    {dysLevel.label}
+                  </span>
+                )}
+              </div>
               <p className="text-xs text-muted-foreground">{point.name}</p>
-              <p className="text-xs text-primary font-mono">{point.frequency} Hz</p>
+              <div className="flex items-center gap-1 mt-1">
+                <Zap className="w-3 h-3 text-primary" />
+                <span className="text-xs text-primary font-mono">{point.frequency} Hz</span>
+              </div>
+              {dysregulationScore > 0 && (
+                <div className="mt-1 h-1 bg-muted rounded-full overflow-hidden">
+                  <div 
+                    className="h-full rounded-full transition-all"
+                    style={{ width: `${dysregulationScore * 100}%`, backgroundColor: pointColor }}
+                  />
+                </div>
+              )}
             </div>
           </Html>
         )}
@@ -801,9 +851,9 @@ function AcupuncturePointMesh({
         >
           <sphereGeometry args={[0.015, 16, 16]} />
           <meshStandardMaterial
-            color={meridian.color}
-            emissive={meridian.color}
-            emissiveIntensity={isActive ? 1 : 0.3}
+            color={pointColor}
+            emissive={pointColor}
+            emissiveIntensity={isActive ? 1 : 0.3 + dysregulationScore * 0.4}
           />
         </mesh>
       </group>
@@ -817,11 +867,13 @@ function MeridianSystemModel({
   showLabels,
   onAcupointClick,
   activeAcupointId,
+  dysregulationScores,
 }: {
   activeMeridianId: string | null;
   showLabels: boolean;
   onAcupointClick: (point: AcupuncturePoint, meridian: MeridianPath) => void;
   activeAcupointId: string | null;
+  dysregulationScores: Map<string, number>;
 }) {
   return (
     <group>
@@ -837,6 +889,7 @@ function MeridianSystemModel({
           showLabels={showLabels && (activeMeridianId === meridian.id || !activeMeridianId)}
           onAcupointClick={onAcupointClick}
           activeAcupointId={activeAcupointId}
+          dysregulationScores={dysregulationScores}
         />
       ))}
     </group>
@@ -855,6 +908,7 @@ function AnatomyScene({
   showMeridianLabels,
   onAcupointClick,
   activeAcupointId,
+  dysregulationScores,
 }: {
   modelType: AnatomyModelType;
   anatomyPoints: AnatomyResonancePoint[];
@@ -866,6 +920,7 @@ function AnatomyScene({
   showMeridianLabels: boolean;
   onAcupointClick: (point: AcupuncturePoint, meridian: MeridianPath) => void;
   activeAcupointId: string | null;
+  dysregulationScores: Map<string, number>;
 }) {
   // Filter Punkte basierend auf Modell-Typ
   const visiblePoints = useMemo(() => {
@@ -914,6 +969,7 @@ function AnatomyScene({
                 showLabels={showMeridianLabels}
                 onAcupointClick={onAcupointClick}
                 activeAcupointId={activeAcupointId}
+                dysregulationScores={dysregulationScores}
               />
             )}
           </>
@@ -924,6 +980,7 @@ function AnatomyScene({
             showLabels={showMeridianLabels}
             onAcupointClick={onAcupointClick}
             activeAcupointId={activeAcupointId}
+            dysregulationScores={dysregulationScores}
           />
         )}
         {modelType === 'heart' && <HeartModel />}
@@ -1019,6 +1076,69 @@ const AnatomyResonanceViewer = ({
     
     return scores;
   }, [vectorAnalysis, anatomyPoints]);
+
+  // Dysregulations-Scores für Meridianpunkte berechnen
+  const dysregulationScores = useMemo(() => {
+    const scores = new Map<string, number>();
+    
+    if (vectorAnalysis) {
+      // Berechne Dysregulation basierend auf Vektor-Dimensionen
+      const dimensions = vectorAnalysis.clientVector.dimensions;
+      const physical = dimensions[0] || 0;
+      const emotional = dimensions[1] || 0;
+      const mental = dimensions[2] || 0;
+      const energy = dimensions[3] || 0;
+      const stress = dimensions[4] || 0;
+
+      // Iteriere durch alle TCM-Meridiane und ihre Punkte
+      TCM_MERIDIANS.forEach(meridian => {
+        meridian.acupoints.forEach(point => {
+          let dysScore = 0;
+          
+          // Element-basierte Dysregulations-Berechnung
+          switch (meridian.element) {
+            case 'wood':
+              // Holz wird durch emotionalen Stress und Stagnation beeinflusst
+              dysScore = Math.abs(emotional) * 0.4 + Math.abs(stress) * 0.4 + Math.abs(mental) * 0.2;
+              break;
+            case 'fire':
+            case 'fire_ministerial':
+              // Feuer reagiert auf emotionale und energetische Zustände
+              dysScore = Math.abs(emotional) * 0.5 + Math.abs(energy) * 0.3 + Math.abs(stress) * 0.2;
+              break;
+            case 'earth':
+              // Erde ist mit Verdauung und mentalem Überfokus verbunden
+              dysScore = Math.abs(physical) * 0.4 + Math.abs(mental) * 0.4 + Math.abs(stress) * 0.2;
+              break;
+            case 'metal':
+              // Metall reagiert auf physische und emotionale (Trauer) Zustände
+              dysScore = Math.abs(physical) * 0.5 + Math.abs(emotional) * 0.3 + Math.abs(energy) * 0.2;
+              break;
+            case 'water':
+              // Wasser ist mit Energie/Essenz und Angst verbunden
+              dysScore = Math.abs(energy) * 0.5 + Math.abs(stress) * 0.3 + Math.abs(physical) * 0.2;
+              break;
+          }
+          
+          // Yin/Yang Modifikator
+          if (meridian.yinYang === 'yin') {
+            // Yin-Meridiane reagieren stärker auf Mangel
+            dysScore *= energy < 0 ? 1.2 : 0.9;
+          } else {
+            // Yang-Meridiane reagieren stärker auf Überschuss
+            dysScore *= stress > 0 ? 1.2 : 0.9;
+          }
+          
+          // Attraktor-Stabilität beeinflusst alle Punkte
+          dysScore *= (1 - vectorAnalysis.attractorState.stability) + 0.3;
+          
+          scores.set(point.id, Math.min(1, Math.max(0, dysScore)));
+        });
+      });
+    }
+    
+    return scores;
+  }, [vectorAnalysis]);
 
   // Modell wechseln
   const currentModelIndex = MODEL_CONFIGS.findIndex(m => m.id === activeModel);
@@ -1117,9 +1237,15 @@ const AnatomyResonanceViewer = ({
                   showMeridianLabels={showMeridianLabels}
                   onAcupointClick={handleAcupointClick}
                   activeAcupointId={activeAcupoint?.point.id || null}
+                  dysregulationScores={dysregulationScores}
                 />
               </Canvas>
             </Suspense>
+
+            {/* Dysregulations-Legende */}
+            {(showMeridians || activeModel === 'meridians') && vectorAnalysis && (
+              <DysregulationLegend className="absolute top-16 left-4" />
+            )}
 
             {/* Controls */}
             <div className="absolute bottom-4 left-4 flex gap-2">
