@@ -1,10 +1,15 @@
 /**
  * Meridian-Diagnose Hook
  * Analysiert Client-Vektoren und identifiziert unausgeglichene Meridiane
+ * Nutzt die vollständige WHO-409-Punkte-Datenbank
  */
 import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import type { VectorAnalysis } from '@/services/feldengine';
+import { 
+  getCompletePointsByMeridian,
+  COMPLETE_DATABASE_STATS 
+} from '@/utils/meridianPoints';
 
 // TCM Elemente mit ihren Zuordnungen
 const ELEMENT_MERIDIAN_MAP = {
@@ -67,28 +72,75 @@ export interface DiagnosisResult {
   aiRecommendation?: string;
 }
 
-// Meridian-Daten für die Diagnose (12 Hauptmeridiane)
-const MERIDIAN_DATA: Record<string, { 
-  name: string; 
-  organ: string; 
-  element: string;
-  yinYang: 'yin' | 'yang';
-  frequency: number;
-  keyPoints: string[];
-}> = {
-  LU: { name: 'Lungen-Meridian', organ: 'Lunge', element: 'metal', yinYang: 'yin', frequency: 194.7, keyPoints: ['LU1', 'LU7', 'LU9'] },
-  LI: { name: 'Dickdarm-Meridian', organ: 'Dickdarm', element: 'metal', yinYang: 'yang', frequency: 174.6, keyPoints: ['LI4', 'LI11', 'LI20'] },
-  ST: { name: 'Magen-Meridian', organ: 'Magen', element: 'earth', yinYang: 'yang', frequency: 126.2, keyPoints: ['ST36', 'ST25', 'ST44'] },
-  SP: { name: 'Milz-Meridian', organ: 'Milz', element: 'earth', yinYang: 'yin', frequency: 117.3, keyPoints: ['SP6', 'SP9', 'SP3'] },
-  HT: { name: 'Herz-Meridian', organ: 'Herz', element: 'fire', yinYang: 'yin', frequency: 250.6, keyPoints: ['HT7', 'HT3', 'HT5'] },
-  SI: { name: 'Dünndarm-Meridian', organ: 'Dünndarm', element: 'fire', yinYang: 'yang', frequency: 185.0, keyPoints: ['SI3', 'SI19', 'SI11'] },
-  BL: { name: 'Blasen-Meridian', organ: 'Blase', element: 'water', yinYang: 'yang', frequency: 194.2, keyPoints: ['BL23', 'BL40', 'BL60'] },
-  KI: { name: 'Nieren-Meridian', organ: 'Niere', element: 'water', yinYang: 'yin', frequency: 160.0, keyPoints: ['KI1', 'KI3', 'KI7'] },
-  PC: { name: 'Perikard-Meridian', organ: 'Perikard', element: 'fire_ministerial', yinYang: 'yin', frequency: 183.6, keyPoints: ['PC6', 'PC8', 'PC3'] },
-  TE: { name: 'Dreifacher Erwärmer', organ: 'San Jiao', element: 'fire_ministerial', yinYang: 'yang', frequency: 176.0, keyPoints: ['TE5', 'TE17', 'TE3'] },
-  GB: { name: 'Gallenblasen-Meridian', organ: 'Gallenblase', element: 'wood', yinYang: 'yang', frequency: 164.8, keyPoints: ['GB20', 'GB34', 'GB41'] },
-  LR: { name: 'Leber-Meridian', organ: 'Leber', element: 'wood', yinYang: 'yin', frequency: 183.6, keyPoints: ['LR3', 'LR14', 'LR8'] },
+/**
+ * Generiert dynamisch Meridian-Daten aus der WHO-Datenbank
+ * Nutzt die tatsächlichen Frequenzen und Punkttypen aus der vollständigen Datenbank
+ */
+const getMeridianDataFromDatabase = () => {
+  const meridianConfigs: Record<string, { 
+    name: string; 
+    organ: string; 
+    element: string;
+    yinYang: 'yin' | 'yang';
+  }> = {
+    LU: { name: 'Lungen-Meridian', organ: 'Lunge', element: 'metal', yinYang: 'yin' },
+    LI: { name: 'Dickdarm-Meridian', organ: 'Dickdarm', element: 'metal', yinYang: 'yang' },
+    ST: { name: 'Magen-Meridian', organ: 'Magen', element: 'earth', yinYang: 'yang' },
+    SP: { name: 'Milz-Meridian', organ: 'Milz', element: 'earth', yinYang: 'yin' },
+    HT: { name: 'Herz-Meridian', organ: 'Herz', element: 'fire', yinYang: 'yin' },
+    SI: { name: 'Dünndarm-Meridian', organ: 'Dünndarm', element: 'fire', yinYang: 'yang' },
+    BL: { name: 'Blasen-Meridian', organ: 'Blase', element: 'water', yinYang: 'yang' },
+    KI: { name: 'Nieren-Meridian', organ: 'Niere', element: 'water', yinYang: 'yin' },
+    PC: { name: 'Perikard-Meridian', organ: 'Perikard', element: 'fire', yinYang: 'yin' },
+    TE: { name: 'Dreifacher Erwärmer', organ: 'San Jiao', element: 'fire', yinYang: 'yang' },
+    GB: { name: 'Gallenblasen-Meridian', organ: 'Gallenblase', element: 'wood', yinYang: 'yang' },
+    LR: { name: 'Leber-Meridian', organ: 'Leber', element: 'wood', yinYang: 'yin' },
+  };
+
+  const meridianData: Record<string, { 
+    name: string; 
+    organ: string; 
+    element: string;
+    yinYang: 'yin' | 'yang';
+    frequency: number;
+    keyPoints: string[];
+    totalPoints: number;
+  }> = {};
+
+  Object.entries(meridianConfigs).forEach(([id, config]) => {
+    const points = getCompletePointsByMeridian(id);
+    
+    // Berechne Durchschnittsfrequenz aus allen Punkten
+    const avgFrequency = points.length > 0 
+      ? points.reduce((sum, p) => sum + p.frequency, 0) / points.length 
+      : 100;
+    
+    // Finde die wichtigsten Punkte (Yuan-Source, He-Sea, Shu-Stream)
+    const keyPoints = points
+      .filter(p => p.pointTypes?.some(t => 
+        ['yuan_source', 'he_sea', 'shu_stream', 'luo_connecting'].includes(t)
+      ))
+      .slice(0, 3)
+      .map(p => p.id);
+    
+    // Fallback auf erste 3 Punkte
+    const finalKeyPoints = keyPoints.length > 0 
+      ? keyPoints 
+      : points.slice(0, 3).map(p => p.id);
+
+    meridianData[id] = {
+      ...config,
+      frequency: Math.round(avgFrequency * 10) / 10,
+      keyPoints: finalKeyPoints,
+      totalPoints: points.length,
+    };
+  });
+
+  return meridianData;
 };
+
+// Initialisiere Meridian-Daten aus der WHO-Datenbank
+const MERIDIAN_DATA = getMeridianDataFromDatabase();
 
 // 8 Außerordentliche Gefäße (Qi Jing Ba Mai)
 export const EXTRAORDINARY_VESSELS: Record<string, {
