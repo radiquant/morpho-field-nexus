@@ -136,19 +136,33 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect }: ClientVec
     loadClients().then(setExistingClients);
   }, [loadClients]);
 
-  // Hardware-Entropie automatisch in State-Dimensionen übertragen
+  // Kontinuierliche Hardware-Entropie-Aktualisierung alle 2 Sekunden
   useEffect(() => {
-    if (!manualOverride && hardwareState.serverStatus.isConnected) {
-      const { cpuUsage, gpuUsage, gpuMemory, audioLatency } = hardwareState.serverStatus;
+    if (manualOverride) return;
+
+    const updateDimensions = () => {
+      const { cpuUsage, gpuUsage, gpuMemory, audioLatency, isConnected } = hardwareState.serverStatus;
+      
+      // Nutze Timestamp für kontinuierliche Variation
       const newDimensions = convertHardwareToStateDimensions(
-        cpuUsage,
-        gpuUsage,
-        gpuMemory,
-        audioLatency,
+        isConnected ? cpuUsage : Math.random() * 30 + 35, // Simulierte Werte wenn nicht verbunden
+        isConnected ? gpuUsage : Math.random() * 25 + 40,
+        isConnected ? gpuMemory : Math.random() * 20 + 45,
+        isConnected ? audioLatency : Math.random() * 10 + 5,
         Date.now()
       );
+      
       setDimensions(newDimensions);
-    }
+      console.log('[FeldEngine] Hardware-Entropie Update:', newDimensions);
+    };
+
+    // Initialer Update
+    updateDimensions();
+
+    // Kontinuierliches Update alle 2 Sekunden
+    const intervalId = setInterval(updateDimensions, 2000);
+
+    return () => clearInterval(intervalId);
   }, [hardwareState.serverStatus, manualOverride]);
 
   // Biometrische Daten aktualisieren
