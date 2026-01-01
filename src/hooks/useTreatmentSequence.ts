@@ -1,7 +1,6 @@
 /**
- * Treatment Sequence Hook
- * Automatische Behandlungssequenz für Meridian-Akupunkturpunkte
- * Mit Impulse/Pause-Verhältnis und zyklischer Wiederholung
+ * Extended Treatment Sequence Hook
+ * Erweitert um: Dauerbesendung nach Nachtestung und Trendanalyse
  */
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
@@ -9,7 +8,6 @@ import { MeridianImbalance, EXTRAORDINARY_VESSELS } from './useMeridianDiagnosis
 import { 
   COMPLETE_ACUPUNCTURE_DATABASE, 
   getCompletePointsByMeridian,
-  getPointsByIndication 
 } from '@/utils/meridianPoints';
 
 export interface TreatmentPoint {
@@ -18,7 +16,7 @@ export interface TreatmentPoint {
   meridianName: string;
   pointName: string;
   frequency: number;
-  duration: number; // Sekunden
+  duration: number;
   element: string;
   isExtraordinaryVessel?: boolean;
   dysregulationScore?: number;
@@ -35,29 +33,42 @@ export interface TreatmentProgress {
   isPaused: boolean;
   isComplete: boolean;
   overallProgress: number;
-  // Neu: Impulse/Pause Status
   isImpulsePhase: boolean;
   currentCycle: number;
   totalCycles: number;
-  totalTreatmentTime: number; // Gesamtzeit in Sekunden
+  totalTreatmentTime: number;
   elapsedTotalTime: number;
+  // NEU: Continuous-Mode Felder
+  isContinuousMode: boolean;
+  continuousEndTime: Date | null;
+  awaitingRetest: boolean;
+  retestPauseRemaining: number;
 }
 
 export interface TreatmentOptions {
   pointsPerMeridian?: number;
   durationPerPoint?: number;
-  totalTreatmentMinutes?: number; // Gesamtbehandlungszeit in Minuten
-  impulseSeconds?: number; // Impulsdauer pro Punkt
-  pauseSeconds?: number; // Pausendauer zwischen Punkten
+  totalTreatmentMinutes?: number;
+  impulseSeconds?: number;
+  pauseSeconds?: number;
   includeExtraordinaryVessels?: boolean;
+  // NEU: Continuous-Mode Optionen
+  continuousMode?: boolean;
+  continuousEndTime?: Date;
+  retestPauseMinutes?: number;
 }
 
-const DEFAULT_POINT_DURATION = 60;
+export interface TreatmentSnapshot {
+  dimensions: number[];
+  timestamp: Date;
+  phase: 'before' | 'after_cycle' | 'after_retest' | 'final';
+}
+
 const DEFAULT_IMPULSE_SECONDS = 30;
 const DEFAULT_PAUSE_SECONDS = 5;
 const DEFAULT_TOTAL_TREATMENT_MINUTES = 15;
+const DEFAULT_RETEST_PAUSE_MINUTES = 2;
 
-// Mapping von Symptomen/Zuständen zu außerordentlichen Gefäßen
 const VESSEL_INDICATIONS: Record<string, string[]> = {
   DU: ['stress', 'mental', 'spine', 'yang_deficiency'],
   REN: ['emotional', 'yin_deficiency', 'fertility', 'breathing'],
@@ -86,58 +97,44 @@ export function useTreatmentSequence() {
     totalCycles: 1,
     totalTreatmentTime: 0,
     elapsedTotalTime: 0,
+    isContinuousMode: false,
+    continuousEndTime: null,
+    awaitingRetest: false,
+    retestPauseRemaining: 0,
   });
+
+  // NEU: Snapshots für Trendanalyse
+  const [snapshots, setSnapshots] = useState<TreatmentSnapshot[]>([]);
+  const [onRetestCallback, setOnRetestCallback] = useState<(() => Promise<number[]>) | null>(null);
 
   const audioContextRef = useRef<AudioContext | null>(null);
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
   const intervalRef = useRef<number | null>(null);
   const treatmentOptionsRef = useRef<TreatmentOptions>({});
+  const imbalancesRef = useRef<MeridianImbalance[]>([]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       stopOscillator();
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+      if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, []);
 
-  /**
-   * Ermittelt relevante außerordentliche Gefäße basierend auf Imbalancen
-   */
-  const selectExtraordinaryVessels = useCallback((
-    imbalances: MeridianImbalance[]
-  ): string[] => {
+  const selectExtraordinaryVessels = useCallback((imbalances: MeridianImbalance[]): string[] => {
     const vesselScores: Record<string, number> = {};
-
     imbalances.forEach((imbalance) => {
-      Object.entries(VESSEL_INDICATIONS).forEach(([vesselId, indications]) => {
+      Object.entries(VESSEL_INDICATIONS).forEach(([vesselId]) => {
         let score = 0;
-
         if (imbalance.imbalanceType === 'excess' && ['DU', 'YANGWEI', 'YANGQIAO'].includes(vesselId)) {
           score += imbalance.imbalanceScore * 0.3;
         }
-
         if (imbalance.imbalanceType === 'deficiency' && ['REN', 'YINQIAO', 'CHONG', 'YINWEI'].includes(vesselId)) {
           score += imbalance.imbalanceScore * 0.3;
         }
-
-        if (imbalance.element === 'water' && ['REN', 'KI'].includes(imbalance.meridianId)) {
-          if (['REN', 'YINQIAO'].includes(vesselId)) score += 0.2;
-        }
-        if (imbalance.element === 'fire' && ['YINWEI', 'CHONG'].includes(vesselId)) {
-          score += 0.15;
-        }
-        if (imbalance.element === 'wood' && imbalance.imbalanceType === 'stagnation') {
-          if (['DAI', 'CHONG'].includes(vesselId)) score += 0.2;
-        }
-
         vesselScores[vesselId] = (vesselScores[vesselId] || 0) + score;
       });
     });
-
     return Object.entries(vesselScores)
       .filter(([_, score]) => score > 0.1)
       .sort(([, a], [, b]) => b - a)
@@ -145,46 +142,28 @@ export function useTreatmentSequence() {
       .map(([id]) => id);
   }, []);
 
-  /**
-   * Generiert Erklärung für dysregulierten Punkt
-   */
   const generatePointExplanation = useCallback((
     point: typeof COMPLETE_ACUPUNCTURE_DATABASE[number],
     imbalance: MeridianImbalance
   ): string => {
-    const typeLabels = {
-      excess: 'Überschuss',
-      deficiency: 'Mangel',
-      stagnation: 'Stagnation'
-    };
-    
-    return `${typeLabels[imbalance.imbalanceType]} im ${imbalance.meridianName} (${imbalance.element}). ` +
-           `Punkt ${point.id} harmonisiert bei ${point.frequency.toFixed(1)} Hz. ` +
-           `${point.indications?.slice(0, 2).join(', ') || point.nameGerman}`;
+    const typeLabels = { excess: 'Überschuss', deficiency: 'Mangel', stagnation: 'Stagnation' };
+    return `${typeLabels[imbalance.imbalanceType]} im ${imbalance.meridianName}. Punkt ${point.id} bei ${point.frequency.toFixed(1)} Hz.`;
   }, []);
 
-  /**
-   * Generiert Behandlungspunkte aus Meridian-Imbalancen
-   * Bis zu 9 Punkte pro Meridian möglich
-   */
   const generateTreatmentPoints = useCallback((
     imbalances: MeridianImbalance[],
     pointsPerMeridian: number = 3,
-    durationPerPoint: number = DEFAULT_POINT_DURATION,
+    durationPerPoint: number = 35,
     includeExtraordinaryVessels: boolean = true
   ): TreatmentPoint[] => {
     const points: TreatmentPoint[] = [];
-    
-    // Limitiere auf max 9 Punkte pro Meridian
     const effectivePointsPerMeridian = Math.min(9, Math.max(1, pointsPerMeridian));
-
-    // Nimm die Top-Imbalancen (max 5 Meridiane)
     const topImbalances = imbalances.slice(0, 5);
 
     topImbalances.forEach((imbalance) => {
       const meridianPoints = getCompletePointsByMeridian(imbalance.meridianId);
-      
       let selectedPoints = meridianPoints;
+      
       if (imbalance.imbalanceType === 'excess') {
         selectedPoints = meridianPoints.filter(p => 
           p.pointTypes?.some(t => ['he_sea', 'xi_cleft', 'luo_connecting'].includes(t))
@@ -196,12 +175,9 @@ export function useTreatmentSequence() {
       }
       
       if (selectedPoints.length === 0) {
-        selectedPoints = meridianPoints.filter(p => 
-          imbalance.recommendedPoints.includes(p.id)
-        );
+        selectedPoints = meridianPoints.filter(p => imbalance.recommendedPoints.includes(p.id));
       }
       
-      // Bis zu 9 Punkte pro Meridian
       const finalPoints = selectedPoints.length > 0 
         ? selectedPoints.slice(0, effectivePointsPerMeridian)
         : meridianPoints.slice(0, effectivePointsPerMeridian);
@@ -222,15 +198,13 @@ export function useTreatmentSequence() {
       });
     });
 
-    // Füge außerordentliche Gefäße hinzu
     if (includeExtraordinaryVessels) {
       const relevantVessels = selectExtraordinaryVessels(imbalances);
-      
       relevantVessels.forEach((vesselId) => {
         const vessel = EXTRAORDINARY_VESSELS[vesselId];
         if (vessel) {
           points.push({
-            id: `${vesselId}-opening-${vessel.openingPoint}`,
+            id: `${vesselId}-opening`,
             meridianId: vesselId,
             meridianName: vessel.name,
             pointName: `${vessel.openingPoint} (Öffnungspunkt)`,
@@ -238,34 +212,8 @@ export function useTreatmentSequence() {
             duration: durationPerPoint,
             element: 'extraordinary',
             isExtraordinaryVessel: true,
-            explanation: `Außerordentliches Gefäß ${vessel.name}: Öffnet den Energiefluss`,
+            explanation: `Außerordentliches Gefäß ${vessel.name}`,
           });
-
-          points.push({
-            id: `${vesselId}-coupled-${vessel.coupledPoint}`,
-            meridianId: vesselId,
-            meridianName: vessel.name,
-            pointName: `${vessel.coupledPoint} (Gekoppelter Punkt)`,
-            frequency: vessel.frequency,
-            duration: durationPerPoint,
-            element: 'extraordinary',
-            isExtraordinaryVessel: true,
-            explanation: `Gekoppelter Punkt verstärkt die Wirkung von ${vessel.openingPoint}`,
-          });
-
-          if (vessel.keyPoints[0]) {
-            points.push({
-              id: `${vesselId}-key-${vessel.keyPoints[0]}`,
-              meridianId: vesselId,
-              meridianName: vessel.name,
-              pointName: vessel.keyPoints[0],
-              frequency: vessel.frequency,
-              duration: durationPerPoint,
-              element: 'extraordinary',
-              isExtraordinaryVessel: true,
-              explanation: `Schlüsselpunkt für ${vessel.name}`,
-            });
-          }
         }
       });
     }
@@ -273,55 +221,35 @@ export function useTreatmentSequence() {
     return points;
   }, [selectExtraordinaryVessels, generatePointExplanation]);
 
-  /**
-   * Startet den Oszillator für eine Frequenz
-   */
   const startOscillator = useCallback((frequency: number) => {
     try {
       if (!audioContextRef.current) {
         audioContextRef.current = new AudioContext();
       }
-
       stopOscillator();
-
       const ctx = audioContextRef.current;
-      
       const oscillator = ctx.createOscillator();
       oscillator.type = 'sine';
       oscillator.frequency.setValueAtTime(frequency, ctx.currentTime);
-
       const gainNode = ctx.createGain();
       gainNode.gain.setValueAtTime(0, ctx.currentTime);
       gainNode.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.5);
-
       oscillator.connect(gainNode);
       gainNode.connect(ctx.destination);
-
       oscillator.start();
-
       oscillatorRef.current = oscillator;
       gainNodeRef.current = gainNode;
     } catch (error) {
-      console.error('Error starting oscillator:', error);
-      toast.error('Audio-Fehler beim Starten');
+      console.error('Oscillator error:', error);
     }
   }, []);
 
-  /**
-   * Stoppt den aktuellen Oszillator (mit Fade-out)
-   */
   const stopOscillator = useCallback(() => {
     if (gainNodeRef.current && audioContextRef.current) {
       try {
-        gainNodeRef.current.gain.linearRampToValueAtTime(
-          0,
-          audioContextRef.current.currentTime + 0.3
-        );
-      } catch (e) {
-        // Ignore
-      }
+        gainNodeRef.current.gain.linearRampToValueAtTime(0, audioContextRef.current.currentTime + 0.3);
+      } catch {}
     }
-
     if (oscillatorRef.current) {
       try {
         setTimeout(() => {
@@ -329,115 +257,173 @@ export function useTreatmentSequence() {
           oscillatorRef.current?.disconnect();
           oscillatorRef.current = null;
         }, 300);
-      } catch (e) {
+      } catch {
         oscillatorRef.current = null;
       }
     }
   }, []);
 
-  /**
-   * Wechselt zum nächsten Behandlungspunkt oder startet neuen Zyklus
-   */
+  // NEU: Retest und Continuous-Mode Handler
+  const handleRetestComplete = useCallback(async (newDimensions: number[]) => {
+    setSnapshots(prev => [...prev, {
+      dimensions: newDimensions,
+      timestamp: new Date(),
+      phase: 'after_retest',
+    }]);
+
+    const options = treatmentOptionsRef.current;
+    const continuousEndTime = options.continuousEndTime;
+
+    // Prüfen ob Endzeit noch nicht erreicht
+    if (continuousEndTime && new Date() < continuousEndTime) {
+      toast.info('Retest abgeschlossen - Starte nächsten Behandlungszyklus');
+      
+      // Neue Behandlung starten
+      setProgress(prev => ({
+        ...prev,
+        awaitingRetest: false,
+        currentPointIndex: 0,
+        elapsedTime: 0,
+        currentCycle: prev.currentCycle + 1,
+        isPlaying: true,
+      }));
+
+      const firstPoint = treatmentPoints[0];
+      if (firstPoint) {
+        startOscillator(firstPoint.frequency);
+      }
+    } else {
+      // Endzeit erreicht - finale Analyse
+      setSnapshots(prev => [...prev, {
+        dimensions: newDimensions,
+        timestamp: new Date(),
+        phase: 'final',
+      }]);
+      
+      setProgress(prev => ({
+        ...prev,
+        isComplete: true,
+        isPlaying: false,
+        awaitingRetest: false,
+        isContinuousMode: false,
+      }));
+
+      toast.success('Dauerbehandlung abgeschlossen!', {
+        description: 'Trendanalyse verfügbar'
+      });
+    }
+  }, [treatmentPoints, startOscillator]);
+
   const moveToNextPoint = useCallback(() => {
     setProgress((prev) => {
       const options = treatmentOptionsRef.current;
-      const totalTreatmentSeconds = (options.totalTreatmentMinutes || DEFAULT_TOTAL_TREATMENT_MINUTES) * 60;
-      
       const nextIndex = prev.currentPointIndex + 1;
 
-      // Prüfe ob Gesamtzeit erreicht ist
-      if (prev.elapsedTotalTime >= totalTreatmentSeconds) {
-        stopOscillator();
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-          intervalRef.current = null;
-        }
-        toast.success('Behandlungssequenz abgeschlossen!', {
-          description: `${prev.currentCycle} Zyklen durchlaufen`
-        });
-        return {
-          ...prev,
-          isPlaying: false,
-          isComplete: true,
-          overallProgress: 100,
-        };
-      }
-
-      // Ende eines Zyklus - starte neuen Zyklus
+      // Zyklus beendet
       if (nextIndex >= prev.totalPoints) {
-        const firstPoint = treatmentPoints[0];
-        if (firstPoint) {
-          startOscillator(firstPoint.frequency);
-          toast.info(`Zyklus ${prev.currentCycle + 1} gestartet`);
+        // Im Continuous-Mode: Retest-Pause starten
+        if (prev.isContinuousMode && prev.continuousEndTime && new Date() < prev.continuousEndTime) {
+          stopOscillator();
+          const retestPauseSeconds = (options.retestPauseMinutes || DEFAULT_RETEST_PAUSE_MINUTES) * 60;
+          
+          toast.info('Zyklus abgeschlossen - Retest-Pause gestartet', {
+            description: `${options.retestPauseMinutes || DEFAULT_RETEST_PAUSE_MINUTES} Minuten bis zum Retest`
+          });
+
+          return {
+            ...prev,
+            awaitingRetest: true,
+            retestPauseRemaining: retestPauseSeconds,
+            isPlaying: false,
+          };
         }
+
+        // Normaler Modus: Prüfe Gesamtzeit
+        const totalTreatmentSeconds = (options.totalTreatmentMinutes || DEFAULT_TOTAL_TREATMENT_MINUTES) * 60;
+        if (prev.elapsedTotalTime >= totalTreatmentSeconds) {
+          stopOscillator();
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+          }
+          toast.success('Behandlungssequenz abgeschlossen!');
+          return { ...prev, isPlaying: false, isComplete: true, overallProgress: 100 };
+        }
+
+        // Neuer Zyklus
+        const firstPoint = treatmentPoints[0];
+        if (firstPoint) startOscillator(firstPoint.frequency);
         
         return {
           ...prev,
           currentPointIndex: 0,
           currentPoint: firstPoint || null,
           elapsedTime: 0,
-          remainingTime: firstPoint?.duration || 0,
           currentCycle: prev.currentCycle + 1,
           isImpulsePhase: true,
         };
       }
 
-      // Nächster Punkt im aktuellen Zyklus
       const nextPoint = treatmentPoints[nextIndex];
-      if (nextPoint) {
-        startOscillator(nextPoint.frequency);
-        toast.info(`${nextPoint.meridianName}: ${nextPoint.pointName}`);
-      }
+      if (nextPoint) startOscillator(nextPoint.frequency);
 
       return {
         ...prev,
         currentPointIndex: nextIndex,
         currentPoint: nextPoint || null,
         elapsedTime: 0,
-        remainingTime: nextPoint?.duration || 0,
         isImpulsePhase: true,
       };
     });
   }, [treatmentPoints, startOscillator, stopOscillator]);
 
-  /**
-   * Timer-Tick mit Impulse/Pause-Logik
-   */
   const tick = useCallback(() => {
     setProgress((prev) => {
-      if (!prev.isPlaying || prev.isPaused || prev.isComplete) {
-        return prev;
+      // Retest-Pause Countdown
+      if (prev.awaitingRetest && prev.retestPauseRemaining > 0) {
+        const newRemaining = prev.retestPauseRemaining - 1;
+        if (newRemaining <= 0) {
+          // Retest-Callback ausführen
+          if (onRetestCallback) {
+            onRetestCallback().then(handleRetestComplete);
+          }
+        }
+        return { ...prev, retestPauseRemaining: newRemaining };
       }
+
+      if (!prev.isPlaying || prev.isPaused || prev.isComplete) return prev;
 
       const options = treatmentOptionsRef.current;
       const impulseSeconds = options.impulseSeconds || DEFAULT_IMPULSE_SECONDS;
       const pauseSeconds = options.pauseSeconds || DEFAULT_PAUSE_SECONDS;
       const pointDuration = impulseSeconds + pauseSeconds;
-      const totalTreatmentSeconds = (options.totalTreatmentMinutes || DEFAULT_TOTAL_TREATMENT_MINUTES) * 60;
 
       const newElapsed = prev.elapsedTime + 1;
       const newTotalElapsed = prev.elapsedTotalTime + 1;
-
-      // Wechsel zwischen Impuls und Pause
       const isImpulsePhase = newElapsed <= impulseSeconds;
-      
-      // Audio entsprechend steuern
+
+      // Audio-Steuerung
       if (!isImpulsePhase && prev.isImpulsePhase && gainNodeRef.current && audioContextRef.current) {
-        // Wechsel zu Pause - Audio leiser
         gainNodeRef.current.gain.linearRampToValueAtTime(0.05, audioContextRef.current.currentTime + 0.2);
       } else if (isImpulsePhase && !prev.isImpulsePhase && gainNodeRef.current && audioContextRef.current) {
-        // Wechsel zu Impuls - Audio lauter
         gainNodeRef.current.gain.linearRampToValueAtTime(0.3, audioContextRef.current.currentTime + 0.2);
       }
 
-      // Punkt abgeschlossen
       if (newElapsed >= pointDuration) {
         setTimeout(() => moveToNextPoint(), 0);
         return { ...prev, elapsedTotalTime: newTotalElapsed };
       }
 
-      // Gesamtfortschritt berechnen
-      const overallProgress = (newTotalElapsed / totalTreatmentSeconds) * 100;
+      // Continuous-Mode Fortschritt
+      let overallProgress = 0;
+      if (prev.isContinuousMode && prev.continuousEndTime) {
+        const totalMs = prev.continuousEndTime.getTime() - (prev.continuousEndTime.getTime() - prev.totalTreatmentTime * 1000);
+        const elapsedMs = newTotalElapsed * 1000;
+        overallProgress = Math.min(100, (elapsedMs / (prev.totalTreatmentTime * 1000)) * 100);
+      } else {
+        const totalTreatmentSeconds = (options.totalTreatmentMinutes || DEFAULT_TOTAL_TREATMENT_MINUTES) * 60;
+        overallProgress = (newTotalElapsed / totalTreatmentSeconds) * 100;
+      }
 
       return {
         ...prev,
@@ -448,12 +434,13 @@ export function useTreatmentSequence() {
         isImpulsePhase,
       };
     });
-  }, [moveToNextPoint]);
+  }, [moveToNextPoint, onRetestCallback, handleRetestComplete]);
 
-  /**
-   * Startet die Behandlungssequenz mit Impulse/Pause-Logik
-   */
-  const startSequence = useCallback((imbalances: MeridianImbalance[], options?: TreatmentOptions) => {
+  const startSequence = useCallback((
+    imbalances: MeridianImbalance[], 
+    options?: TreatmentOptions,
+    retestCallback?: () => Promise<number[]>
+  ) => {
     const effectiveOptions: TreatmentOptions = {
       pointsPerMeridian: options?.pointsPerMeridian ?? 3,
       durationPerPoint: (options?.impulseSeconds || DEFAULT_IMPULSE_SECONDS) + (options?.pauseSeconds || DEFAULT_PAUSE_SECONDS),
@@ -461,9 +448,14 @@ export function useTreatmentSequence() {
       impulseSeconds: options?.impulseSeconds ?? DEFAULT_IMPULSE_SECONDS,
       pauseSeconds: options?.pauseSeconds ?? DEFAULT_PAUSE_SECONDS,
       includeExtraordinaryVessels: options?.includeExtraordinaryVessels ?? true,
+      continuousMode: options?.continuousMode ?? false,
+      continuousEndTime: options?.continuousEndTime,
+      retestPauseMinutes: options?.retestPauseMinutes ?? DEFAULT_RETEST_PAUSE_MINUTES,
     };
     
     treatmentOptionsRef.current = effectiveOptions;
+    imbalancesRef.current = imbalances;
+    if (retestCallback) setOnRetestCallback(() => retestCallback);
     
     const points = generateTreatmentPoints(
       imbalances,
@@ -478,65 +470,57 @@ export function useTreatmentSequence() {
     }
 
     setTreatmentPoints(points);
+    setSnapshots([]);
 
     const firstPoint = points[0];
     startOscillator(firstPoint.frequency);
     
-    const totalTreatmentSeconds = (effectiveOptions.totalTreatmentMinutes || DEFAULT_TOTAL_TREATMENT_MINUTES) * 60;
-    const pointDuration = (effectiveOptions.impulseSeconds || DEFAULT_IMPULSE_SECONDS) + 
-                          (effectiveOptions.pauseSeconds || DEFAULT_PAUSE_SECONDS);
-    const estimatedCycles = Math.ceil(totalTreatmentSeconds / (points.length * pointDuration));
+    const totalTreatmentSeconds = effectiveOptions.continuousMode && effectiveOptions.continuousEndTime
+      ? Math.floor((effectiveOptions.continuousEndTime.getTime() - Date.now()) / 1000)
+      : (effectiveOptions.totalTreatmentMinutes || DEFAULT_TOTAL_TREATMENT_MINUTES) * 60;
 
     setProgress({
       currentPointIndex: 0,
       totalPoints: points.length,
       currentPoint: firstPoint,
       elapsedTime: 0,
-      remainingTime: pointDuration,
+      remainingTime: (effectiveOptions.impulseSeconds || DEFAULT_IMPULSE_SECONDS) + (effectiveOptions.pauseSeconds || DEFAULT_PAUSE_SECONDS),
       isPlaying: true,
       isPaused: false,
       isComplete: false,
       overallProgress: 0,
       isImpulsePhase: true,
       currentCycle: 1,
-      totalCycles: estimatedCycles,
+      totalCycles: 1,
       totalTreatmentTime: totalTreatmentSeconds,
       elapsedTotalTime: 0,
+      isContinuousMode: effectiveOptions.continuousMode || false,
+      continuousEndTime: effectiveOptions.continuousEndTime || null,
+      awaitingRetest: false,
+      retestPauseRemaining: 0,
     });
 
-    toast.success(`Behandlung gestartet`, {
-      description: `${points.length} Punkte, ${effectiveOptions.totalTreatmentMinutes} Min. Gesamtzeit`
+    const modeName = effectiveOptions.continuousMode ? 'Dauerbehandlung' : 'Behandlung';
+    toast.success(`${modeName} gestartet`, {
+      description: `${points.length} Punkte${effectiveOptions.continuousMode ? ' bis Endzeit' : ''}`
     });
 
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
+    if (intervalRef.current) clearInterval(intervalRef.current);
     intervalRef.current = window.setInterval(tick, 1000);
   }, [generateTreatmentPoints, startOscillator, tick]);
 
-  /**
-   * Pausiert die Behandlung
-   */
   const pauseSequence = useCallback(() => {
     stopOscillator();
     setProgress((prev) => ({ ...prev, isPaused: true, isPlaying: false }));
     toast.info('Behandlung pausiert');
   }, [stopOscillator]);
 
-  /**
-   * Setzt die Behandlung fort
-   */
   const resumeSequence = useCallback(() => {
-    if (progress.currentPoint) {
-      startOscillator(progress.currentPoint.frequency);
-    }
+    if (progress.currentPoint) startOscillator(progress.currentPoint.frequency);
     setProgress((prev) => ({ ...prev, isPaused: false, isPlaying: true }));
     toast.info('Behandlung fortgesetzt');
   }, [progress.currentPoint, startOscillator]);
 
-  /**
-   * Stoppt die Behandlung
-   */
   const stopSequence = useCallback(() => {
     stopOscillator();
     if (intervalRef.current) {
@@ -558,20 +542,19 @@ export function useTreatmentSequence() {
       totalCycles: 1,
       totalTreatmentTime: 0,
       elapsedTotalTime: 0,
+      isContinuousMode: false,
+      continuousEndTime: null,
+      awaitingRetest: false,
+      retestPauseRemaining: 0,
     });
     setTreatmentPoints([]);
-    toast.info('Behandlung abgebrochen');
+    toast.info('Behandlung beendet');
   }, [stopOscillator]);
 
-  /**
-   * Springt zu einem bestimmten Punkt
-   */
   const skipToPoint = useCallback((index: number) => {
     if (index < 0 || index >= treatmentPoints.length) return;
-
     const point = treatmentPoints[index];
     startOscillator(point.frequency);
-
     setProgress((prev) => ({
       ...prev,
       currentPointIndex: index,
@@ -580,18 +563,23 @@ export function useTreatmentSequence() {
       remainingTime: point.duration,
       isImpulsePhase: true,
     }));
-
-    toast.info(`Springe zu: ${point.meridianName} - ${point.pointName}`);
   }, [treatmentPoints, startOscillator]);
+
+  const addSnapshot = useCallback((dimensions: number[], phase: TreatmentSnapshot['phase']) => {
+    setSnapshots(prev => [...prev, { dimensions, timestamp: new Date(), phase }]);
+  }, []);
 
   return {
     treatmentPoints,
     progress,
+    snapshots,
     startSequence,
     pauseSequence,
     resumeSequence,
     stopSequence,
     skipToPoint,
     generateTreatmentPoints,
+    addSnapshot,
+    handleRetestComplete,
   };
 }
