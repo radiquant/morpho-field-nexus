@@ -6,8 +6,8 @@
 import { useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { ArrowLeft, Activity } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { ArrowLeft, Activity, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import ClientVectorInterface from '@/components/ClientVectorInterface';
 import ClientVectorTrajectory3D from '@/components/ClientVectorTrajectory3D';
@@ -15,12 +15,22 @@ import AnatomyResonanceViewer from '@/components/AnatomyResonanceViewer';
 import MeridianDiagnosisPanel from '@/components/MeridianDiagnosisPanel';
 import FrequencyOutputModule from '@/components/FrequencyOutputModule';
 import RealtimeStatusWidget from '@/components/RealtimeStatusWidget';
+import TreatmentTrendAnalysis from '@/components/TreatmentTrendAnalysis';
 import Footer from '@/components/Footer';
 import type { VectorAnalysis } from '@/services/feldengine';
+
+export interface TreatmentResult {
+  beforeDimensions: number[];
+  afterDimensions: number[];
+  treatmentDuration: number;
+  cyclesCompleted: number;
+  pointsProcessed: number;
+}
 
 const Analyse = () => {
   const [currentVectorAnalysis, setCurrentVectorAnalysis] = useState<VectorAnalysis | null>(null);
   const [selectedFrequency, setSelectedFrequency] = useState<number | null>(null);
+  const [treatmentResult, setTreatmentResult] = useState<TreatmentResult | null>(null);
 
   const handleVectorCreated = useCallback((analysis: VectorAnalysis) => {
     setCurrentVectorAnalysis(analysis);
@@ -28,6 +38,14 @@ const Analyse = () => {
 
   const handleFrequencySelect = useCallback((frequency: number) => {
     setSelectedFrequency(frequency);
+  }, []);
+
+  const handleTreatmentComplete = useCallback((result: TreatmentResult) => {
+    setTreatmentResult(result);
+  }, []);
+
+  const dismissTrendAnalysis = useCallback(() => {
+    setTreatmentResult(null);
   }, []);
 
   return (
@@ -67,6 +85,41 @@ const Analyse = () => {
           </div>
         </header>
 
+        {/* Trend-Analyse Overlay nach Behandlungsabschluss */}
+        <AnimatePresence>
+          {treatmentResult && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4"
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="relative max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              >
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-2 right-2 z-10"
+                  onClick={dismissTrendAnalysis}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+                <TreatmentTrendAnalysis
+                  beforeDimensions={treatmentResult.beforeDimensions}
+                  afterDimensions={treatmentResult.afterDimensions}
+                  treatmentDuration={treatmentResult.treatmentDuration}
+                  cyclesCompleted={treatmentResult.cyclesCompleted}
+                  pointsProcessed={treatmentResult.pointsProcessed}
+                />
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Analyse-Komponenten */}
         <ClientVectorInterface onVectorCreated={handleVectorCreated} />
         <ClientVectorTrajectory3D vectorAnalysis={currentVectorAnalysis} />
@@ -77,6 +130,7 @@ const Analyse = () => {
         <MeridianDiagnosisPanel
           vectorAnalysis={currentVectorAnalysis}
           onFrequencySelect={handleFrequencySelect}
+          onTreatmentComplete={handleTreatmentComplete}
         />
         <FrequencyOutputModule />
         

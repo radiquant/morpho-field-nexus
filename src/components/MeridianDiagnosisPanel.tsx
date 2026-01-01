@@ -56,10 +56,19 @@ import { useTreatmentArchive, type TreatmentRecord } from '@/hooks/useTreatmentA
 import HardwareMethodSelector from '@/components/HardwareMethodSelector';
 import type { VectorAnalysis } from '@/services/feldengine';
 
+export interface TreatmentCompleteResult {
+  beforeDimensions: number[];
+  afterDimensions: number[];
+  treatmentDuration: number;
+  cyclesCompleted: number;
+  pointsProcessed: number;
+}
+
 interface MeridianDiagnosisPanelProps {
   vectorAnalysis: VectorAnalysis | null;
   clientId?: string;
   onFrequencySelect?: (frequency: number) => void;
+  onTreatmentComplete?: (result: TreatmentCompleteResult) => void;
 }
 
 // Element-Farben
@@ -100,7 +109,7 @@ const formatTime = (seconds: number): string => {
 // Zeit-Einheit für Eingabe
 type TimeUnit = 'seconds' | 'minutes';
 
-const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect }: MeridianDiagnosisPanelProps) => {
+const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, onTreatmentComplete }: MeridianDiagnosisPanelProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<'treatment' | 'archive' | 'retest'>('treatment');
   const [showMethodSettings, setShowMethodSettings] = useState(false);
@@ -120,6 +129,7 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect }:
   const [isRetestPending, setIsRetestPending] = useState(false);
   const [retestCountdown, setRetestCountdown] = useState(0);
   const [preHarmonizationPoints, setPreHarmonizationPoints] = useState<TreatmentPoint[]>([]);
+  const [beforeDimensions, setBeforeDimensions] = useState<number[]>([]);
   
   const {
     isAnalyzing,
@@ -191,25 +201,50 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect }:
 
   // Bei Behandlungsabschluss
   useEffect(() => {
-    if (progress.isComplete && retestEnabled && treatmentPoints.length > 0) {
+    if (progress.isComplete && treatmentPoints.length > 0) {
       // Speichere Behandlung im Archiv
       if (clientId && diagnosisResult) {
         saveTreatment(clientId, treatmentPoints, diagnosisResult, vectorAnalysis?.attractorState.stability || 0);
       }
       
-      // Starte Nachtestungs-Countdown
-      setPreHarmonizationPoints(treatmentPoints);
-      setRetestCountdown(retestPauseMinutes * 60);
-      setIsRetestPending(true);
+      // Rufe onTreatmentComplete Callback auf
+      if (onTreatmentComplete && vectorAnalysis) {
+        // dimensions Array: [physical, emotional, mental, energy, stress]
+        const currentDimensions = vectorAnalysis.clientVector.dimensions;
+        const afterDimensions = currentDimensions.length >= 5 
+          ? currentDimensions.slice(0, 5) 
+          : [50, 50, 50, 50, 50];
+        
+        onTreatmentComplete({
+          beforeDimensions: beforeDimensions.length > 0 ? beforeDimensions : afterDimensions,
+          afterDimensions,
+          treatmentDuration: progress.elapsedTotalTime,
+          cyclesCompleted: progress.currentCycle,
+          pointsProcessed: treatmentPoints.length,
+        });
+      }
       
-      toast.success('Behandlung abgeschlossen', {
-        description: `Nachtestung in ${retestPauseMinutes} Minuten...`
-      });
+      // Starte Nachtestungs-Countdown wenn aktiviert
+      if (retestEnabled) {
+        setPreHarmonizationPoints(treatmentPoints);
+        setRetestCountdown(retestPauseMinutes * 60);
+        setIsRetestPending(true);
+        
+        toast.success('Behandlung abgeschlossen', {
+          description: `Nachtestung in ${retestPauseMinutes} Minuten...`
+        });
+      } else {
+        toast.success('Behandlung abgeschlossen');
+      }
     }
-  }, [progress.isComplete, retestEnabled, treatmentPoints, clientId, diagnosisResult, vectorAnalysis, retestPauseMinutes, saveTreatment]);
+  }, [progress.isComplete, retestEnabled, treatmentPoints, clientId, diagnosisResult, vectorAnalysis, retestPauseMinutes, saveTreatment, onTreatmentComplete, beforeDimensions, progress.elapsedTotalTime, progress.currentCycle]);
 
   const handleStartTreatment = useCallback(() => {
-    if (diagnosisResult?.imbalances) {
+    if (diagnosisResult?.imbalances && vectorAnalysis) {
+      // Speichere aktuelle Dimensionen als "vorher" Werte
+      const currentDimensions = vectorAnalysis.clientVector.dimensions;
+      setBeforeDimensions(currentDimensions.length >= 5 ? currentDimensions.slice(0, 5) : [50, 50, 50, 50, 50]);
+      
       // Log selected methods for treatment
       const methodNames = selectedMethods.join(', ');
       console.log(`Starting treatment with methods: ${methodNames}, Server-GPU: ${serverHardwareEnabled}`);
@@ -223,7 +258,7 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect }:
         description: `Methoden: ${methodNames}${serverHardwareEnabled ? ' + Server-GPU' : ''}`
       });
     }
-  }, [diagnosisResult, startSequence, pointsPerMeridian, treatmentDuration, selectedMethods, serverHardwareEnabled]);
+  }, [diagnosisResult, vectorAnalysis, startSequence, pointsPerMeridian, treatmentDuration, selectedMethods, serverHardwareEnabled]);
 
   const handleReanalyze = useCallback(() => {
     if (vectorAnalysis) {
