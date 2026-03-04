@@ -1919,7 +1919,7 @@ const AnatomyResonanceViewer = ({
 
                 {/* Punkte-Liste */}
                 <div className="space-y-1">
-                  {filteredOrganScanPoints.map((point) => (
+                  {(selectedOrganFilter ? modelFilteredOrganScanPoints.filter(p => p.organSystem === selectedOrganFilter) : modelFilteredOrganScanPoints).map((point) => (
                     <button
                       key={point.id}
                       onClick={() => setActiveOrganScanPoint(point)}
