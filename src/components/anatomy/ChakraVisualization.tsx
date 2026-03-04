@@ -98,10 +98,12 @@ function ChakraSphere({
   chakra,
   isActive,
   onClick,
+  sizeFactor = 1,
 }: {
   chakra: ChakraData;
   isActive: boolean;
   onClick: () => void;
+  sizeFactor?: number;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const glowRef = useRef<THREE.Mesh>(null);
@@ -127,11 +129,14 @@ function ChakraSphere({
     }
   });
 
+  const innerRadius = 0.015 * sizeFactor;
+  const glowRadius = 0.04 * sizeFactor;
+
   return (
     <group position={[0, chakra.yPosition, 0.06]}>
       {/* Äußerer Glow */}
       <mesh ref={glowRef}>
-        <sphereGeometry args={[0.06, 16, 16]} />
+        <sphereGeometry args={[glowRadius, 16, 16]} />
         <meshBasicMaterial
           color={chakra.color}
           transparent
@@ -154,7 +159,7 @@ function ChakraSphere({
           setIsHovered(false);
         }}
       >
-        <sphereGeometry args={[0.025, 24, 24]} />
+        <sphereGeometry args={[innerRadius, 24, 24]} />
         <meshStandardMaterial
           color={chakra.color}
           emissive={chakra.color}
@@ -182,12 +187,18 @@ function ChakraSphere({
 interface ChakraVisualizationProps {
   onChakraClick?: (chakra: ChakraData) => void;
   activeChakraId?: string | null;
+  /** Half-width of the body model for proportional sizing */
+  bodyHalfWidth?: number;
 }
 
 export function ChakraVisualization({
   onChakraClick,
   activeChakraId,
+  bodyHalfWidth = 0.12,
 }: ChakraVisualizationProps) {
+  // Scale chakra sphere sizes relative to body width
+  const sizeFactor = Math.min(1, bodyHalfWidth / 0.15);
+
   return (
     <group>
       {CHAKRAS.map((chakra) => (
@@ -196,6 +207,7 @@ export function ChakraVisualization({
           chakra={chakra}
           isActive={activeChakraId === chakra.id}
           onClick={() => onChakraClick?.(chakra)}
+          sizeFactor={sizeFactor}
         />
       ))}
     </group>

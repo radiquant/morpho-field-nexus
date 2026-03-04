@@ -889,6 +889,7 @@ function AnatomyScene({
   onChakraClick,
   meridianXScale,
   onGLBLoaded,
+  bodyHalfWidth,
 }: {
   modelType: AnatomyModelType;
   anatomyPoints: AnatomyResonancePoint[];
@@ -907,6 +908,7 @@ function AnatomyScene({
   onChakraClick: (chakra: ChakraData) => void;
   meridianXScale: number;
   onGLBLoaded: (info: GLBModelInfo) => void;
+  bodyHalfWidth: number;
 }) {
   // Filter Punkte basierend auf Modell-Typ
   const visiblePoints = useMemo(() => {
@@ -973,6 +975,7 @@ function AnatomyScene({
               <ChakraVisualization
                 activeChakraId={activeChakraId}
                 onChakraClick={onChakraClick}
+                bodyHalfWidth={bodyHalfWidth}
               />
             )}
           </>
@@ -1032,7 +1035,7 @@ const AnatomyResonanceViewer = ({
   const [useGLBModel, setUseGLBModel] = useState(true);
   const [showChakras, setShowChakras] = useState(false);
   const [activeChakra, setActiveChakra] = useState<ChakraData | null>(null);
-  const [meridianXScale, setMeridianXScale] = useState(0.55); // Standard-Skalierung, wird bei GLB-Load aktualisiert
+  const [glbModelInfo, setGlbModelInfo] = useState<GLBModelInfo | null>(null);
 
   const { 
     anatomyPoints, 
@@ -1203,7 +1206,7 @@ const AnatomyResonanceViewer = ({
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="lg:col-span-3 h-[750px] bg-card rounded-lg border border-border overflow-hidden relative"
+            className="lg:col-span-3 h-[900px] bg-card rounded-lg border border-border overflow-hidden relative"
           >
             {/* Model Selector */}
             <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-3 bg-background/80 backdrop-blur-sm px-4 py-2 rounded-full border border-border">
@@ -1250,12 +1253,9 @@ const AnatomyResonanceViewer = ({
                   showChakras={showChakras}
                   activeChakraId={activeChakra?.id || null}
                   onChakraClick={(c) => { setActiveChakra(c); setActivePoint(null); setActiveAcupoint(null); }}
-                  meridianXScale={meridianXScale}
-                  onGLBLoaded={(info) => {
-                    // Meridian x-Koordinaten gehen bis ~0.32, GLB halfWidth bestimmt Skalierung
-                    const targetMeridianWidth = 0.32;
-                    setMeridianXScale(info.halfWidth / targetMeridianWidth);
-                  }}
+                  meridianXScale={glbModelInfo ? glbModelInfo.halfWidth / 0.32 : 0.55}
+                  onGLBLoaded={(info) => setGlbModelInfo(info)}
+                  bodyHalfWidth={glbModelInfo?.halfWidth || 0.12}
                 />
               </Canvas>
             </Suspense>
