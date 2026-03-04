@@ -28,6 +28,8 @@ export interface AnatomyModel {
   isDefault: boolean;
   isAvailable: boolean; // ob die GLB-Datei tatsächlich existiert
   resolvedUrl: string; // aufgelöster URL zum Laden
+  visibleLayers: string[]; // which visualization layers are applicable
+  applicableOrganSystems: string[] | null; // which organ systems NLS points to show
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -110,6 +112,8 @@ export function useAnatomyModels() {
           isDefault: m.is_default ?? false,
           isAvailable,
           resolvedUrl,
+          visibleLayers: m.visible_layers || ['meridians', 'chakras', 'resonance_points', 'nls_scan'],
+          applicableOrganSystems: m.applicable_organ_systems || null,
         };
       });
 
