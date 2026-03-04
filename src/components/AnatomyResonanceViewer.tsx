@@ -6,6 +6,7 @@
 import { useRef, useState, useEffect, useMemo, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Html, Environment, ContactShadows, Float, Line } from '@react-three/drei';
+import { GLBModelLoader, AVAILABLE_MODELS } from '@/components/anatomy/GLBModelLoader';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -881,6 +882,7 @@ function AnatomyScene({
   onAcupointClick,
   activeAcupointId,
   dysregulationScores,
+  useGLBModel,
 }: {
   modelType: AnatomyModelType;
   anatomyPoints: AnatomyResonancePoint[];
@@ -893,6 +895,7 @@ function AnatomyScene({
   onAcupointClick: (point: AcupuncturePoint, meridian: MeridianPath) => void;
   activeAcupointId: string | null;
   dysregulationScores: Map<string, number>;
+  useGLBModel: boolean;
 }) {
   // Filter Punkte basierend auf Modell-Typ
   const visiblePoints = useMemo(() => {
@@ -934,7 +937,16 @@ function AnatomyScene({
       <group>
         {modelType === 'full_body' && (
           <>
-            <HumanBodyModel opacity={showMeridians ? 0.25 : 0.3} />
+            {useGLBModel ? (
+              <GLBModelLoader
+                modelPath={AVAILABLE_MODELS.fullBody}
+                opacity={showMeridians ? 0.2 : 0.35}
+                scale={0.65}
+                position={[0, -0.1, 0]}
+              />
+            ) : (
+              <HumanBodyModel opacity={showMeridians ? 0.25 : 0.3} />
+            )}
             {showMeridians && (
               <MeridianSystemModel
                 activeMeridianId={activeMeridianId}
@@ -999,6 +1011,7 @@ const AnatomyResonanceViewer = ({
   const [activeMeridianId, setActiveMeridianId] = useState<string | null>(null);
   const [activeAcupoint, setActiveAcupoint] = useState<{ point: AcupuncturePoint; meridian: MeridianPath } | null>(null);
   const [showMeridianLabels, setShowMeridianLabels] = useState(true);
+  const [useGLBModel, setUseGLBModel] = useState(true);
 
   const { 
     anatomyPoints, 
@@ -1212,6 +1225,7 @@ const AnatomyResonanceViewer = ({
                   onAcupointClick={handleAcupointClick}
                   activeAcupointId={activeAcupoint?.point.id || null}
                   dysregulationScores={dysregulationScores}
+                  useGLBModel={useGLBModel}
                 />
               </Canvas>
             </Suspense>
@@ -1241,17 +1255,31 @@ const AnatomyResonanceViewer = ({
               </Button>
             </div>
 
-            {/* Meridian-Toggle (nur bei full_body) */}
+            {/* Toggles (nur bei full_body) */}
             {activeModel === 'full_body' && (
-              <div className="absolute bottom-4 right-4 flex items-center gap-2 bg-background/80 backdrop-blur-sm px-3 py-2 rounded-lg border border-border">
-                <Switch
-                  id="show-meridians"
-                  checked={showMeridians}
-                  onCheckedChange={setShowMeridians}
-                />
-                <Label htmlFor="show-meridians" className="text-xs text-foreground">
-                  Meridiane
-                </Label>
+              <div className="absolute bottom-4 right-4 flex items-center gap-4 bg-background/80 backdrop-blur-sm px-3 py-2 rounded-lg border border-border">
+                <div className="flex items-center gap-1.5">
+                  <Switch
+                    id="use-glb"
+                    checked={useGLBModel}
+                    onCheckedChange={setUseGLBModel}
+                    className="scale-75"
+                  />
+                  <Label htmlFor="use-glb" className="text-xs text-foreground">
+                    3D-Modell
+                  </Label>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Switch
+                    id="show-meridians"
+                    checked={showMeridians}
+                    onCheckedChange={setShowMeridians}
+                    className="scale-75"
+                  />
+                  <Label htmlFor="show-meridians" className="text-xs text-foreground">
+                    Meridiane
+                  </Label>
+                </div>
               </div>
             )}
 
