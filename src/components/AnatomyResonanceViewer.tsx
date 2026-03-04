@@ -1426,7 +1426,7 @@ const AnatomyResonanceViewer = ({
                   showResonancePoints={showResonancePoints}
                   selectedModelUrl={selectedAnatomyModel?.resolvedUrl || AVAILABLE_MODELS.fullBody}
                   showOrganScan={showOrganScan}
-                  organScanPoints={organScanPoints}
+                  organScanPoints={modelFilteredOrganScanPoints}
                   activeOrganScanPointId={activeOrganScanPoint?.id || null}
                   onOrganScanPointClick={(p) => { setActiveOrganScanPoint(p); setActivePoint(null); setActiveAcupoint(null); setActiveChakra(null); }}
                   selectedOrganFilter={selectedOrganFilter}
