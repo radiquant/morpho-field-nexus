@@ -6,6 +6,7 @@
 import { useRef, useState, useEffect, useMemo, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Html, Environment, ContactShadows, Float, Line } from '@react-three/drei';
+import { GLBModelLoader, AVAILABLE_MODELS } from '@/components/anatomy/GLBModelLoader';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
