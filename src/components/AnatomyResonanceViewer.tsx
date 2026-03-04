@@ -9,6 +9,7 @@ import { OrbitControls, Html, Environment, ContactShadows, Float, Line } from '@
 import { GLBModelLoader, AVAILABLE_MODELS, type GLBModelInfo } from '@/components/anatomy/GLBModelLoader';
 import { ChakraVisualization, type ChakraData } from '@/components/anatomy/ChakraVisualization';
 import { ModelSelector } from '@/components/anatomy/ModelSelector';
+import { ModelUpload } from '@/components/anatomy/ModelUpload';
 import { useAnatomyModels, type AnatomyModel } from '@/hooks/useAnatomyModels';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -1054,6 +1055,7 @@ const AnatomyResonanceViewer = ({
     setSelectedModel: setSelectedAnatomyModel,
     isLoading: modelsLoading,
     categories: modelCategories,
+    loadModels: reloadAnatomyModels,
   } = useAnatomyModels();
 
   // Punkte laden
@@ -1541,6 +1543,9 @@ const AnatomyResonanceViewer = ({
                 categories={modelCategories}
                 isLoading={modelsLoading}
               />
+              <div className="mt-3 pt-3 border-t border-border">
+                <ModelUpload onUploadComplete={() => reloadAnatomyModels()} />
+              </div>
             </div>
 
             {/* Meridian-Liste (bei Meridian-Ansicht) */}
