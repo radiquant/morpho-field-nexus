@@ -1088,6 +1088,16 @@ function AnatomyScene({
         />
       ))}
 
+      {/* NLS Organ-Scan-Punkte */}
+      {showOrganScan && (
+        <OrganScanLayer
+          points={organScanPoints}
+          activePointId={activeOrganScanPointId}
+          onPointClick={onOrganScanPointClick}
+          selectedOrgan={selectedOrganFilter}
+        />
+      )}
+
       {/* Controls */}
       <OrbitControls
         enablePan={false}
@@ -1119,8 +1129,22 @@ const AnatomyResonanceViewer = ({
   const [useGLBModel, setUseGLBModel] = useState(true);
   const [showChakras, setShowChakras] = useState(false);
   const [showResonancePoints, setShowResonancePoints] = useState(false);
+  const [showOrganScan, setShowOrganScan] = useState(false);
   const [activeChakra, setActiveChakra] = useState<ChakraData | null>(null);
   const [glbModelInfo, setGlbModelInfo] = useState<GLBModelInfo | null>(null);
+
+  const {
+    points: organScanPoints,
+    filteredPoints: filteredOrganScanPoints,
+    organGroups,
+    organSystems,
+    isLoading: organScanLoading,
+    selectedOrgan: selectedOrganFilter,
+    setSelectedOrgan: setSelectedOrganFilter,
+    activePoint: activeOrganScanPoint,
+    setActivePoint: setActiveOrganScanPoint,
+    loadPoints: loadOrganScanPoints,
+  } = useOrganScanPoints();
 
   const { 
     anatomyPoints, 
