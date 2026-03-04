@@ -8,6 +8,8 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Html, Environment, ContactShadows, Float, Line } from '@react-three/drei';
 import { GLBModelLoader, AVAILABLE_MODELS, type GLBModelInfo } from '@/components/anatomy/GLBModelLoader';
 import { ChakraVisualization, type ChakraData } from '@/components/anatomy/ChakraVisualization';
+import { ModelSelector } from '@/components/anatomy/ModelSelector';
+import { useAnatomyModels, type AnatomyModel } from '@/hooks/useAnatomyModels';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -1046,6 +1048,14 @@ const AnatomyResonanceViewer = ({
     isLoading,
   } = useResonanceDatabase();
 
+  const {
+    models: anatomyModels,
+    selectedModel: selectedAnatomyModel,
+    setSelectedModel: setSelectedAnatomyModel,
+    isLoading: modelsLoading,
+    categories: modelCategories,
+  } = useAnatomyModels();
+
   // Punkte laden
   useEffect(() => {
     loadAnatomyPoints();
@@ -1515,6 +1525,22 @@ const AnatomyResonanceViewer = ({
                   Klicken Sie auf einen Punkt im 3D-Modell
                 </p>
               )}
+            </div>
+
+            {/* Modell-Bibliothek */}
+            <div className="bg-card rounded-lg border border-border p-4 max-h-[350px] overflow-y-auto">
+              <ModelSelector
+                models={anatomyModels}
+                selectedModel={selectedAnatomyModel}
+                onSelect={(model) => {
+                  setSelectedAnatomyModel(model);
+                  if (model.isAvailable) {
+                    // Modell wird automatisch über den GLBModelLoader geladen
+                  }
+                }}
+                categories={modelCategories}
+                isLoading={modelsLoading}
+              />
             </div>
 
             {/* Meridian-Liste (bei Meridian-Ansicht) */}
