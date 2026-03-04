@@ -1458,6 +1458,17 @@ const AnatomyResonanceViewer = ({
                     Organe
                   </Label>
                 </div>
+                <div className="flex items-center gap-1.5">
+                  <Switch
+                    id="show-nls"
+                    checked={showOrganScan}
+                    onCheckedChange={setShowOrganScan}
+                    className="scale-75"
+                  />
+                  <Label htmlFor="show-nls" className="text-xs text-foreground">
+                    NLS-Scan
+                  </Label>
+                </div>
               </div>
             )}
 
