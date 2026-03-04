@@ -1643,6 +1643,68 @@ const AnatomyResonanceViewer = ({
                     Frequenz anwenden
                   </Button>
                 </div>
+              ) : activeOrganScanPoint ? (
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">{getTissueIcon(activeOrganScanPoint.tissueType)}</span>
+                      <span className="text-lg font-bold text-foreground">{activeOrganScanPoint.pointName}</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground italic">{activeOrganScanPoint.description}</p>
+                  </div>
+
+                  <div className="p-3 bg-primary/10 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Scan-Frequenz</span>
+                      <span className="font-mono text-primary text-lg">
+                        {activeOrganScanPoint.scanFrequency.toFixed(2)} Hz
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Organ</p>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: getOrganColor(activeOrganScanPoint.organSystem) }} />
+                      <span className="text-sm text-foreground">{activeOrganScanPoint.organNameDe}</span>
+                    </div>
+                    {activeOrganScanPoint.organNameLatin && (
+                      <p className="text-xs text-muted-foreground mt-0.5 italic">{activeOrganScanPoint.organNameLatin}</p>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <p className="text-xs text-muted-foreground">Gewebe</p>
+                      <p className="text-sm text-foreground capitalize">{activeOrganScanPoint.tissueType || '–'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Tiefe</p>
+                      <p className="text-sm text-foreground capitalize">{activeOrganScanPoint.layerDepth}</p>
+                    </div>
+                  </div>
+
+                  {activeOrganScanPoint.harmonicFrequencies.length > 0 && (
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Harmonische</p>
+                      <div className="flex flex-wrap gap-1">
+                        {activeOrganScanPoint.harmonicFrequencies.map((freq, i) => (
+                          <span key={i} className="text-xs px-2 py-0.5 bg-muted rounded-full text-muted-foreground">
+                            {freq.toFixed(1)} Hz
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <Button
+                    onClick={() => onFrequencySelect?.(activeOrganScanPoint.scanFrequency)}
+                    className="w-full gap-2"
+                  >
+                    <Volume2 className="w-4 h-4" />
+                    Frequenz anwenden
+                  </Button>
+                </div>
               ) : (
                 <p className="text-sm text-muted-foreground text-center py-6">
                   Klicken Sie auf einen Punkt im 3D-Modell
