@@ -1274,6 +1274,7 @@ const AnatomyResonanceViewer = ({
                   onGLBLoaded={(info) => setGlbModelInfo(info)}
                   bodyHalfWidth={glbModelInfo ? Math.min(glbModelInfo.halfWidth, 0.15) : 0.12}
                   showResonancePoints={showResonancePoints}
+                  selectedModelUrl={selectedAnatomyModel?.resolvedUrl || AVAILABLE_MODELS.fullBody}
                 />
               </Canvas>
             </Suspense>
