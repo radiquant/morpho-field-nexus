@@ -941,7 +941,7 @@ function AnatomyScene({
               <GLBModelLoader
                 modelPath={AVAILABLE_MODELS.fullBody}
                 opacity={showMeridians ? 0.2 : 0.35}
-                scale={0.65}
+                scale={0.008}
                 position={[0, -0.1, 0]}
               />
             ) : (
