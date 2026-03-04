@@ -279,24 +279,27 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
 
   const handleStartTreatment = useCallback(() => {
     if (diagnosisResult?.imbalances && vectorAnalysis) {
-      // Speichere aktuelle Dimensionen als "vorher" Werte
       const currentDimensions = vectorAnalysis.clientVector.dimensions;
       setBeforeDimensions(currentDimensions.length >= 5 ? currentDimensions.slice(0, 5) : [50, 50, 50, 50, 50]);
       
-      // Log selected methods for treatment
       const methodNames = selectedMethods.join(', ');
-      console.log(`Starting treatment with methods: ${methodNames}, Server-GPU: ${serverHardwareEnabled}`);
+      console.log(`Starting treatment with methods: ${methodNames}, Server-GPU: ${serverHardwareEnabled}, NLS-Punkte: ${nlsTreatmentPoints.length}`);
       
-      startSequence(diagnosisResult.imbalances, {
-        pointsPerMeridian,
-        durationPerPoint: treatmentDuration,
-      });
+      startSequence(
+        diagnosisResult.imbalances,
+        {
+          pointsPerMeridian,
+          durationPerPoint: treatmentDuration,
+        },
+        undefined,
+        nlsTreatmentPoints.length > 0 ? nlsTreatmentPoints : undefined
+      );
       
       toast.success('Behandlung gestartet', {
-        description: `Methoden: ${methodNames}${serverHardwareEnabled ? ' + Server-GPU' : ''}`
+        description: `${methodNames}${serverHardwareEnabled ? ' + GPU' : ''}${nlsTreatmentPoints.length > 0 ? ` + ${nlsTreatmentPoints.length} NLS-Punkte` : ''}`
       });
     }
-  }, [diagnosisResult, vectorAnalysis, startSequence, pointsPerMeridian, treatmentDuration, selectedMethods, serverHardwareEnabled]);
+  }, [diagnosisResult, vectorAnalysis, startSequence, pointsPerMeridian, treatmentDuration, selectedMethods, serverHardwareEnabled, nlsTreatmentPoints]);
 
   const handleReanalyze = useCallback(() => {
     if (vectorAnalysis) {
