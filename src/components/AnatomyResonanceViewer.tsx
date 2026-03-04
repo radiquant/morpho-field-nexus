@@ -847,11 +847,12 @@ function AcupuncturePointMesh({
           onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
           onPointerOut={() => { document.body.style.cursor = 'default'; }}
         >
-          <sphereGeometry args={[0.015, 16, 16]} />
+          <sphereGeometry args={[0.012, 12, 12]} />
           <meshStandardMaterial
             color={pointColor}
             emissive={pointColor}
             emissiveIntensity={isActive ? 1 : 0.3 + dysregulationScore * 0.4}
+            depthWrite={false}
           />
         </mesh>
       </group>
