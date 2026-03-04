@@ -158,7 +158,8 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
       }));
   }, [nlsDysregulationData, includeNLSPoints, treatmentDuration]);
 
-  const {
+  // Nachtestungs-Einstellungen
+  const [retestEnabled, setRetestEnabled] = useState(true);
   const [retestPauseMinutes, setRetestPauseMinutes] = useState(5);
   const [isRetestPending, setIsRetestPending] = useState(false);
   const [retestCountdown, setRetestCountdown] = useState(0);
