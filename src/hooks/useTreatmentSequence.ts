@@ -439,7 +439,8 @@ export function useTreatmentSequence() {
   const startSequence = useCallback((
     imbalances: MeridianImbalance[], 
     options?: TreatmentOptions,
-    retestCallback?: () => Promise<number[]>
+    retestCallback?: () => Promise<number[]>,
+    extraPoints?: TreatmentPoint[]
   ) => {
     const effectiveOptions: TreatmentOptions = {
       pointsPerMeridian: options?.pointsPerMeridian ?? 3,
@@ -463,6 +464,11 @@ export function useTreatmentSequence() {
       effectiveOptions.durationPerPoint,
       effectiveOptions.includeExtraordinaryVessels
     );
+
+    // Append extra points (e.g. NLS scan points)
+    if (extraPoints && extraPoints.length > 0) {
+      points.push(...extraPoints);
+    }
 
     if (points.length === 0) {
       toast.warning('Keine Behandlungspunkte verfügbar');

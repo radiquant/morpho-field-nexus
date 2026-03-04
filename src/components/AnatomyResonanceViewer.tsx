@@ -40,11 +40,13 @@ import { useResonanceDatabase, type AnatomyResonancePoint } from '@/hooks/useRes
 import { DysregulationLegend, getDysregulationColor, getDysregulationLevel } from '@/components/anatomy/DysregulationLegend';
 import type { VectorAnalysis } from '@/services/feldengine';
 
+import type { NLSDysregulationData } from '@/components/MeridianDiagnosisPanel';
+
 interface AnatomyResonanceViewerProps {
   vectorAnalysis?: VectorAnalysis | null;
   onFrequencySelect?: (frequency: number) => void;
   onScanConfigChange?: (config: NLSScanConfig | null) => void;
-  onNLSDysregulationScores?: (scores: Map<string, number>) => void;
+  onNLSDysregulationData?: (data: NLSDysregulationData) => void;
 }
 
 // Anatomie-Modell Typen
@@ -1120,7 +1122,7 @@ const AnatomyResonanceViewer = ({
   vectorAnalysis,
   onFrequencySelect,
   onScanConfigChange,
-  onNLSDysregulationScores,
+  onNLSDysregulationData,
 }: AnatomyResonanceViewerProps) => {
   const [activeModel, setActiveModel] = useState<AnatomyModelType>('full_body');
   const [activePoint, setActivePoint] = useState<AnatomyResonancePoint | null>(null);
@@ -1363,12 +1365,16 @@ const AnatomyResonanceViewer = ({
     return scores;
   }, [vectorAnalysis, modelFilteredOrganScanPoints, activeScanConfig]);
 
-  // Notify parent about NLS dysregulation scores
+  // Notify parent about NLS dysregulation data (scores + points)
   useEffect(() => {
-    if (nlsDysregulationScores.size > 0) {
-      onNLSDysregulationScores?.(nlsDysregulationScores);
+    if (nlsDysregulationScores.size > 0 && organScanPoints.length > 0) {
+      onNLSDysregulationData?.({
+        scores: nlsDysregulationScores,
+        points: organScanPoints,
+        focusLabels: activeScanConfig?.focusList?.map(f => f.label),
+      });
     }
-  }, [nlsDysregulationScores, onNLSDysregulationScores]);
+  }, [nlsDysregulationScores, organScanPoints, onNLSDysregulationData, activeScanConfig]);
 
   // Notify parent about scan config changes
   useEffect(() => {

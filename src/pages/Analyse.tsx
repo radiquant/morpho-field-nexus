@@ -4,6 +4,7 @@
  * Ausgelagert von der Hauptseite für bessere Performance
  */
 import { useState, useCallback } from 'react';
+import type { NLSDysregulationData } from '@/components/MeridianDiagnosisPanel';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { ArrowLeft, Activity, X } from 'lucide-react';
@@ -33,7 +34,7 @@ const Analyse = () => {
   const [selectedFrequency, setSelectedFrequency] = useState<number | null>(null);
   const [treatmentResult, setTreatmentResult] = useState<TreatmentResult | null>(null);
   const [scanConfig, setScanConfig] = useState<NLSScanConfig | null>(null);
-  const [nlsDysregulationScores, setNlsDysregulationScores] = useState<Map<string, number>>(new Map());
+  const [nlsDysregulationData, setNlsDysregulationData] = useState<NLSDysregulationData | null>(null);
 
   const handleVectorCreated = useCallback((analysis: VectorAnalysis) => {
     setCurrentVectorAnalysis(analysis);
@@ -130,12 +131,13 @@ const Analyse = () => {
           vectorAnalysis={currentVectorAnalysis} 
           onFrequencySelect={handleFrequencySelect}
           onScanConfigChange={setScanConfig}
-          onNLSDysregulationScores={setNlsDysregulationScores}
+          onNLSDysregulationData={setNlsDysregulationData}
         />
         <MeridianDiagnosisPanel
           vectorAnalysis={currentVectorAnalysis}
           onFrequencySelect={handleFrequencySelect}
           onTreatmentComplete={handleTreatmentComplete}
+          nlsDysregulationData={nlsDysregulationData}
         />
         <FrequencyOutputModule />
         
