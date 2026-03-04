@@ -461,16 +461,16 @@ function ResonancePoint({
 
       {/* Label */}
       {isActive && (
-        <Html center distanceFactor={6} position={[0, 0.1, 0]}>
-          <div className="bg-background/90 backdrop-blur-sm px-3 py-2 rounded-lg border border-primary/30 shadow-lg min-w-[150px]">
-            <p className="text-sm font-medium text-foreground">{point.name}</p>
+        <Html center distanceFactor={18} position={[0, 0.04, 0]} style={{ pointerEvents: 'none' }}>
+          <div className="bg-background/90 backdrop-blur-sm px-2 py-1 rounded border border-primary/30 shadow-md whitespace-nowrap">
+            <p className="text-[10px] font-medium text-foreground">{point.name}</p>
             {point.nameLatin && (
-              <p className="text-xs text-muted-foreground italic">{point.nameLatin}</p>
+              <p className="text-[9px] text-muted-foreground italic">{point.nameLatin}</p>
             )}
-            <div className="flex items-center gap-2 mt-1">
-              <Zap className="w-3 h-3 text-primary" />
-              <span className="text-xs font-mono text-primary">
-                {point.primaryFrequency.toFixed(2)} Hz
+            <div className="flex items-center gap-1 mt-0.5">
+              <Zap className="w-2.5 h-2.5 text-primary" />
+              <span className="text-[9px] font-mono text-primary">
+                {point.primaryFrequency.toFixed(1)} Hz
               </span>
             </div>
           </div>
@@ -808,33 +808,25 @@ function AcupuncturePointMesh({
         </mesh>
 
         {/* Label nur bei Hover oder aktiv */}
-        {(showLabel || isHovered || isActive) && (
-          <Html center distanceFactor={6} position={[0, 0.05, 0]} style={{ pointerEvents: 'none' }}>
-            <div className="bg-background/95 backdrop-blur-sm px-3 py-2 rounded-lg border border-primary/40 shadow-lg min-w-[120px]">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-bold text-foreground">{point.id}</span>
+        {(isHovered || isActive) && (
+          <Html center distanceFactor={18} position={[0, 0.03, 0]} style={{ pointerEvents: 'none' }}>
+            <div className="bg-background/95 backdrop-blur-sm px-2 py-1 rounded border border-primary/40 shadow-md whitespace-nowrap">
+              <div className="flex items-center gap-1">
+                <span className="text-[10px] font-bold text-foreground">{point.id}</span>
                 {dysregulationScore > 0 && (
                   <span 
-                    className="text-xs px-1.5 py-0.5 rounded"
+                    className="text-[9px] px-1 rounded"
                     style={{ backgroundColor: `${pointColor}20`, color: pointColor }}
                   >
                     {dysLevel.label}
                   </span>
                 )}
               </div>
-              <p className="text-xs text-muted-foreground">{point.name}</p>
-              <div className="flex items-center gap-1 mt-1">
-                <Zap className="w-3 h-3 text-primary" />
-                <span className="text-xs text-primary font-mono">{point.frequency} Hz</span>
+              <p className="text-[9px] text-muted-foreground">{point.name}</p>
+              <div className="flex items-center gap-1">
+                <Zap className="w-2 h-2 text-primary" />
+                <span className="text-[9px] text-primary font-mono">{point.frequency} Hz</span>
               </div>
-              {dysregulationScore > 0 && (
-                <div className="mt-1 h-1 bg-muted rounded-full overflow-hidden">
-                  <div 
-                    className="h-full rounded-full transition-all"
-                    style={{ width: `${dysregulationScore * 100}%`, backgroundColor: pointColor }}
-                  />
-                </div>
-              )}
             </div>
           </Html>
         )}
@@ -1004,8 +996,9 @@ function AnatomyScene({
       <OrbitControls
         enablePan={false}
         enableZoom={true}
-        minDistance={1.5}
-        maxDistance={5}
+        minDistance={1}
+        maxDistance={6}
+        target={[0, 0.4, 0]}
         autoRotate={!activePointId && !activeAcupointId}
         autoRotateSpeed={0.5}
       />
