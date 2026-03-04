@@ -1,16 +1,17 @@
 /**
  * Login-Seite
- * Nur für registrierte Benutzer - keine Registrierung möglich
+ * Login + temporäre Registrierung für Ersteinrichtung
  */
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Loader2, Activity, Lock } from 'lucide-react';
+import { Loader2, Activity, Lock, UserPlus } from 'lucide-react';
 import { z } from 'zod';
 
 const loginSchema = z.object({
@@ -20,43 +21,42 @@ const loginSchema = z.object({
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckingSession, setIsCheckingSession] = useState(true);
+  const [activeTab, setActiveTab] = useState('login');
 
-  // Prüfen ob bereits eingeloggt
+  const redirectTo = (location.state as any)?.from?.pathname || '/';
+
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
-        navigate('/', { replace: true });
+        navigate(redirectTo, { replace: true });
       }
       setIsCheckingSession(false);
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
-        navigate('/', { replace: true });
+        navigate(redirectTo, { replace: true });
       }
       setIsCheckingSession(false);
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, redirectTo]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validierung
     const validation = loginSchema.safeParse({ email, password });
     if (!validation.success) {
-      const errors = validation.error.errors;
-      toast.error(errors[0].message);
+      toast.error(validation.error.errors[0].message);
       return;
     }
 
     setIsLoading(true);
-
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email: email.trim(),
@@ -65,27 +65,53 @@ export default function Login() {
 
       if (error) {
         if (error.message.includes('Invalid login credentials')) {
-          toast.error('Ungültige Anmeldedaten', {
-            description: 'E-Mail oder Passwort ist falsch.',
-          });
+          toast.error('Ungültige Anmeldedaten', { description: 'E-Mail oder Passwort ist falsch.' });
         } else if (error.message.includes('Email not confirmed')) {
-          toast.error('E-Mail nicht bestätigt', {
-            description: 'Bitte bestätigen Sie Ihre E-Mail-Adresse.',
-          });
+          toast.error('E-Mail nicht bestätigt');
         } else {
-          toast.error('Anmeldung fehlgeschlagen', {
-            description: error.message,
-          });
+          toast.error('Anmeldung fehlgeschlagen', { description: error.message });
         }
         return;
       }
 
       if (data.user) {
         toast.success('Erfolgreich angemeldet');
-        navigate('/', { replace: true });
+        navigate(redirectTo, { replace: true });
       }
     } catch (error) {
       console.error('Login error:', error);
+      toast.error('Ein unerwarteter Fehler ist aufgetreten');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const validation = loginSchema.safeParse({ email, password });
+    if (!validation.success) {
+      toast.error(validation.error.errors[0].message);
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+      });
+
+      if (error) {
+        toast.error('Registrierung fehlgeschlagen', { description: error.message });
+        return;
+      }
+
+      if (data.user) {
+        toast.success('Konto erstellt – Sie sind jetzt angemeldet');
+        navigate(redirectTo, { replace: true });
+      }
+    } catch (error) {
+      console.error('Signup error:', error);
       toast.error('Ein unerwarteter Fehler ist aufgetreten');
     } finally {
       setIsLoading(false);
@@ -110,67 +136,53 @@ export default function Login() {
           <div>
             <CardTitle className="text-2xl font-display">Feldengine</CardTitle>
             <CardDescription className="mt-2">
-              Melden Sie sich mit Ihren Zugangsdaten an
+              Zugang zur Therapie-Plattform
             </CardDescription>
           </div>
         </CardHeader>
         
         <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">E-Mail</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="ihre@email.de"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={isLoading}
-                required
-                className="bg-background"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="password">Passwort</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={isLoading}
-                required
-                className="bg-background"
-              />
-            </div>
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-2 mb-4">
+              <TabsTrigger value="login">Anmelden</TabsTrigger>
+              <TabsTrigger value="signup">Registrieren</TabsTrigger>
+            </TabsList>
 
-            <Button 
-              type="submit" 
-              className="w-full gap-2" 
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Anmelden...
-                </>
-              ) : (
-                <>
-                  <Lock className="w-4 h-4" />
-                  Anmelden
-                </>
-              )}
-            </Button>
-          </form>
+            <TabsContent value="login">
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="login-email">E-Mail</Label>
+                  <Input id="login-email" type="email" placeholder="ihre@email.de" value={email} onChange={(e) => setEmail(e.target.value)} disabled={isLoading} required className="bg-background" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="login-password">Passwort</Label>
+                  <Input id="login-password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} disabled={isLoading} required className="bg-background" />
+                </div>
+                <Button type="submit" className="w-full gap-2" disabled={isLoading}>
+                  {isLoading ? <><Loader2 className="w-4 h-4 animate-spin" />Anmelden...</> : <><Lock className="w-4 h-4" />Anmelden</>}
+                </Button>
+              </form>
+            </TabsContent>
 
-          <div className="mt-6 pt-6 border-t text-center">
-            <p className="text-sm text-muted-foreground">
-              Nur für registrierte Therapeuten.
-              <br />
-              Kontaktieren Sie den Administrator für Zugangsdaten.
-            </p>
-          </div>
+            <TabsContent value="signup">
+              <form onSubmit={handleSignup} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="signup-email">E-Mail</Label>
+                  <Input id="signup-email" type="email" placeholder="ihre@email.de" value={email} onChange={(e) => setEmail(e.target.value)} disabled={isLoading} required className="bg-background" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-password">Passwort (mind. 6 Zeichen)</Label>
+                  <Input id="signup-password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} disabled={isLoading} required className="bg-background" />
+                </div>
+                <Button type="submit" className="w-full gap-2" disabled={isLoading}>
+                  {isLoading ? <><Loader2 className="w-4 h-4 animate-spin" />Registrieren...</> : <><UserPlus className="w-4 h-4" />Konto erstellen</>}
+                </Button>
+              </form>
+              <p className="text-xs text-muted-foreground mt-3 text-center">
+                ⚠️ Ersteinrichtung – Registrierung wird nach Einrichtung deaktiviert.
+              </p>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
     </div>
