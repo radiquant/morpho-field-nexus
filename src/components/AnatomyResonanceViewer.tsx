@@ -3,7 +3,7 @@
  * Interaktives 3D-Modell mit resonierenden Körperpunkten und TCM-Meridianen
  * Mit Dysregulations-Farbskala für Meridianpunkte
  */
-import { useRef, useState, useEffect, useMemo, Suspense } from 'react';
+import { useRef, useState, useEffect, useMemo, useCallback, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Html, Environment, ContactShadows, Float, Line } from '@react-three/drei';
 import { GLBModelLoader, AVAILABLE_MODELS, type GLBModelInfo } from '@/components/anatomy/GLBModelLoader';
@@ -11,6 +11,7 @@ import { ChakraVisualization, type ChakraData } from '@/components/anatomy/Chakr
 import { ModelSelector } from '@/components/anatomy/ModelSelector';
 import { ModelUpload } from '@/components/anatomy/ModelUpload';
 import { useAnatomyModels, type AnatomyModel } from '@/hooks/useAnatomyModels';
+import { projectMeridianPoints, projectMeridianPath, collectMeshes, isMeshSufficientForProjection, type ProjectedPoint } from '@/utils/surfaceProjection';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -686,7 +687,7 @@ function BrainModel({ opacity = 0.5 }: { opacity?: number }) {
 
 // ============= MERIDIAN 3D COMPONENTS =============
 
-// Einzelner Meridian-Pfad
+// Einzelner Meridian-Pfad mit optionaler Surface-Projection
 function MeridianLine({
   meridian,
   isActive,
@@ -694,6 +695,8 @@ function MeridianLine({
   onAcupointClick,
   activeAcupointId,
   dysregulationScores,
+  projectedPoints,
+  projectedPath,
 }: {
   meridian: MeridianPath;
   isActive: boolean;
@@ -701,14 +704,20 @@ function MeridianLine({
   onAcupointClick: (point: AcupuncturePoint, meridian: MeridianPath) => void;
   activeAcupointId: string | null;
   dysregulationScores: Map<string, number>;
+  projectedPoints?: Map<string, ProjectedPoint>;
+  projectedPath?: THREE.Vector3[];
 }) {
   const opacity = isActive ? 0.9 : 0.5;
+
+  // Projizierte oder Original-Pfade verwenden
+  const leftPath = projectedPath || meridian.points;
+  const rightPath = leftPath.map(p => new THREE.Vector3(-p.x, p.y, p.z));
 
   return (
     <group>
       {/* Meridian-Linie */}
       <Line
-        points={meridian.points}
+        points={leftPath}
         color={meridian.color}
         lineWidth={isActive ? 4 : 2}
         transparent
@@ -717,7 +726,7 @@ function MeridianLine({
 
       {/* Gespiegelte Linie (rechte Körperseite) */}
       <Line
-        points={meridian.points.map(p => new THREE.Vector3(-p.x, p.y, p.z))}
+        points={rightPath}
         color={meridian.color}
         lineWidth={isActive ? 4 : 2}
         transparent
@@ -725,17 +734,25 @@ function MeridianLine({
       />
 
       {/* Akupunkturpunkte */}
-      {meridian.acupoints.map((point) => (
-        <AcupuncturePointMesh
-          key={point.id}
-          point={point}
-          meridian={meridian}
-          isActive={activeAcupointId === point.id}
-          showLabel={showLabels || activeAcupointId === point.id}
-          onClick={() => onAcupointClick(point, meridian)}
-          dysregulationScore={dysregulationScores.get(point.id) || 0}
-        />
-      ))}
+      {meridian.acupoints.map((point) => {
+        // Projizierte Position verwenden falls vorhanden
+        const projected = projectedPoints?.get(point.id);
+        const effectivePoint = projected?.wasProjected
+          ? { ...point, position: projected.projectedPosition }
+          : point;
+
+        return (
+          <AcupuncturePointMesh
+            key={point.id}
+            point={effectivePoint}
+            meridian={meridian}
+            isActive={activeAcupointId === point.id}
+            showLabel={showLabels || activeAcupointId === point.id}
+            onClick={() => onAcupointClick(point, meridian)}
+            dysregulationScore={dysregulationScores.get(point.id) || 0}
+          />
+        );
+      })}
     </group>
   );
 }
@@ -836,7 +853,7 @@ function AcupuncturePointMesh({
   );
 }
 
-// Meridian-System-Modell
+// Meridian-System-Modell mit Surface-Projection
 function MeridianSystemModel({
   activeMeridianId,
   showLabels,
@@ -844,6 +861,8 @@ function MeridianSystemModel({
   activeAcupointId,
   dysregulationScores,
   showBodySilhouette = true,
+  surfaceMeshes,
+  meridianXScale = 1,
 }: {
   activeMeridianId: string | null;
   showLabels: boolean;
@@ -851,24 +870,58 @@ function MeridianSystemModel({
   activeAcupointId: string | null;
   dysregulationScores: Map<string, number>;
   showBodySilhouette?: boolean;
+  surfaceMeshes?: THREE.Mesh[];
+  meridianXScale?: number;
 }) {
+  // Surface-Projection für alle Meridiane berechnen
+  const projections = useMemo(() => {
+    if (!surfaceMeshes || surfaceMeshes.length === 0) return null;
+    if (!isMeshSufficientForProjection(surfaceMeshes)) return null;
+
+    const result = new Map<string, { points: Map<string, ProjectedPoint>; path: THREE.Vector3[] }>();
+
+    for (const meridian of TCM_MERIDIANS) {
+      const projectedPoints = projectMeridianPoints(
+        meridian.acupoints,
+        surfaceMeshes,
+        meridianXScale,
+        0.01
+      );
+      const projectedPath = projectMeridianPath(
+        meridian.points,
+        surfaceMeshes,
+        meridianXScale,
+        0.008
+      );
+      result.set(meridian.id, { points: projectedPoints, path: projectedPath });
+    }
+
+    console.log(`Surface-Projection: ${result.size} Meridiane projiziert`);
+    return result;
+  }, [surfaceMeshes, meridianXScale]);
+
   return (
     <group>
       {/* Körper-Silhouette nur wenn standalone (nicht full_body) */}
       {showBodySilhouette && <HumanBodyModel opacity={0.35} />}
 
       {/* Alle Meridiane */}
-      {TCM_MERIDIANS.map((meridian) => (
-        <MeridianLine
-          key={meridian.id}
-          meridian={meridian}
-          isActive={activeMeridianId === meridian.id || !activeMeridianId}
-          showLabels={showLabels && (activeMeridianId === meridian.id || !activeMeridianId)}
-          onAcupointClick={onAcupointClick}
-          activeAcupointId={activeAcupointId}
-          dysregulationScores={dysregulationScores}
-        />
-      ))}
+      {TCM_MERIDIANS.map((meridian) => {
+        const proj = projections?.get(meridian.id);
+        return (
+          <MeridianLine
+            key={meridian.id}
+            meridian={meridian}
+            isActive={activeMeridianId === meridian.id || !activeMeridianId}
+            showLabels={showLabels && (activeMeridianId === meridian.id || !activeMeridianId)}
+            onAcupointClick={onAcupointClick}
+            activeAcupointId={activeAcupointId}
+            dysregulationScores={dysregulationScores}
+            projectedPoints={proj?.points}
+            projectedPath={proj?.path}
+          />
+        );
+      })}
     </group>
   );
 }
@@ -917,6 +970,8 @@ function AnatomyScene({
   showResonancePoints: boolean;
   selectedModelUrl: string;
 }) {
+  const [surfaceMeshes, setSurfaceMeshes] = useState<THREE.Mesh[]>([]);
+
   // Filter Punkte basierend auf Modell-Typ
   const visiblePoints = useMemo(() => {
     switch (modelType) {
@@ -931,11 +986,17 @@ function AnatomyScene({
           p.bodyRegion === 'head'
         );
       case 'meridians':
-        return []; // Meridian-Ansicht zeigt nur Akupunkturpunkte
+        return [];
       default:
         return anatomyPoints;
     }
   }, [modelType, anatomyPoints]);
+
+  // Callback für Meshes vom GLB-Modell
+  const handleMeshesReady = useCallback((meshes: THREE.Mesh[]) => {
+    setSurfaceMeshes(meshes);
+    console.log(`Surface-Projection: ${meshes.length} Meshes bereit`);
+  }, []);
 
   return (
     <>
@@ -963,12 +1024,13 @@ function AnatomyScene({
                 modelPath={selectedModelUrl}
                 opacity={showMeridians || showChakras ? 0.2 : 0.35}
                 onLoaded={onGLBLoaded}
+                onMeshesReady={handleMeshesReady}
               />
             ) : (
               <HumanBodyModel opacity={showMeridians ? 0.25 : 0.3} />
             )}
             {showMeridians && (
-              <group scale={[meridianXScale, 1, 1]}>
+              <group scale={useGLBModel && surfaceMeshes.length > 0 ? [1, 1, 1] : [meridianXScale, 1, 1]}>
                 <MeridianSystemModel
                   activeMeridianId={activeMeridianId}
                   showLabels={showMeridianLabels}
@@ -976,6 +1038,8 @@ function AnatomyScene({
                   activeAcupointId={activeAcupointId}
                   dysregulationScores={dysregulationScores}
                   showBodySilhouette={false}
+                  surfaceMeshes={useGLBModel ? surfaceMeshes : undefined}
+                  meridianXScale={meridianXScale}
                 />
               </group>
             )}

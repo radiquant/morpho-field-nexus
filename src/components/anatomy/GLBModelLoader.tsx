@@ -16,6 +16,7 @@ interface GLBModelLoaderProps {
   wireframe?: boolean;
   highlightColor?: string;
   onLoaded?: (info: GLBModelInfo) => void;
+  onMeshesReady?: (meshes: THREE.Mesh[]) => void;
 }
 
 export interface GLBModelInfo {
@@ -48,6 +49,7 @@ export function GLBModelLoader({
   wireframe = false,
   highlightColor,
   onLoaded,
+  onMeshesReady,
 }: GLBModelLoaderProps) {
   const groupRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF(modelPath);
@@ -139,6 +141,21 @@ export function GLBModelLoader({
   useEffect(() => {
     onLoaded?.(modelInfo);
   }, [modelInfo, onLoaded]);
+
+  // Meshes für Surface-Projection exportieren
+  useEffect(() => {
+    if (clonedScene && onMeshesReady) {
+      const meshes: THREE.Mesh[] = [];
+      clonedScene.traverse((child) => {
+        if (child instanceof THREE.Mesh) {
+          meshes.push(child);
+        }
+      });
+      if (meshes.length > 0) {
+        onMeshesReady(meshes);
+      }
+    }
+  }, [clonedScene, onMeshesReady]);
 
   // Atem-Animation
   useFrame((state) => {
