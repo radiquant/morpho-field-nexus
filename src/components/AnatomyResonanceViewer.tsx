@@ -9,6 +9,7 @@ import { OrbitControls, Html, Environment, ContactShadows, Float, Line } from '@
 import { GLBModelLoader, AVAILABLE_MODELS, type GLBModelInfo } from '@/components/anatomy/GLBModelLoader';
 import { ChakraVisualization, type ChakraData } from '@/components/anatomy/ChakraVisualization';
 import { ModelSelector } from '@/components/anatomy/ModelSelector';
+import { ModelUpload } from '@/components/anatomy/ModelUpload';
 import { useAnatomyModels, type AnatomyModel } from '@/hooks/useAnatomyModels';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
