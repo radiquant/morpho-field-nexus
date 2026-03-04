@@ -58,6 +58,55 @@ export function ModelUpload({ onUploadComplete }: ModelUploadProps) {
     }
   };
 
+  const uploadWithTus = (bucketName: string, fileName: string, file: File): Promise<void> => {
+    return new Promise(async (resolve, reject) => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        reject(new Error('Nicht authentifiziert'));
+        return;
+      }
+
+      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID || 'yoryyvfuscyfumeseour';
+
+      const upload = new tus.Upload(file, {
+        endpoint: `https://${projectId}.supabase.co/storage/v1/upload/resumable`,
+        retryDelays: [0, 3000, 5000, 10000],
+        headers: {
+          authorization: `Bearer ${session.access_token}`,
+          'x-upsert': 'false',
+        },
+        uploadDataDuringCreation: true,
+        removeFingerprintOnSuccess: true,
+        metadata: {
+          bucketName: bucketName,
+          objectName: fileName,
+          contentType: file.type || 'application/octet-stream',
+          cacheControl: '3600',
+        },
+        chunkSize: 6 * 1024 * 1024, // 6MB chunks
+        onError: (error) => {
+          console.error('TUS Upload-Fehler:', error);
+          reject(error);
+        },
+        onProgress: (bytesUploaded, bytesTotal) => {
+          const percentage = Math.round((bytesUploaded / bytesTotal) * 60) + 10; // 10-70%
+          setUploadProgress(percentage);
+        },
+        onSuccess: () => {
+          resolve();
+        },
+      });
+
+      // Check for previous uploads to resume
+      const previousUploads = await upload.findPreviousUploads();
+      if (previousUploads.length) {
+        upload.resumeFromPreviousUpload(previousUploads[0]);
+      }
+
+      upload.start();
+    });
+  };
+
   const handleUpload = async () => {
     if (!selectedFile || !name) {
       toast.error('Bitte Name und Datei angeben');
@@ -68,20 +117,11 @@ export function ModelUpload({ onUploadComplete }: ModelUploadProps) {
     setUploadProgress(10);
 
     try {
-      // 1. Upload to storage
+      // 1. Upload to storage via TUS (resumable, no size limit from proxy)
       const fileName = `${Date.now()}-${selectedFile.name}`;
       const storagePath = fileName;
 
-      setUploadProgress(30);
-
-      const { error: uploadError } = await supabase.storage
-        .from('3d-models')
-        .upload(storagePath, selectedFile, {
-          cacheControl: '3600',
-          upsert: false,
-        });
-
-      if (uploadError) throw uploadError;
+      await uploadWithTus('3d-models', storagePath, selectedFile);
 
       setUploadProgress(70);
 
