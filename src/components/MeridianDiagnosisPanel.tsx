@@ -133,8 +133,32 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
   const [selectedMethods, setSelectedMethods] = useState<string[]>(['webaudio']);
   const [serverHardwareEnabled, setServerHardwareEnabled] = useState(false);
   
-  // Nachtestungs-Einstellungen
-  const [retestEnabled, setRetestEnabled] = useState(true);
+  // NLS-Integration
+  const [includeNLSPoints, setIncludeNLSPoints] = useState(true);
+  
+  // NLS-dysregulierte Punkte als TreatmentPoints
+  const nlsTreatmentPoints = useMemo(() => {
+    if (!nlsDysregulationData || !includeNLSPoints) return [];
+    const { scores, points } = nlsDysregulationData;
+    return points
+      .filter(p => (scores.get(p.id) || 0) > 2.5) // nur signifikante Dysregulation
+      .sort((a, b) => (scores.get(b.id) || 0) - (scores.get(a.id) || 0))
+      .slice(0, 15)
+      .map(p => ({
+        id: `nls-${p.id}`,
+        meridianId: `nls-${p.organSystem}`,
+        meridianName: `NLS: ${p.organNameDe}`,
+        pointName: p.pointName,
+        frequency: p.scanFrequency,
+        duration: treatmentDuration || 60,
+        element: 'earth' as string,
+        isExtraordinaryVessel: false,
+        dysregulationScore: (scores.get(p.id) || 0) / 6,
+        explanation: `NLS-Dysregulation ${((scores.get(p.id) || 0)).toFixed(1)}/6 – ${p.pointName} (${p.organNameDe})`,
+      }));
+  }, [nlsDysregulationData, includeNLSPoints, treatmentDuration]);
+
+  const {
   const [retestPauseMinutes, setRetestPauseMinutes] = useState(5);
   const [isRetestPending, setIsRetestPending] = useState(false);
   const [retestCountdown, setRetestCountdown] = useState(0);
