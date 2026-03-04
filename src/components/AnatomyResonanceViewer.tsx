@@ -14,6 +14,7 @@ import { useAnatomyModels, type AnatomyModel } from '@/hooks/useAnatomyModels';
 import { projectMeridianPoints, projectMeridianPath, collectMeshes, isMeshSufficientForProjection, type ProjectedPoint } from '@/utils/surfaceProjection';
 import { OrganScanLayer } from '@/components/anatomy/OrganScanLayer';
 import { useOrganScanPoints, type OrganScanPoint, getOrganColor, getTissueIcon } from '@/hooks/useOrganScanPoints';
+import { NLSScanConfigPanel, type NLSScanConfig } from '@/components/NLSScanConfigPanel';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -28,9 +29,11 @@ import {
   RotateCcw,
   Info,
   GitBranch,
-  AlertTriangle
+  AlertTriangle,
+  Settings2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useResonanceDatabase, type AnatomyResonancePoint } from '@/hooks/useResonanceDatabase';
@@ -40,6 +43,8 @@ import type { VectorAnalysis } from '@/services/feldengine';
 interface AnatomyResonanceViewerProps {
   vectorAnalysis?: VectorAnalysis | null;
   onFrequencySelect?: (frequency: number) => void;
+  onScanConfigChange?: (config: NLSScanConfig | null) => void;
+  onNLSDysregulationScores?: (scores: Map<string, number>) => void;
 }
 
 // Anatomie-Modell Typen
@@ -1116,6 +1121,8 @@ function AnatomyScene({
 const AnatomyResonanceViewer = ({
   vectorAnalysis,
   onFrequencySelect,
+  onScanConfigChange,
+  onNLSDysregulationScores,
 }: AnatomyResonanceViewerProps) => {
   const [activeModel, setActiveModel] = useState<AnatomyModelType>('full_body');
   const [activePoint, setActivePoint] = useState<AnatomyResonancePoint | null>(null);
@@ -1132,6 +1139,8 @@ const AnatomyResonanceViewer = ({
   const [showOrganScan, setShowOrganScan] = useState(false);
   const [activeChakra, setActiveChakra] = useState<ChakraData | null>(null);
   const [glbModelInfo, setGlbModelInfo] = useState<GLBModelInfo | null>(null);
+  const [showScanConfig, setShowScanConfig] = useState(false);
+  const [activeScanConfig, setActiveScanConfig] = useState<NLSScanConfig | null>(null);
 
   const {
     points: organScanPoints,
@@ -1167,12 +1176,57 @@ const AnatomyResonanceViewer = ({
     loadOrganScanPoints();
   }, [loadAnatomyPoints, loadOrganScanPoints]);
 
+  // Model-aware layer visibility
+  const visibleLayers = useMemo(() => {
+    if (selectedAnatomyModel?.visibleLayers) {
+      return new Set(selectedAnatomyModel.visibleLayers);
+    }
+    return new Set(['meridians', 'chakras', 'resonance_points', 'nls_scan']);
+  }, [selectedAnatomyModel]);
+
+  const canShowMeridians = visibleLayers.has('meridians');
+  const canShowChakras = visibleLayers.has('chakras');
+  const canShowResonancePoints = visibleLayers.has('resonance_points');
+  const canShowNLS = visibleLayers.has('nls_scan');
+
+  // Auto-disable layers when model doesn't support them
+  useEffect(() => {
+    if (!canShowMeridians && showMeridians) setShowMeridians(false);
+    if (!canShowChakras && showChakras) setShowChakras(false);
+    if (!canShowResonancePoints && showResonancePoints) setShowResonancePoints(false);
+    if (!canShowNLS && showOrganScan) setShowOrganScan(false);
+  }, [canShowMeridians, canShowChakras, canShowResonancePoints, canShowNLS]);
+
+  // Filter NLS points by model's applicable organ systems
+  const modelFilteredOrganScanPoints = useMemo(() => {
+    if (activeScanConfig) {
+      return organScanPoints.filter(p => activeScanConfig.selectedPointIds.includes(p.id));
+    }
+    if (selectedAnatomyModel?.applicableOrganSystems?.length) {
+      return organScanPoints.filter(p => selectedAnatomyModel.applicableOrganSystems!.includes(p.organSystem));
+    }
+    return organScanPoints;
+  }, [organScanPoints, selectedAnatomyModel, activeScanConfig]);
+
   // Wenn Meridian-Ansicht aktiviert wird
   useEffect(() => {
     if (activeModel === 'meridians') {
       setShowMeridians(true);
     }
   }, [activeModel]);
+
+  // Scan config handler
+  const handleScanConfigConfirm = useCallback((config: NLSScanConfig) => {
+    setActiveScanConfig(config);
+    setShowScanConfig(false);
+    setShowOrganScan(true);
+    // Apply organ filter from config
+    if (config.selectedOrgans.length === 1) {
+      setSelectedOrganFilter(config.selectedOrgans[0]);
+    } else {
+      setSelectedOrganFilter(null);
+    }
+  }, [setSelectedOrganFilter]);
 
   // Akupunktur-Punkt auswählen
   const handleAcupointClick = (point: AcupuncturePoint, meridian: MeridianPath) => {
@@ -1270,6 +1324,58 @@ const AnatomyResonanceViewer = ({
     return scores;
   }, [vectorAnalysis]);
 
+  // NLS organ scan dysregulation scores
+  const nlsDysregulationScores = useMemo(() => {
+    const scores = new Map<string, number>();
+    if (!vectorAnalysis) return scores;
+
+    const dimensions = vectorAnalysis.clientVector.dimensions;
+    const physical = dimensions[0] || 0;
+    const emotional = dimensions[1] || 0;
+    const energy = dimensions[3] || 0;
+    const stress = dimensions[4] || 0;
+
+    // Organ-specific dysregulation mapping
+    const organWeights: Record<string, { physical: number; emotional: number; energy: number; stress: number }> = {
+      heart: { physical: 0.3, emotional: 0.4, energy: 0.2, stress: 0.1 },
+      liver: { physical: 0.2, emotional: 0.4, energy: 0.2, stress: 0.2 },
+      kidney: { physical: 0.3, emotional: 0.1, energy: 0.4, stress: 0.2 },
+      lung: { physical: 0.4, emotional: 0.2, energy: 0.2, stress: 0.2 },
+      spleen: { physical: 0.3, emotional: 0.2, energy: 0.3, stress: 0.2 },
+      stomach: { physical: 0.4, emotional: 0.2, energy: 0.2, stress: 0.2 },
+      pancreas: { physical: 0.3, emotional: 0.1, energy: 0.3, stress: 0.3 },
+      brain: { physical: 0.1, emotional: 0.3, energy: 0.2, stress: 0.4 },
+      thyroid: { physical: 0.2, emotional: 0.2, energy: 0.4, stress: 0.2 },
+      intestine: { physical: 0.4, emotional: 0.2, energy: 0.2, stress: 0.2 },
+    };
+
+    modelFilteredOrganScanPoints.forEach(point => {
+      const w = organWeights[point.organSystem] || { physical: 0.25, emotional: 0.25, energy: 0.25, stress: 0.25 };
+      let dysScore = Math.abs(physical) * w.physical + Math.abs(emotional) * w.emotional + Math.abs(energy) * w.energy + Math.abs(stress) * w.stress;
+      
+      // Focus boost: higher dysregulation visibility for focused organs
+      if (activeScanConfig?.focusList.some(f => f.relatedOrgans?.includes(point.organSystem))) {
+        dysScore *= 1.3;
+      }
+
+      dysScore *= (1 - vectorAnalysis.attractorState.stability) + 0.3;
+      scores.set(point.id, Math.min(1, Math.max(0, dysScore)));
+    });
+
+    return scores;
+  }, [vectorAnalysis, modelFilteredOrganScanPoints, activeScanConfig]);
+
+  // Notify parent about NLS dysregulation scores
+  useEffect(() => {
+    if (nlsDysregulationScores.size > 0) {
+      onNLSDysregulationScores?.(nlsDysregulationScores);
+    }
+  }, [nlsDysregulationScores, onNLSDysregulationScores]);
+
+  // Notify parent about scan config changes
+  useEffect(() => {
+    onScanConfigChange?.(activeScanConfig);
+  }, [activeScanConfig, onScanConfigChange]);
   // Modell wechseln
   const currentModelIndex = MODEL_CONFIGS.findIndex(m => m.id === activeModel);
   const prevModel = () => {
@@ -1378,7 +1484,7 @@ const AnatomyResonanceViewer = ({
                   showResonancePoints={showResonancePoints}
                   selectedModelUrl={selectedAnatomyModel?.resolvedUrl || AVAILABLE_MODELS.fullBody}
                   showOrganScan={showOrganScan}
-                  organScanPoints={organScanPoints}
+                  organScanPoints={modelFilteredOrganScanPoints}
                   activeOrganScanPointId={activeOrganScanPoint?.id || null}
                   onOrganScanPointClick={(p) => { setActiveOrganScanPoint(p); setActivePoint(null); setActiveAcupoint(null); setActiveChakra(null); }}
                   selectedOrganFilter={selectedOrganFilter}
@@ -1425,50 +1531,58 @@ const AnatomyResonanceViewer = ({
                     3D-Modell
                   </Label>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <Switch
-                    id="show-meridians"
-                    checked={showMeridians}
-                    onCheckedChange={setShowMeridians}
-                    className="scale-75"
-                  />
-                  <Label htmlFor="show-meridians" className="text-xs text-foreground">
-                    Meridiane
-                  </Label>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Switch
-                    id="show-chakras"
-                    checked={showChakras}
-                    onCheckedChange={setShowChakras}
-                    className="scale-75"
-                  />
-                  <Label htmlFor="show-chakras" className="text-xs text-foreground">
-                    Chakren
-                  </Label>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Switch
-                    id="show-resonance"
-                    checked={showResonancePoints}
-                    onCheckedChange={setShowResonancePoints}
-                    className="scale-75"
-                  />
-                  <Label htmlFor="show-resonance" className="text-xs text-foreground">
-                    Organe
-                  </Label>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Switch
-                    id="show-nls"
-                    checked={showOrganScan}
-                    onCheckedChange={setShowOrganScan}
-                    className="scale-75"
-                  />
-                  <Label htmlFor="show-nls" className="text-xs text-foreground">
-                    NLS-Scan
-                  </Label>
-                </div>
+                {canShowMeridians && (
+                  <div className="flex items-center gap-1.5">
+                    <Switch
+                      id="show-meridians"
+                      checked={showMeridians}
+                      onCheckedChange={setShowMeridians}
+                      className="scale-75"
+                    />
+                    <Label htmlFor="show-meridians" className="text-xs text-foreground">
+                      Meridiane
+                    </Label>
+                  </div>
+                )}
+                {canShowChakras && (
+                  <div className="flex items-center gap-1.5">
+                    <Switch
+                      id="show-chakras"
+                      checked={showChakras}
+                      onCheckedChange={setShowChakras}
+                      className="scale-75"
+                    />
+                    <Label htmlFor="show-chakras" className="text-xs text-foreground">
+                      Chakren
+                    </Label>
+                  </div>
+                )}
+                {canShowResonancePoints && (
+                  <div className="flex items-center gap-1.5">
+                    <Switch
+                      id="show-resonance"
+                      checked={showResonancePoints}
+                      onCheckedChange={setShowResonancePoints}
+                      className="scale-75"
+                    />
+                    <Label htmlFor="show-resonance" className="text-xs text-foreground">
+                      Organe
+                    </Label>
+                  </div>
+                )}
+                {canShowNLS && (
+                  <div className="flex items-center gap-1.5">
+                    <Switch
+                      id="show-nls"
+                      checked={showOrganScan}
+                      onCheckedChange={setShowOrganScan}
+                      className="scale-75"
+                    />
+                    <Label htmlFor="show-nls" className="text-xs text-foreground">
+                      NLS-Scan
+                    </Label>
+                  </div>
+                )}
               </div>
             )}
 
@@ -1778,13 +1892,55 @@ const AnatomyResonanceViewer = ({
               </div>
             )}
 
+            {/* NLS Scan Configuration */}
+            {canShowNLS && (
+              <NLSScanConfigPanel
+                organGroups={organGroups}
+                organSystems={organSystems}
+                allPoints={organScanPoints}
+                models={anatomyModels}
+                selectedModel={selectedAnatomyModel}
+                onConfigConfirm={handleScanConfigConfirm}
+                onCancel={() => setShowScanConfig(false)}
+                isOpen={showScanConfig}
+              />
+            )}
+
+            {/* NLS Scan Config Button */}
+            {canShowNLS && !showScanConfig && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowScanConfig(true)}
+                className="w-full gap-2"
+              >
+                <Settings2 className="w-4 h-4" />
+                NLS-Scan konfigurieren
+                {activeScanConfig && (
+                  <Badge variant="secondary" className="ml-auto text-[10px]">
+                    {activeScanConfig.selectedPointIds.length} Punkte
+                    {activeScanConfig.focusList.length > 0 && ` • ${activeScanConfig.focusList.length} Fokus`}
+                  </Badge>
+                )}
+              </Button>
+            )}
+
             {/* NLS Organ-Scan-Punkte (bei aktivem NLS-Scan) */}
             {showOrganScan && (
               <div className="bg-card rounded-lg border border-border p-4 max-h-[320px] overflow-y-auto">
                 <div className="flex items-center gap-2 mb-3">
                   <Zap className="w-5 h-5 text-primary" />
                   <h3 className="font-medium text-foreground">NLS Organ-Scan</h3>
-                  <span className="text-xs text-muted-foreground ml-auto">{organScanPoints.length} Punkte</span>
+                  <span className="text-xs text-muted-foreground ml-auto">{modelFilteredOrganScanPoints.length} Punkte</span>
+                  {activeScanConfig?.focusList.length ? (
+                    <div className="flex gap-1">
+                      {activeScanConfig.focusList.map(f => (
+                        <Badge key={f.id} variant="outline" className="text-[9px] py-0">
+                          {f.label}
+                        </Badge>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
 
                 {/* Organ-Filter */}
@@ -1819,7 +1975,7 @@ const AnatomyResonanceViewer = ({
 
                 {/* Punkte-Liste */}
                 <div className="space-y-1">
-                  {filteredOrganScanPoints.map((point) => (
+                  {(selectedOrganFilter ? modelFilteredOrganScanPoints.filter(p => p.organSystem === selectedOrganFilter) : modelFilteredOrganScanPoints).map((point) => (
                     <button
                       key={point.id}
                       onClick={() => setActiveOrganScanPoint(point)}
