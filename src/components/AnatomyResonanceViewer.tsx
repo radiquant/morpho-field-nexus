@@ -1133,6 +1133,8 @@ const AnatomyResonanceViewer = ({
   const [showOrganScan, setShowOrganScan] = useState(false);
   const [activeChakra, setActiveChakra] = useState<ChakraData | null>(null);
   const [glbModelInfo, setGlbModelInfo] = useState<GLBModelInfo | null>(null);
+  const [showScanConfig, setShowScanConfig] = useState(false);
+  const [activeScanConfig, setActiveScanConfig] = useState<NLSScanConfig | null>(null);
 
   const {
     points: organScanPoints,
