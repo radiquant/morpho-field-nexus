@@ -6,7 +6,8 @@
 import { useRef, useState, useEffect, useMemo, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Html, Environment, ContactShadows, Float, Line } from '@react-three/drei';
-import { GLBModelLoader, AVAILABLE_MODELS } from '@/components/anatomy/GLBModelLoader';
+import { GLBModelLoader, AVAILABLE_MODELS, type GLBModelInfo } from '@/components/anatomy/GLBModelLoader';
+import { ChakraVisualization, type ChakraData } from '@/components/anatomy/ChakraVisualization';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -883,6 +884,11 @@ function AnatomyScene({
   activeAcupointId,
   dysregulationScores,
   useGLBModel,
+  showChakras,
+  activeChakraId,
+  onChakraClick,
+  meridianXScale,
+  onGLBLoaded,
 }: {
   modelType: AnatomyModelType;
   anatomyPoints: AnatomyResonancePoint[];
@@ -896,6 +902,11 @@ function AnatomyScene({
   activeAcupointId: string | null;
   dysregulationScores: Map<string, number>;
   useGLBModel: boolean;
+  showChakras: boolean;
+  activeChakraId: string | null;
+  onChakraClick: (chakra: ChakraData) => void;
+  meridianXScale: number;
+  onGLBLoaded: (info: GLBModelInfo) => void;
 }) {
   // Filter Punkte basierend auf Modell-Typ
   const visiblePoints = useMemo(() => {
@@ -940,19 +951,28 @@ function AnatomyScene({
             {useGLBModel ? (
               <GLBModelLoader
                 modelPath={AVAILABLE_MODELS.fullBody}
-                opacity={showMeridians ? 0.2 : 0.35}
+                opacity={showMeridians || showChakras ? 0.2 : 0.35}
+                onLoaded={onGLBLoaded}
               />
             ) : (
               <HumanBodyModel opacity={showMeridians ? 0.25 : 0.3} />
             )}
             {showMeridians && (
-              <MeridianSystemModel
-                activeMeridianId={activeMeridianId}
-                showLabels={showMeridianLabels}
-                onAcupointClick={onAcupointClick}
-                activeAcupointId={activeAcupointId}
-                dysregulationScores={dysregulationScores}
-                showBodySilhouette={false}
+              <group scale={[meridianXScale, 1, 1]}>
+                <MeridianSystemModel
+                  activeMeridianId={activeMeridianId}
+                  showLabels={showMeridianLabels}
+                  onAcupointClick={onAcupointClick}
+                  activeAcupointId={activeAcupointId}
+                  dysregulationScores={dysregulationScores}
+                  showBodySilhouette={false}
+                />
+              </group>
+            )}
+            {showChakras && (
+              <ChakraVisualization
+                activeChakraId={activeChakraId}
+                onChakraClick={onChakraClick}
               />
             )}
           </>
@@ -1004,12 +1024,15 @@ const AnatomyResonanceViewer = ({
   const [activePoint, setActivePoint] = useState<AnatomyResonancePoint | null>(null);
   const [showInfo, setShowInfo] = useState(false);
 
-  // Meridian-spezifische States
+   // Meridian-spezifische States
   const [showMeridians, setShowMeridians] = useState(false);
   const [activeMeridianId, setActiveMeridianId] = useState<string | null>(null);
   const [activeAcupoint, setActiveAcupoint] = useState<{ point: AcupuncturePoint; meridian: MeridianPath } | null>(null);
   const [showMeridianLabels, setShowMeridianLabels] = useState(true);
   const [useGLBModel, setUseGLBModel] = useState(true);
+  const [showChakras, setShowChakras] = useState(false);
+  const [activeChakra, setActiveChakra] = useState<ChakraData | null>(null);
+  const [meridianXScale, setMeridianXScale] = useState(0.55); // Standard-Skalierung, wird bei GLB-Load aktualisiert
 
   const { 
     anatomyPoints, 
@@ -1216,7 +1239,7 @@ const AnatomyResonanceViewer = ({
                   anatomyPoints={anatomyPoints}
                   activePointId={activePoint?.id || null}
                   resonanceScores={resonanceScores}
-                  onPointClick={(p) => { setActivePoint(p); setActiveAcupoint(null); }}
+                  onPointClick={(p) => { setActivePoint(p); setActiveAcupoint(null); setActiveChakra(null); }}
                   showMeridians={showMeridians}
                   activeMeridianId={activeMeridianId}
                   showMeridianLabels={showMeridianLabels}
@@ -1224,6 +1247,15 @@ const AnatomyResonanceViewer = ({
                   activeAcupointId={activeAcupoint?.point.id || null}
                   dysregulationScores={dysregulationScores}
                   useGLBModel={useGLBModel}
+                  showChakras={showChakras}
+                  activeChakraId={activeChakra?.id || null}
+                  onChakraClick={(c) => { setActiveChakra(c); setActivePoint(null); setActiveAcupoint(null); }}
+                  meridianXScale={meridianXScale}
+                  onGLBLoaded={(info) => {
+                    // Meridian x-Koordinaten gehen bis ~0.32, GLB halfWidth bestimmt Skalierung
+                    const targetMeridianWidth = 0.32;
+                    setMeridianXScale(info.halfWidth / targetMeridianWidth);
+                  }}
                 />
               </Canvas>
             </Suspense>
@@ -1276,6 +1308,17 @@ const AnatomyResonanceViewer = ({
                   />
                   <Label htmlFor="show-meridians" className="text-xs text-foreground">
                     Meridiane
+                  </Label>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Switch
+                    id="show-chakras"
+                    checked={showChakras}
+                    onCheckedChange={setShowChakras}
+                    className="scale-75"
+                  />
+                  <Label htmlFor="show-chakras" className="text-xs text-foreground">
+                    Chakren
                   </Label>
                 </div>
               </div>
@@ -1412,6 +1455,40 @@ const AnatomyResonanceViewer = ({
 
                   <Button
                     onClick={() => onFrequencySelect?.(activePoint.primaryFrequency)}
+                    className="w-full gap-2"
+                  >
+                    <Volume2 className="w-4 h-4" />
+                    Frequenz anwenden
+                  </Button>
+                </div>
+              ) : activeChakra ? (
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-lg font-bold" style={{ color: activeChakra.color }}>{activeChakra.nameSanskrit}</p>
+                    <p className="text-md font-medium text-foreground">{activeChakra.name}</p>
+                  </div>
+
+                  <div className="p-3 bg-primary/10 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Solfeggio-Frequenz</span>
+                      <span className="font-mono text-primary text-lg">
+                        {activeChakra.frequency} Hz
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Element</p>
+                    <p className="text-sm text-foreground">{activeChakra.element}</p>
+                  </div>
+
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Wirkung</p>
+                    <p className="text-sm text-foreground">{activeChakra.description}</p>
+                  </div>
+
+                  <Button
+                    onClick={() => onFrequencySelect?.(activeChakra.frequency)}
                     className="w-full gap-2"
                   >
                     <Volume2 className="w-4 h-4" />
