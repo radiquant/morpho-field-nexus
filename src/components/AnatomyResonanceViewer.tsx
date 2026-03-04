@@ -853,7 +853,7 @@ function AcupuncturePointMesh({
   );
 }
 
-// Meridian-System-Modell
+// Meridian-System-Modell mit Surface-Projection
 function MeridianSystemModel({
   activeMeridianId,
   showLabels,
@@ -861,6 +861,8 @@ function MeridianSystemModel({
   activeAcupointId,
   dysregulationScores,
   showBodySilhouette = true,
+  surfaceMeshes,
+  meridianXScale = 1,
 }: {
   activeMeridianId: string | null;
   showLabels: boolean;
@@ -868,24 +870,58 @@ function MeridianSystemModel({
   activeAcupointId: string | null;
   dysregulationScores: Map<string, number>;
   showBodySilhouette?: boolean;
+  surfaceMeshes?: THREE.Mesh[];
+  meridianXScale?: number;
 }) {
+  // Surface-Projection für alle Meridiane berechnen
+  const projections = useMemo(() => {
+    if (!surfaceMeshes || surfaceMeshes.length === 0) return null;
+    if (!isMeshSufficientForProjection(surfaceMeshes)) return null;
+
+    const result = new Map<string, { points: Map<string, ProjectedPoint>; path: THREE.Vector3[] }>();
+
+    for (const meridian of TCM_MERIDIANS) {
+      const projectedPoints = projectMeridianPoints(
+        meridian.acupoints,
+        surfaceMeshes,
+        meridianXScale,
+        0.01
+      );
+      const projectedPath = projectMeridianPath(
+        meridian.points,
+        surfaceMeshes,
+        meridianXScale,
+        0.008
+      );
+      result.set(meridian.id, { points: projectedPoints, path: projectedPath });
+    }
+
+    console.log(`Surface-Projection: ${result.size} Meridiane projiziert`);
+    return result;
+  }, [surfaceMeshes, meridianXScale]);
+
   return (
     <group>
       {/* Körper-Silhouette nur wenn standalone (nicht full_body) */}
       {showBodySilhouette && <HumanBodyModel opacity={0.35} />}
 
       {/* Alle Meridiane */}
-      {TCM_MERIDIANS.map((meridian) => (
-        <MeridianLine
-          key={meridian.id}
-          meridian={meridian}
-          isActive={activeMeridianId === meridian.id || !activeMeridianId}
-          showLabels={showLabels && (activeMeridianId === meridian.id || !activeMeridianId)}
-          onAcupointClick={onAcupointClick}
-          activeAcupointId={activeAcupointId}
-          dysregulationScores={dysregulationScores}
-        />
-      ))}
+      {TCM_MERIDIANS.map((meridian) => {
+        const proj = projections?.get(meridian.id);
+        return (
+          <MeridianLine
+            key={meridian.id}
+            meridian={meridian}
+            isActive={activeMeridianId === meridian.id || !activeMeridianId}
+            showLabels={showLabels && (activeMeridianId === meridian.id || !activeMeridianId)}
+            onAcupointClick={onAcupointClick}
+            activeAcupointId={activeAcupointId}
+            dysregulationScores={dysregulationScores}
+            projectedPoints={proj?.points}
+            projectedPath={proj?.path}
+          />
+        );
+      })}
     </group>
   );
 }
