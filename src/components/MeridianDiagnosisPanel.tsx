@@ -119,7 +119,7 @@ const formatTime = (seconds: number): string => {
 // Zeit-Einheit für Eingabe
 type TimeUnit = 'seconds' | 'minutes';
 
-const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, onTreatmentComplete }: MeridianDiagnosisPanelProps) => {
+const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, onTreatmentComplete, nlsDysregulationData }: MeridianDiagnosisPanelProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<'treatment' | 'archive' | 'retest'>('treatment');
   const [showMethodSettings, setShowMethodSettings] = useState(false);
