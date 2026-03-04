@@ -884,6 +884,11 @@ function AnatomyScene({
   activeAcupointId,
   dysregulationScores,
   useGLBModel,
+  showChakras,
+  activeChakraId,
+  onChakraClick,
+  meridianXScale,
+  onGLBLoaded,
 }: {
   modelType: AnatomyModelType;
   anatomyPoints: AnatomyResonancePoint[];
@@ -897,6 +902,11 @@ function AnatomyScene({
   activeAcupointId: string | null;
   dysregulationScores: Map<string, number>;
   useGLBModel: boolean;
+  showChakras: boolean;
+  activeChakraId: string | null;
+  onChakraClick: (chakra: ChakraData) => void;
+  meridianXScale: number;
+  onGLBLoaded: (info: GLBModelInfo) => void;
 }) {
   // Filter Punkte basierend auf Modell-Typ
   const visiblePoints = useMemo(() => {
