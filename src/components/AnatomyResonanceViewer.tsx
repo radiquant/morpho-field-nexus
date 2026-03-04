@@ -957,7 +957,7 @@ function AnatomyScene({
           <>
             {useGLBModel ? (
               <GLBModelLoader
-                modelPath={AVAILABLE_MODELS.fullBody}
+                modelPath={selectedAnatomyModel?.resolvedUrl || AVAILABLE_MODELS.fullBody}
                 opacity={showMeridians || showChakras ? 0.2 : 0.35}
                 onLoaded={onGLBLoaded}
               />
