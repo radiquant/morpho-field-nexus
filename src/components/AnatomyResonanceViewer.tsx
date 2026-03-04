@@ -40,11 +40,13 @@ import { useResonanceDatabase, type AnatomyResonancePoint } from '@/hooks/useRes
 import { DysregulationLegend, getDysregulationColor, getDysregulationLevel } from '@/components/anatomy/DysregulationLegend';
 import type { VectorAnalysis } from '@/services/feldengine';
 
+import type { NLSDysregulationData } from '@/components/MeridianDiagnosisPanel';
+
 interface AnatomyResonanceViewerProps {
   vectorAnalysis?: VectorAnalysis | null;
   onFrequencySelect?: (frequency: number) => void;
   onScanConfigChange?: (config: NLSScanConfig | null) => void;
-  onNLSDysregulationScores?: (scores: Map<string, number>) => void;
+  onNLSDysregulationData?: (data: NLSDysregulationData) => void;
 }
 
 // Anatomie-Modell Typen
