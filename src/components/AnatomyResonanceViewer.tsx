@@ -867,17 +867,19 @@ function MeridianSystemModel({
   onAcupointClick,
   activeAcupointId,
   dysregulationScores,
+  showBodySilhouette = true,
 }: {
   activeMeridianId: string | null;
   showLabels: boolean;
   onAcupointClick: (point: AcupuncturePoint, meridian: MeridianPath) => void;
   activeAcupointId: string | null;
   dysregulationScores: Map<string, number>;
+  showBodySilhouette?: boolean;
 }) {
   return (
     <group>
-      {/* Körper-Silhouette als Referenz - höhere Opacity für Sichtbarkeit */}
-      <HumanBodyModel opacity={0.35} />
+      {/* Körper-Silhouette nur wenn standalone (nicht full_body) */}
+      {showBodySilhouette && <HumanBodyModel opacity={0.35} />}
 
       {/* Alle Meridiane */}
       {TCM_MERIDIANS.map((meridian) => (
