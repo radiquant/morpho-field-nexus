@@ -55,6 +55,15 @@ import { useTreatmentSequence, type TreatmentPoint } from '@/hooks/useTreatmentS
 import { useTreatmentArchive, type TreatmentRecord } from '@/hooks/useTreatmentArchive';
 import HardwareMethodSelector from '@/components/HardwareMethodSelector';
 import type { VectorAnalysis } from '@/services/feldengine';
+import type { OrganScanPoint } from '@/hooks/useOrganScanPoints';
+import { getOrganColor } from '@/hooks/useOrganScanPoints';
+
+// NLS-Dysregulations-Daten für die Harmonisierung
+export interface NLSDysregulationData {
+  scores: Map<string, number>;
+  points: OrganScanPoint[];
+  focusLabels?: string[];
+}
 
 export interface TreatmentCompleteResult {
   beforeDimensions: number[];
@@ -69,6 +78,7 @@ interface MeridianDiagnosisPanelProps {
   clientId?: string;
   onFrequencySelect?: (frequency: number) => void;
   onTreatmentComplete?: (result: TreatmentCompleteResult) => void;
+  nlsDysregulationData?: NLSDysregulationData | null;
 }
 
 // Element-Farben
