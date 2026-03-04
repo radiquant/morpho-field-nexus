@@ -427,11 +427,11 @@ function ResonancePoint({
     <group position={position}>
       {/* Glow-Effekt */}
       <mesh ref={glowRef}>
-        <sphereGeometry args={[0.025, 12, 12]} />
+        <sphereGeometry args={[0.014, 12, 12]} />
         <meshBasicMaterial
           color={color}
           transparent
-          opacity={0.15 + resonanceScore * 0.2}
+          opacity={0.1 + resonanceScore * 0.15}
           depthWrite={false}
         />
       </mesh>
