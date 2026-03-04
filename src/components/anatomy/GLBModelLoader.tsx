@@ -16,6 +16,7 @@ interface GLBModelLoaderProps {
   wireframe?: boolean;
   highlightColor?: string;
   onLoaded?: (info: GLBModelInfo) => void;
+  onMeshesReady?: (meshes: THREE.Mesh[]) => void;
 }
 
 export interface GLBModelInfo {
