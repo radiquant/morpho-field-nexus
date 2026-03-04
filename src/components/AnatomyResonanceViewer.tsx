@@ -12,9 +12,6 @@ import { ModelSelector } from '@/components/anatomy/ModelSelector';
 import { ModelUpload } from '@/components/anatomy/ModelUpload';
 import { useAnatomyModels, type AnatomyModel } from '@/hooks/useAnatomyModels';
 import { projectMeridianPoints, projectMeridianPath, collectMeshes, isMeshSufficientForProjection, type ProjectedPoint } from '@/utils/surfaceProjection';
-import { ModelSelector } from '@/components/anatomy/ModelSelector';
-import { ModelUpload } from '@/components/anatomy/ModelUpload';
-import { useAnatomyModels, type AnatomyModel } from '@/hooks/useAnatomyModels';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
