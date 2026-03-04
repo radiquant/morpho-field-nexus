@@ -84,8 +84,8 @@ export function useAnatomyModels() {
         const storageType = m.storage_type || 'local';
         const filePath = m.file_path || '';
         const resolvedUrl = resolveModelUrl(filePath, storageType);
-        // Lokale Modelle sind immer verfügbar, Cloud-Modelle müssen hochgeladen werden
-        const isAvailable = storageType === 'local';
+        // Lokale Modelle sind immer verfügbar, Cloud-Modelle sind verfügbar wenn file_path existiert
+        const isAvailable = storageType === 'local' || !!filePath;
 
         return {
           id: m.id,

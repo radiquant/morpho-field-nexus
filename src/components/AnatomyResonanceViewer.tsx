@@ -894,6 +894,7 @@ function AnatomyScene({
   onGLBLoaded,
   bodyHalfWidth,
   showResonancePoints,
+  selectedModelUrl,
 }: {
   modelType: AnatomyModelType;
   anatomyPoints: AnatomyResonancePoint[];
@@ -914,6 +915,7 @@ function AnatomyScene({
   onGLBLoaded: (info: GLBModelInfo) => void;
   bodyHalfWidth: number;
   showResonancePoints: boolean;
+  selectedModelUrl: string;
 }) {
   // Filter Punkte basierend auf Modell-Typ
   const visiblePoints = useMemo(() => {
@@ -957,7 +959,8 @@ function AnatomyScene({
           <>
             {useGLBModel ? (
               <GLBModelLoader
-                modelPath={AVAILABLE_MODELS.fullBody}
+                key={selectedModelUrl}
+                modelPath={selectedModelUrl}
                 opacity={showMeridians || showChakras ? 0.2 : 0.35}
                 onLoaded={onGLBLoaded}
               />
@@ -1272,6 +1275,7 @@ const AnatomyResonanceViewer = ({
                   onGLBLoaded={(info) => setGlbModelInfo(info)}
                   bodyHalfWidth={glbModelInfo ? Math.min(glbModelInfo.halfWidth, 0.15) : 0.12}
                   showResonancePoints={showResonancePoints}
+                  selectedModelUrl={selectedAnatomyModel?.resolvedUrl || AVAILABLE_MODELS.fullBody}
                 />
               </Canvas>
             </Suspense>
