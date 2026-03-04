@@ -970,6 +970,8 @@ function AnatomyScene({
   showResonancePoints: boolean;
   selectedModelUrl: string;
 }) {
+  const [surfaceMeshes, setSurfaceMeshes] = useState<THREE.Mesh[]>([]);
+
   // Filter Punkte basierend auf Modell-Typ
   const visiblePoints = useMemo(() => {
     switch (modelType) {
@@ -984,11 +986,17 @@ function AnatomyScene({
           p.bodyRegion === 'head'
         );
       case 'meridians':
-        return []; // Meridian-Ansicht zeigt nur Akupunkturpunkte
+        return [];
       default:
         return anatomyPoints;
     }
   }, [modelType, anatomyPoints]);
+
+  // Callback für Meshes vom GLB-Modell
+  const handleMeshesReady = useCallback((meshes: THREE.Mesh[]) => {
+    setSurfaceMeshes(meshes);
+    console.log(`Surface-Projection: ${meshes.length} Meshes bereit`);
+  }, []);
 
   return (
     <>
@@ -1016,12 +1024,13 @@ function AnatomyScene({
                 modelPath={selectedModelUrl}
                 opacity={showMeridians || showChakras ? 0.2 : 0.35}
                 onLoaded={onGLBLoaded}
+                onMeshesReady={handleMeshesReady}
               />
             ) : (
               <HumanBodyModel opacity={showMeridians ? 0.25 : 0.3} />
             )}
             {showMeridians && (
-              <group scale={[meridianXScale, 1, 1]}>
+              <group scale={useGLBModel && surfaceMeshes.length > 0 ? [1, 1, 1] : [meridianXScale, 1, 1]}>
                 <MeridianSystemModel
                   activeMeridianId={activeMeridianId}
                   showLabels={showMeridianLabels}
@@ -1029,6 +1038,8 @@ function AnatomyScene({
                   activeAcupointId={activeAcupointId}
                   dysregulationScores={dysregulationScores}
                   showBodySilhouette={false}
+                  surfaceMeshes={useGLBModel ? surfaceMeshes : undefined}
+                  meridianXScale={meridianXScale}
                 />
               </group>
             )}
