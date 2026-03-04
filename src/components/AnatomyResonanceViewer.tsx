@@ -1527,6 +1527,22 @@ const AnatomyResonanceViewer = ({
               )}
             </div>
 
+            {/* Modell-Bibliothek */}
+            <div className="bg-card rounded-lg border border-border p-4 max-h-[350px] overflow-y-auto">
+              <ModelSelector
+                models={anatomyModels}
+                selectedModel={selectedAnatomyModel}
+                onSelect={(model) => {
+                  setSelectedAnatomyModel(model);
+                  if (model.isAvailable) {
+                    // Modell wird automatisch über den GLBModelLoader geladen
+                  }
+                }}
+                categories={modelCategories}
+                isLoading={modelsLoading}
+              />
+            </div>
+
             {/* Meridian-Liste (bei Meridian-Ansicht) */}
             {(activeModel === 'meridians' || showMeridians) && (
               <div className="bg-card rounded-lg border border-border p-4 max-h-[280px] overflow-y-auto">
