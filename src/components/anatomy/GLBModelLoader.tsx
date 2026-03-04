@@ -55,6 +55,38 @@ export function GLBModelLoader({
   const { clonedScene, modelInfo } = useMemo(() => {
     const clone = scene.clone(true);
 
+    // Filter out text labels, planes, and annotation objects from Z-Anatomy exports
+    const toRemove: THREE.Object3D[] = [];
+    clone.traverse((child) => {
+      const name = child.name.toLowerCase();
+      // Z-Anatomy text labels, reference planes, annotations
+      const isLabel = name.includes('text') || name.includes('label') || name.includes('annotation')
+        || name.includes('title') || name.includes('caption') || name.includes('plane')
+        || name.includes('reference') || name.includes('movement') || name.includes('general_t');
+      
+      if (child instanceof THREE.Mesh) {
+        const geo = child.geometry;
+        // Detect flat planes: very thin in one axis (text quads)
+        if (geo) {
+          geo.computeBoundingBox();
+          const geoSize = new THREE.Vector3();
+          geo.boundingBox?.getSize(geoSize);
+          const minDim = Math.min(geoSize.x, geoSize.y, geoSize.z);
+          const maxDim = Math.max(geoSize.x, geoSize.y, geoSize.z);
+          // Extremely flat objects are likely label planes
+          if (minDim > 0 && maxDim / minDim > 50) {
+            toRemove.push(child);
+            return;
+          }
+        }
+      }
+      
+      if (isLabel) {
+        toRemove.push(child);
+      }
+    });
+    toRemove.forEach(obj => obj.removeFromParent());
+
     // Bounding Box berechnen
     const box = new THREE.Box3().setFromObject(clone);
     const size = box.getSize(new THREE.Vector3());
