@@ -3,7 +3,7 @@
  * Interaktives 3D-Modell mit resonierenden Körperpunkten und TCM-Meridianen
  * Mit Dysregulations-Farbskala für Meridianpunkte
  */
-import { useRef, useState, useEffect, useMemo, Suspense } from 'react';
+import { useRef, useState, useEffect, useMemo, useCallback, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Html, Environment, ContactShadows, Float, Line } from '@react-three/drei';
 import { GLBModelLoader, AVAILABLE_MODELS, type GLBModelInfo } from '@/components/anatomy/GLBModelLoader';
