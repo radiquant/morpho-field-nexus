@@ -14,6 +14,7 @@ import { useAnatomyModels, type AnatomyModel } from '@/hooks/useAnatomyModels';
 import { projectMeridianPoints, projectMeridianPath, collectMeshes, isMeshSufficientForProjection, type ProjectedPoint } from '@/utils/surfaceProjection';
 import { OrganScanLayer } from '@/components/anatomy/OrganScanLayer';
 import { useOrganScanPoints, type OrganScanPoint, getOrganColor, getTissueIcon } from '@/hooks/useOrganScanPoints';
+import { NLSScanConfigPanel, type NLSScanConfig } from '@/components/NLSScanConfigPanel';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
