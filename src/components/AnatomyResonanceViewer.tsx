@@ -461,18 +461,10 @@ function ResonancePoint({
 
       {/* Label */}
       {isActive && (
-        <Html center distanceFactor={18} position={[0, 0.04, 0]} style={{ pointerEvents: 'none' }}>
-          <div className="bg-background/90 backdrop-blur-sm px-2 py-1 rounded border border-primary/30 shadow-md whitespace-nowrap">
-            <p className="text-[10px] font-medium text-foreground">{point.name}</p>
-            {point.nameLatin && (
-              <p className="text-[9px] text-muted-foreground italic">{point.nameLatin}</p>
-            )}
-            <div className="flex items-center gap-1 mt-0.5">
-              <Zap className="w-2.5 h-2.5 text-primary" />
-              <span className="text-[9px] font-mono text-primary">
-                {point.primaryFrequency.toFixed(1)} Hz
-              </span>
-            </div>
+        <Html center distanceFactor={28} position={[0, 0.03, 0]} style={{ pointerEvents: 'none' }}>
+          <div className="bg-background/90 backdrop-blur-sm px-1.5 py-0.5 rounded border border-primary/30 shadow-sm whitespace-nowrap">
+            <span className="text-[8px] font-medium text-foreground">{point.name}</span>
+            <span className="text-[7px] text-primary font-mono ml-1">{point.primaryFrequency.toFixed(1)}Hz</span>
           </div>
         </Html>
       )}
@@ -809,24 +801,11 @@ function AcupuncturePointMesh({
 
         {/* Label nur bei Hover oder aktiv */}
         {(isHovered || isActive) && (
-          <Html center distanceFactor={18} position={[0, 0.03, 0]} style={{ pointerEvents: 'none' }}>
-            <div className="bg-background/95 backdrop-blur-sm px-2 py-1 rounded border border-primary/40 shadow-md whitespace-nowrap">
-              <div className="flex items-center gap-1">
-                <span className="text-[10px] font-bold text-foreground">{point.id}</span>
-                {dysregulationScore > 0 && (
-                  <span 
-                    className="text-[9px] px-1 rounded"
-                    style={{ backgroundColor: `${pointColor}20`, color: pointColor }}
-                  >
-                    {dysLevel.label}
-                  </span>
-                )}
-              </div>
-              <p className="text-[9px] text-muted-foreground">{point.name}</p>
-              <div className="flex items-center gap-1">
-                <Zap className="w-2 h-2 text-primary" />
-                <span className="text-[9px] text-primary font-mono">{point.frequency} Hz</span>
-              </div>
+          <Html center distanceFactor={28} position={[0, 0.025, 0]} style={{ pointerEvents: 'none' }}>
+            <div className="bg-background/95 backdrop-blur-sm px-1.5 py-0.5 rounded border border-primary/40 shadow-sm whitespace-nowrap">
+              <span className="text-[8px] font-bold text-foreground">{point.id}</span>
+              <span className="text-[7px] text-muted-foreground ml-1">{point.name}</span>
+              <span className="text-[7px] text-primary font-mono ml-1">{point.frequency}Hz</span>
             </div>
           </Html>
         )}
@@ -1190,7 +1169,7 @@ const AnatomyResonanceViewer = ({
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="lg:col-span-3 h-[550px] bg-card rounded-lg border border-border overflow-hidden relative"
+            className="lg:col-span-3 h-[750px] bg-card rounded-lg border border-border overflow-hidden relative"
           >
             {/* Model Selector */}
             <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-3 bg-background/80 backdrop-blur-sm px-4 py-2 rounded-full border border-border">

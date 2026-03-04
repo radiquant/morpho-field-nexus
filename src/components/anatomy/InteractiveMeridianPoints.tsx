@@ -97,22 +97,11 @@ function PointMesh({
       
       {/* Label nur bei Hover oder aktiv - nicht dauerhaft */}
       {(isHovered || isActive) && (
-        <Html center distanceFactor={18} position={[0, 0.025, 0]} style={{ pointerEvents: 'none' }}>
-          <div className="bg-background/95 backdrop-blur-sm px-2 py-1 rounded border border-primary/40 shadow-md whitespace-nowrap">
-            <div className="flex items-center gap-1">
-              <span className="text-[10px] font-bold text-primary">{point.id}</span>
-              <span 
-                className="text-[9px] px-1 rounded"
-                style={{ backgroundColor: `${color}20`, color }}
-              >
-                {dysLevel.label}
-              </span>
-            </div>
-            <span className="text-[9px] text-foreground">{point.nameGerman}</span>
-            <div className="flex items-center gap-1">
-              <Zap className="w-2 h-2 text-primary" />
-              <span className="text-[9px] font-mono text-primary">{point.frequency.toFixed(1)} Hz</span>
-            </div>
+        <Html center distanceFactor={28} position={[0, 0.02, 0]} style={{ pointerEvents: 'none' }}>
+          <div className="bg-background/95 backdrop-blur-sm px-1.5 py-0.5 rounded border border-primary/40 shadow-sm whitespace-nowrap">
+            <span className="text-[8px] font-bold text-primary">{point.id}</span>
+            <span className="text-[7px] text-foreground ml-1">{point.nameGerman}</span>
+            <span className="text-[7px] font-mono text-primary ml-1">{point.frequency.toFixed(1)}Hz</span>
           </div>
         </Html>
       )}
