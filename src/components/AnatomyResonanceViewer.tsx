@@ -889,6 +889,7 @@ function AnatomyScene({
   onChakraClick,
   meridianXScale,
   onGLBLoaded,
+  bodyHalfWidth,
 }: {
   modelType: AnatomyModelType;
   anatomyPoints: AnatomyResonancePoint[];
