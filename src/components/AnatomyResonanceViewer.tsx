@@ -1122,7 +1122,7 @@ const AnatomyResonanceViewer = ({
   vectorAnalysis,
   onFrequencySelect,
   onScanConfigChange,
-  onNLSDysregulationScores,
+  onNLSDysregulationData,
 }: AnatomyResonanceViewerProps) => {
   const [activeModel, setActiveModel] = useState<AnatomyModelType>('full_body');
   const [activePoint, setActivePoint] = useState<AnatomyResonancePoint | null>(null);
@@ -1365,12 +1365,16 @@ const AnatomyResonanceViewer = ({
     return scores;
   }, [vectorAnalysis, modelFilteredOrganScanPoints, activeScanConfig]);
 
-  // Notify parent about NLS dysregulation scores
+  // Notify parent about NLS dysregulation data (scores + points)
   useEffect(() => {
-    if (nlsDysregulationScores.size > 0) {
-      onNLSDysregulationScores?.(nlsDysregulationScores);
+    if (nlsDysregulationScores.size > 0 && organScanPoints.length > 0) {
+      onNLSDysregulationData?.({
+        scores: nlsDysregulationScores,
+        points: organScanPoints,
+        focusLabels: activeScanConfig?.focusList?.map(f => f.label),
+      });
     }
-  }, [nlsDysregulationScores, onNLSDysregulationScores]);
+  }, [nlsDysregulationScores, organScanPoints, onNLSDysregulationData, activeScanConfig]);
 
   // Notify parent about scan config changes
   useEffect(() => {
