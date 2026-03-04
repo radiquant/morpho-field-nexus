@@ -1473,50 +1473,58 @@ const AnatomyResonanceViewer = ({
                     3D-Modell
                   </Label>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <Switch
-                    id="show-meridians"
-                    checked={showMeridians}
-                    onCheckedChange={setShowMeridians}
-                    className="scale-75"
-                  />
-                  <Label htmlFor="show-meridians" className="text-xs text-foreground">
-                    Meridiane
-                  </Label>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Switch
-                    id="show-chakras"
-                    checked={showChakras}
-                    onCheckedChange={setShowChakras}
-                    className="scale-75"
-                  />
-                  <Label htmlFor="show-chakras" className="text-xs text-foreground">
-                    Chakren
-                  </Label>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Switch
-                    id="show-resonance"
-                    checked={showResonancePoints}
-                    onCheckedChange={setShowResonancePoints}
-                    className="scale-75"
-                  />
-                  <Label htmlFor="show-resonance" className="text-xs text-foreground">
-                    Organe
-                  </Label>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Switch
-                    id="show-nls"
-                    checked={showOrganScan}
-                    onCheckedChange={setShowOrganScan}
-                    className="scale-75"
-                  />
-                  <Label htmlFor="show-nls" className="text-xs text-foreground">
-                    NLS-Scan
-                  </Label>
-                </div>
+                {canShowMeridians && (
+                  <div className="flex items-center gap-1.5">
+                    <Switch
+                      id="show-meridians"
+                      checked={showMeridians}
+                      onCheckedChange={setShowMeridians}
+                      className="scale-75"
+                    />
+                    <Label htmlFor="show-meridians" className="text-xs text-foreground">
+                      Meridiane
+                    </Label>
+                  </div>
+                )}
+                {canShowChakras && (
+                  <div className="flex items-center gap-1.5">
+                    <Switch
+                      id="show-chakras"
+                      checked={showChakras}
+                      onCheckedChange={setShowChakras}
+                      className="scale-75"
+                    />
+                    <Label htmlFor="show-chakras" className="text-xs text-foreground">
+                      Chakren
+                    </Label>
+                  </div>
+                )}
+                {canShowResonancePoints && (
+                  <div className="flex items-center gap-1.5">
+                    <Switch
+                      id="show-resonance"
+                      checked={showResonancePoints}
+                      onCheckedChange={setShowResonancePoints}
+                      className="scale-75"
+                    />
+                    <Label htmlFor="show-resonance" className="text-xs text-foreground">
+                      Organe
+                    </Label>
+                  </div>
+                )}
+                {canShowNLS && (
+                  <div className="flex items-center gap-1.5">
+                    <Switch
+                      id="show-nls"
+                      checked={showOrganScan}
+                      onCheckedChange={setShowOrganScan}
+                      className="scale-75"
+                    />
+                    <Label htmlFor="show-nls" className="text-xs text-foreground">
+                      NLS-Scan
+                    </Label>
+                  </div>
+                )}
               </div>
             )}
 
