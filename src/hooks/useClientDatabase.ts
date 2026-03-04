@@ -46,7 +46,8 @@ export function useClientDatabase() {
   ): Promise<ClientRecord | null> => {
     setIsLoading(true);
     try {
-      if (!user) throw new Error('Nicht authentifiziert');
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) throw new Error('Nicht authentifiziert');
       
       const fieldSignature = ThomVectorEngine.calculateFieldSignature(biometricData);
 
@@ -60,7 +61,7 @@ export function useClientDatabase() {
           photo_url: biometricData.photoData,
           field_signature: fieldSignature.hash,
           notes,
-          user_id: user.id,
+          user_id: session.user.id,
         })
         .select()
         .single();
