@@ -461,7 +461,7 @@ function ResonancePoint({
 
       {/* Label */}
       {isActive && (
-        <Html center distanceFactor={28} position={[0, 0.03, 0]} style={{ pointerEvents: 'none' }}>
+        <Html center distanceFactor={3} position={[0, 0.03, 0]} style={{ pointerEvents: 'none' }}>
           <div className="bg-background/90 backdrop-blur-sm px-1.5 py-0.5 rounded border border-primary/30 shadow-sm whitespace-nowrap">
             <span className="text-[8px] font-medium text-foreground">{point.name}</span>
             <span className="text-[7px] text-primary font-mono ml-1">{point.primaryFrequency.toFixed(1)}Hz</span>
@@ -801,7 +801,7 @@ function AcupuncturePointMesh({
 
         {/* Label nur bei Hover oder aktiv */}
         {(isHovered || isActive) && (
-          <Html center distanceFactor={28} position={[0, 0.025, 0]} style={{ pointerEvents: 'none' }}>
+          <Html center distanceFactor={3} position={[0, 0.025, 0]} style={{ pointerEvents: 'none' }}>
             <div className="bg-background/95 backdrop-blur-sm px-1.5 py-0.5 rounded border border-primary/40 shadow-sm whitespace-nowrap">
               <span className="text-[8px] font-bold text-foreground">{point.id}</span>
               <span className="text-[7px] text-muted-foreground ml-1">{point.name}</span>

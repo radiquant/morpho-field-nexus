@@ -97,7 +97,7 @@ function PointMesh({
       
       {/* Label nur bei Hover oder aktiv - nicht dauerhaft */}
       {(isHovered || isActive) && (
-        <Html center distanceFactor={28} position={[0, 0.02, 0]} style={{ pointerEvents: 'none' }}>
+        <Html center distanceFactor={3} position={[0, 0.02, 0]} style={{ pointerEvents: 'none' }}>
           <div className="bg-background/95 backdrop-blur-sm px-1.5 py-0.5 rounded border border-primary/40 shadow-sm whitespace-nowrap">
             <span className="text-[8px] font-bold text-primary">{point.id}</span>
             <span className="text-[7px] text-foreground ml-1">{point.nameGerman}</span>
