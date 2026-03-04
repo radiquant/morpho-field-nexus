@@ -1239,7 +1239,7 @@ const AnatomyResonanceViewer = ({
                   anatomyPoints={anatomyPoints}
                   activePointId={activePoint?.id || null}
                   resonanceScores={resonanceScores}
-                  onPointClick={(p) => { setActivePoint(p); setActiveAcupoint(null); }}
+                  onPointClick={(p) => { setActivePoint(p); setActiveAcupoint(null); setActiveChakra(null); }}
                   showMeridians={showMeridians}
                   activeMeridianId={activeMeridianId}
                   showMeridianLabels={showMeridianLabels}
@@ -1247,6 +1247,15 @@ const AnatomyResonanceViewer = ({
                   activeAcupointId={activeAcupoint?.point.id || null}
                   dysregulationScores={dysregulationScores}
                   useGLBModel={useGLBModel}
+                  showChakras={showChakras}
+                  activeChakraId={activeChakra?.id || null}
+                  onChakraClick={(c) => { setActiveChakra(c); setActivePoint(null); setActiveAcupoint(null); }}
+                  meridianXScale={meridianXScale}
+                  onGLBLoaded={(info) => {
+                    // Meridian x-Koordinaten gehen bis ~0.32, GLB halfWidth bestimmt Skalierung
+                    const targetMeridianWidth = 0.32;
+                    setMeridianXScale(info.halfWidth / targetMeridianWidth);
+                  }}
                 />
               </Canvas>
             </Suspense>
