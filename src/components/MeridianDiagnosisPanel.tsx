@@ -698,15 +698,53 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
                           pointsPerMeridian={pointsPerMeridian}
                         />
 
+                        {/* NLS-Scan Punkte Integration */}
+                        {nlsDysregulationData && nlsDysregulationData.points.length > 0 && (
+                          <div className="space-y-2 p-4 rounded-lg bg-muted/30 border border-border">
+                            <div className="flex items-center justify-between">
+                              <Label className="text-sm flex items-center gap-2">
+                                <Zap className="w-4 h-4 text-primary" />
+                                NLS-Scan-Punkte einbeziehen
+                                {nlsDysregulationData.focusLabels?.length ? (
+                                  <Badge variant="outline" className="text-[10px]">
+                                    Fokus: {nlsDysregulationData.focusLabels.join(', ')}
+                                  </Badge>
+                                ) : null}
+                              </Label>
+                              <Switch
+                                checked={includeNLSPoints}
+                                onCheckedChange={setIncludeNLSPoints}
+                              />
+                            </div>
+                            {includeNLSPoints && nlsTreatmentPoints.length > 0 && (
+                              <div className="space-y-1 max-h-32 overflow-y-auto">
+                                {nlsTreatmentPoints.map(p => (
+                                  <div key={p.id} className="flex items-center gap-2 text-xs p-1.5 rounded bg-background/50">
+                                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: getOrganColor(p.meridianId.replace('nls-', '')) }} />
+                                    <span className="text-foreground flex-1">{p.meridianName} – {p.pointName}</span>
+                                    <span className="font-mono text-muted-foreground">{p.frequency.toFixed(1)} Hz</span>
+                                    <Badge variant={p.dysregulationScore! > 0.6 ? 'destructive' : 'secondary'} className="text-[10px]">
+                                      {((p.dysregulationScore || 0) * 6).toFixed(1)}
+                                    </Badge>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                            {includeNLSPoints && nlsTreatmentPoints.length === 0 && (
+                              <p className="text-xs text-muted-foreground">Keine signifikant dysregulierten NLS-Punkte (Schwelle &gt; 2.5/6)</p>
+                            )}
+                          </div>
+                        )}
+
                         {/* Behandlungsplan Preview */}
                         <div className="p-3 rounded-lg bg-primary/10 border border-primary/30">
                           <p className="text-sm text-muted-foreground mb-1">Behandlungsplan:</p>
                           <p className="text-foreground">
                             <span className="font-mono text-primary">
-                              {Math.min(5, diagnosisResult.imbalances.length) * pointsPerMeridian}
-                            </span> Akupunkturpunkte • Gesamtdauer: {' '}
+                              {Math.min(5, diagnosisResult.imbalances.length) * pointsPerMeridian + nlsTreatmentPoints.length}
+                            </span> Punkte ({Math.min(5, diagnosisResult.imbalances.length) * pointsPerMeridian} Meridian{nlsTreatmentPoints.length > 0 ? ` + ${nlsTreatmentPoints.length} NLS` : ''}) • Dauer:{' '}
                             <span className="font-mono text-primary">
-                              {formatTime(Math.min(5, diagnosisResult.imbalances.length) * pointsPerMeridian * treatmentDuration)}
+                              {formatTime((Math.min(5, diagnosisResult.imbalances.length) * pointsPerMeridian + nlsTreatmentPoints.length) * treatmentDuration)}
                             </span>
                           </p>
                         </div>
