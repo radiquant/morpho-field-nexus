@@ -12,6 +12,8 @@ import { ModelSelector } from '@/components/anatomy/ModelSelector';
 import { ModelUpload } from '@/components/anatomy/ModelUpload';
 import { useAnatomyModels, type AnatomyModel } from '@/hooks/useAnatomyModels';
 import { projectMeridianPoints, projectMeridianPath, collectMeshes, isMeshSufficientForProjection, type ProjectedPoint } from '@/utils/surfaceProjection';
+import { OrganScanLayer } from '@/components/anatomy/OrganScanLayer';
+import { useOrganScanPoints, type OrganScanPoint, getOrganColor, getTissueIcon } from '@/hooks/useOrganScanPoints';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -948,6 +950,11 @@ function AnatomyScene({
   bodyHalfWidth,
   showResonancePoints,
   selectedModelUrl,
+  showOrganScan,
+  organScanPoints,
+  activeOrganScanPointId,
+  onOrganScanPointClick,
+  selectedOrganFilter,
 }: {
   modelType: AnatomyModelType;
   anatomyPoints: AnatomyResonancePoint[];
@@ -969,6 +976,11 @@ function AnatomyScene({
   bodyHalfWidth: number;
   showResonancePoints: boolean;
   selectedModelUrl: string;
+  showOrganScan: boolean;
+  organScanPoints: OrganScanPoint[];
+  activeOrganScanPointId: string | null;
+  onOrganScanPointClick: (point: OrganScanPoint) => void;
+  selectedOrganFilter: string | null;
 }) {
   const [surfaceMeshes, setSurfaceMeshes] = useState<THREE.Mesh[]>([]);
 
