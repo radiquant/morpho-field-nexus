@@ -1121,6 +1121,8 @@ function AnatomyScene({
 const AnatomyResonanceViewer = ({
   vectorAnalysis,
   onFrequencySelect,
+  onScanConfigChange,
+  onNLSDysregulationScores,
 }: AnatomyResonanceViewerProps) => {
   const [activeModel, setActiveModel] = useState<AnatomyModelType>('full_body');
   const [activePoint, setActivePoint] = useState<AnatomyResonancePoint | null>(null);
