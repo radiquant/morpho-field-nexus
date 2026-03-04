@@ -1164,7 +1164,8 @@ const AnatomyResonanceViewer = ({
   // Punkte laden
   useEffect(() => {
     loadAnatomyPoints();
-  }, [loadAnatomyPoints]);
+    loadOrganScanPoints();
+  }, [loadAnatomyPoints, loadOrganScanPoints]);
 
   // Wenn Meridian-Ansicht aktiviert wird
   useEffect(() => {
