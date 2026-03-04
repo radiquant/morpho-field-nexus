@@ -18,7 +18,7 @@ interface ModelUploadProps {
   onUploadComplete?: () => void;
 }
 
-const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 
 export function ModelUpload({ onUploadComplete }: ModelUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
