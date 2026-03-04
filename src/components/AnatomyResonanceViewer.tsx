@@ -951,19 +951,28 @@ function AnatomyScene({
             {useGLBModel ? (
               <GLBModelLoader
                 modelPath={AVAILABLE_MODELS.fullBody}
-                opacity={showMeridians ? 0.2 : 0.35}
+                opacity={showMeridians || showChakras ? 0.2 : 0.35}
+                onLoaded={onGLBLoaded}
               />
             ) : (
               <HumanBodyModel opacity={showMeridians ? 0.25 : 0.3} />
             )}
             {showMeridians && (
-              <MeridianSystemModel
-                activeMeridianId={activeMeridianId}
-                showLabels={showMeridianLabels}
-                onAcupointClick={onAcupointClick}
-                activeAcupointId={activeAcupointId}
-                dysregulationScores={dysregulationScores}
-                showBodySilhouette={false}
+              <group scale={[meridianXScale, 1, 1]}>
+                <MeridianSystemModel
+                  activeMeridianId={activeMeridianId}
+                  showLabels={showMeridianLabels}
+                  onAcupointClick={onAcupointClick}
+                  activeAcupointId={activeAcupointId}
+                  dysregulationScores={dysregulationScores}
+                  showBodySilhouette={false}
+                />
+              </group>
+            )}
+            {showChakras && (
+              <ChakraVisualization
+                activeChakraId={activeChakraId}
+                onChakraClick={onChakraClick}
               />
             )}
           </>
