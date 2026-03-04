@@ -1170,12 +1170,57 @@ const AnatomyResonanceViewer = ({
     loadOrganScanPoints();
   }, [loadAnatomyPoints, loadOrganScanPoints]);
 
+  // Model-aware layer visibility
+  const visibleLayers = useMemo(() => {
+    if (selectedAnatomyModel?.visibleLayers) {
+      return new Set(selectedAnatomyModel.visibleLayers);
+    }
+    return new Set(['meridians', 'chakras', 'resonance_points', 'nls_scan']);
+  }, [selectedAnatomyModel]);
+
+  const canShowMeridians = visibleLayers.has('meridians');
+  const canShowChakras = visibleLayers.has('chakras');
+  const canShowResonancePoints = visibleLayers.has('resonance_points');
+  const canShowNLS = visibleLayers.has('nls_scan');
+
+  // Auto-disable layers when model doesn't support them
+  useEffect(() => {
+    if (!canShowMeridians && showMeridians) setShowMeridians(false);
+    if (!canShowChakras && showChakras) setShowChakras(false);
+    if (!canShowResonancePoints && showResonancePoints) setShowResonancePoints(false);
+    if (!canShowNLS && showOrganScan) setShowOrganScan(false);
+  }, [canShowMeridians, canShowChakras, canShowResonancePoints, canShowNLS]);
+
+  // Filter NLS points by model's applicable organ systems
+  const modelFilteredOrganScanPoints = useMemo(() => {
+    if (activeScanConfig) {
+      return organScanPoints.filter(p => activeScanConfig.selectedPointIds.includes(p.id));
+    }
+    if (selectedAnatomyModel?.applicableOrganSystems?.length) {
+      return organScanPoints.filter(p => selectedAnatomyModel.applicableOrganSystems!.includes(p.organSystem));
+    }
+    return organScanPoints;
+  }, [organScanPoints, selectedAnatomyModel, activeScanConfig]);
+
   // Wenn Meridian-Ansicht aktiviert wird
   useEffect(() => {
     if (activeModel === 'meridians') {
       setShowMeridians(true);
     }
   }, [activeModel]);
+
+  // Scan config handler
+  const handleScanConfigConfirm = useCallback((config: NLSScanConfig) => {
+    setActiveScanConfig(config);
+    setShowScanConfig(false);
+    setShowOrganScan(true);
+    // Apply organ filter from config
+    if (config.selectedOrgans.length === 1) {
+      setSelectedOrganFilter(config.selectedOrgans[0]);
+    } else {
+      setSelectedOrganFilter(null);
+    }
+  }, [setSelectedOrganFilter]);
 
   // Akupunktur-Punkt auswählen
   const handleAcupointClick = (point: AcupuncturePoint, meridian: MeridianPath) => {
