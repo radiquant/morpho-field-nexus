@@ -1310,6 +1310,17 @@ const AnatomyResonanceViewer = ({
                     Meridiane
                   </Label>
                 </div>
+                <div className="flex items-center gap-1.5">
+                  <Switch
+                    id="show-chakras"
+                    checked={showChakras}
+                    onCheckedChange={setShowChakras}
+                    className="scale-75"
+                  />
+                  <Label htmlFor="show-chakras" className="text-xs text-foreground">
+                    Chakren
+                  </Label>
+                </div>
               </div>
             )}
 
