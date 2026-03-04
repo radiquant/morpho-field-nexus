@@ -1778,6 +1778,71 @@ const AnatomyResonanceViewer = ({
               </div>
             )}
 
+            {/* NLS Organ-Scan-Punkte (bei aktivem NLS-Scan) */}
+            {showOrganScan && (
+              <div className="bg-card rounded-lg border border-border p-4 max-h-[320px] overflow-y-auto">
+                <div className="flex items-center gap-2 mb-3">
+                  <Zap className="w-5 h-5 text-primary" />
+                  <h3 className="font-medium text-foreground">NLS Organ-Scan</h3>
+                  <span className="text-xs text-muted-foreground ml-auto">{organScanPoints.length} Punkte</span>
+                </div>
+
+                {/* Organ-Filter */}
+                <div className="flex flex-wrap gap-1 mb-3">
+                  <button
+                    onClick={() => setSelectedOrganFilter(null)}
+                    className={`text-xs px-2 py-0.5 rounded-full transition-colors ${
+                      !selectedOrganFilter
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                    }`}
+                  >
+                    Alle
+                  </button>
+                  {organGroups.map((group) => (
+                    <button
+                      key={group.organSystem}
+                      onClick={() => setSelectedOrganFilter(
+                        selectedOrganFilter === group.organSystem ? null : group.organSystem
+                      )}
+                      className={`text-xs px-2 py-0.5 rounded-full transition-colors flex items-center gap-1 ${
+                        selectedOrganFilter === group.organSystem
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                      }`}
+                    >
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: getOrganColor(group.organSystem) }} />
+                      {group.organNameDe}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Punkte-Liste */}
+                <div className="space-y-1">
+                  {filteredOrganScanPoints.map((point) => (
+                    <button
+                      key={point.id}
+                      onClick={() => setActiveOrganScanPoint(point)}
+                      className={`w-full p-2 rounded-lg text-left transition-colors flex items-center gap-2 ${
+                        activeOrganScanPoint?.id === point.id
+                          ? 'bg-primary/20 border border-primary/30'
+                          : 'bg-muted/30 hover:bg-muted/50 border border-transparent'
+                      }`}
+                    >
+                      <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: getOrganColor(point.organSystem) }} />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-foreground truncate">{point.pointName}</span>
+                          <span className="text-xs font-mono text-muted-foreground">{point.scanFrequency.toFixed(1)} Hz</span>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground truncate">{point.organNameDe} • {point.layerDepth}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Resonanz-Punkte Liste */}
             <div className="bg-card rounded-lg border border-border p-4 max-h-[300px] overflow-y-auto">
               <div className="flex items-center gap-2 mb-3">
