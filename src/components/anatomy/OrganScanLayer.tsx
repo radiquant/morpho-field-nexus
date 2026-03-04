@@ -53,13 +53,24 @@ function ScanPointMesh({
         </mesh>
       )}
 
-      {/* Glow */}
+      {/* Outer Glow */}
       <mesh>
-        <sphereGeometry args={[0.012, 8, 8]} />
+        <sphereGeometry args={[0.025, 12, 12]} />
         <meshBasicMaterial
           color={color}
           transparent
-          opacity={0.12 * depthOpacity}
+          opacity={0.2 * depthOpacity}
+          depthWrite={false}
+        />
+      </mesh>
+
+      {/* Inner Glow */}
+      <mesh>
+        <sphereGeometry args={[0.016, 10, 10]} />
+        <meshBasicMaterial
+          color={color}
+          transparent
+          opacity={0.35 * depthOpacity}
           depthWrite={false}
         />
       </mesh>
@@ -80,16 +91,16 @@ function ScanPointMesh({
       >
         {/* Verschiedene Formen je nach Gewebetyp */}
         {point.tissueType === 'vessel' ? (
-          <octahedronGeometry args={[0.006]} />
+          <octahedronGeometry args={[0.01]} />
         ) : point.tissueType === 'node' || point.tissueType === 'conduction' ? (
-          <dodecahedronGeometry args={[0.006]} />
+          <dodecahedronGeometry args={[0.01]} />
         ) : (
-          <sphereGeometry args={[0.006, 12, 12]} />
+          <sphereGeometry args={[0.01, 12, 12]} />
         )}
         <meshStandardMaterial
           color={color}
           emissive={color}
-          emissiveIntensity={isActive ? 1.2 : isHovered ? 0.8 : 0.4}
+          emissiveIntensity={isActive ? 2.0 : isHovered ? 1.4 : 0.9}
           transparent
           opacity={depthOpacity}
           depthWrite={false}
