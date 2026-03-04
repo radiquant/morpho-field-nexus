@@ -416,6 +416,66 @@ export type Database = {
           },
         ]
       }
+      organ_scan_points: {
+        Row: {
+          body_region: string
+          created_at: string
+          description: string | null
+          dysregulation_threshold: number | null
+          harmonic_frequencies: number[] | null
+          id: string
+          layer_depth: string | null
+          organ_name_de: string
+          organ_name_latin: string | null
+          organ_system: string
+          point_index: number
+          point_name: string
+          scan_frequency: number
+          tissue_type: string | null
+          x_position: number
+          y_position: number
+          z_position: number
+        }
+        Insert: {
+          body_region: string
+          created_at?: string
+          description?: string | null
+          dysregulation_threshold?: number | null
+          harmonic_frequencies?: number[] | null
+          id?: string
+          layer_depth?: string | null
+          organ_name_de: string
+          organ_name_latin?: string | null
+          organ_system: string
+          point_index: number
+          point_name: string
+          scan_frequency: number
+          tissue_type?: string | null
+          x_position: number
+          y_position: number
+          z_position: number
+        }
+        Update: {
+          body_region?: string
+          created_at?: string
+          description?: string | null
+          dysregulation_threshold?: number | null
+          harmonic_frequencies?: number[] | null
+          id?: string
+          layer_depth?: string | null
+          organ_name_de?: string
+          organ_name_latin?: string | null
+          organ_system?: string
+          point_index?: number
+          point_name?: string
+          scan_frequency?: number
+          tissue_type?: string | null
+          x_position?: number
+          y_position?: number
+          z_position?: number
+        }
+        Relationships: []
+      }
       word_energies: {
         Row: {
           amplitude: number | null
