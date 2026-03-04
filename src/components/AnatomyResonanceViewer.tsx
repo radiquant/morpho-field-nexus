@@ -1031,9 +1031,9 @@ function AnatomyScene({
         blur={2.5} 
       />
 
-      {/* Anatomie-Modell oder Meridian-System */}
-      <group>
-        {modelType === 'full_body' && (
+       {/* Anatomie-Modell oder Meridian-System */}
+       <group>
+        {(modelType === 'full_body' || modelType === 'heart' || modelType === 'brain') && (
           <>
             {useGLBModel ? (
               <GLBModelLoader
@@ -1078,8 +1078,6 @@ function AnatomyScene({
             dysregulationScores={dysregulationScores}
           />
         )}
-        {modelType === 'heart' && <HeartModel />}
-        {modelType === 'brain' && <BrainModel />}
       </group>
 
       {/* Resonanz-Punkte */}
@@ -1517,8 +1515,8 @@ const AnatomyResonanceViewer = ({
               </Button>
             </div>
 
-            {/* Toggles (nur bei full_body) */}
-            {activeModel === 'full_body' && (
+            {/* Toggles */}
+            {(activeModel === 'full_body' || activeModel === 'heart' || activeModel === 'brain') && (
               <div className="absolute bottom-4 right-4 flex items-center gap-4 bg-background/80 backdrop-blur-sm px-3 py-2 rounded-lg border border-border">
                 <div className="flex items-center gap-1.5">
                   <Switch
