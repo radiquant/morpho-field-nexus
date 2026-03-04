@@ -145,6 +145,7 @@ export type Database = {
           notes: string | null
           photo_url: string | null
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           birth_date: string
@@ -157,6 +158,7 @@ export type Database = {
           notes?: string | null
           photo_url?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           birth_date?: string
@@ -169,6 +171,7 @@ export type Database = {
           notes?: string | null
           photo_url?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
