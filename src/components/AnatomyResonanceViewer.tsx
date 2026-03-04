@@ -1024,12 +1024,15 @@ const AnatomyResonanceViewer = ({
   const [activePoint, setActivePoint] = useState<AnatomyResonancePoint | null>(null);
   const [showInfo, setShowInfo] = useState(false);
 
-  // Meridian-spezifische States
+   // Meridian-spezifische States
   const [showMeridians, setShowMeridians] = useState(false);
   const [activeMeridianId, setActiveMeridianId] = useState<string | null>(null);
   const [activeAcupoint, setActiveAcupoint] = useState<{ point: AcupuncturePoint; meridian: MeridianPath } | null>(null);
   const [showMeridianLabels, setShowMeridianLabels] = useState(true);
   const [useGLBModel, setUseGLBModel] = useState(true);
+  const [showChakras, setShowChakras] = useState(false);
+  const [activeChakra, setActiveChakra] = useState<ChakraData | null>(null);
+  const [meridianXScale, setMeridianXScale] = useState(0.55); // Standard-Skalierung, wird bei GLB-Load aktualisiert
 
   const { 
     anatomyPoints, 
