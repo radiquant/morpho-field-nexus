@@ -1834,13 +1834,55 @@ const AnatomyResonanceViewer = ({
               </div>
             )}
 
+            {/* NLS Scan Configuration */}
+            {canShowNLS && (
+              <NLSScanConfigPanel
+                organGroups={organGroups}
+                organSystems={organSystems}
+                allPoints={organScanPoints}
+                models={anatomyModels}
+                selectedModel={selectedAnatomyModel}
+                onConfigConfirm={handleScanConfigConfirm}
+                onCancel={() => setShowScanConfig(false)}
+                isOpen={showScanConfig}
+              />
+            )}
+
+            {/* NLS Scan Config Button */}
+            {canShowNLS && !showScanConfig && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowScanConfig(true)}
+                className="w-full gap-2"
+              >
+                <Settings2 className="w-4 h-4" />
+                NLS-Scan konfigurieren
+                {activeScanConfig && (
+                  <Badge variant="secondary" className="ml-auto text-[10px]">
+                    {activeScanConfig.selectedPointIds.length} Punkte
+                    {activeScanConfig.focusList.length > 0 && ` • ${activeScanConfig.focusList.length} Fokus`}
+                  </Badge>
+                )}
+              </Button>
+            )}
+
             {/* NLS Organ-Scan-Punkte (bei aktivem NLS-Scan) */}
             {showOrganScan && (
               <div className="bg-card rounded-lg border border-border p-4 max-h-[320px] overflow-y-auto">
                 <div className="flex items-center gap-2 mb-3">
                   <Zap className="w-5 h-5 text-primary" />
                   <h3 className="font-medium text-foreground">NLS Organ-Scan</h3>
-                  <span className="text-xs text-muted-foreground ml-auto">{organScanPoints.length} Punkte</span>
+                  <span className="text-xs text-muted-foreground ml-auto">{modelFilteredOrganScanPoints.length} Punkte</span>
+                  {activeScanConfig?.focusList.length ? (
+                    <div className="flex gap-1">
+                      {activeScanConfig.focusList.map(f => (
+                        <Badge key={f.id} variant="outline" className="text-[9px] py-0">
+                          {f.label}
+                        </Badge>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
 
                 {/* Organ-Filter */}
