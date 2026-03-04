@@ -1253,9 +1253,9 @@ const AnatomyResonanceViewer = ({
                   showChakras={showChakras}
                   activeChakraId={activeChakra?.id || null}
                   onChakraClick={(c) => { setActiveChakra(c); setActivePoint(null); setActiveAcupoint(null); }}
-                  meridianXScale={glbModelInfo ? glbModelInfo.halfWidth / 0.32 : 0.55}
+                  meridianXScale={0.45}
                   onGLBLoaded={(info) => setGlbModelInfo(info)}
-                  bodyHalfWidth={glbModelInfo?.halfWidth || 0.12}
+                  bodyHalfWidth={glbModelInfo ? Math.min(glbModelInfo.halfWidth, 0.15) : 0.12}
                 />
               </Canvas>
             </Suspense>
