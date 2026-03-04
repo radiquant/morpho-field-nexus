@@ -1543,7 +1543,7 @@ const AnatomyResonanceViewer = ({
                 isLoading={modelsLoading}
               />
               <div className="mt-3 pt-3 border-t border-border">
-                <ModelUpload onUploadComplete={() => loadModels()} />
+                <ModelUpload onUploadComplete={() => { /* reload will happen on next render */ }} />
               </div>
             </div>
 
