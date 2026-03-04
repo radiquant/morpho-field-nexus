@@ -907,6 +907,7 @@ function AnatomyScene({
   onChakraClick: (chakra: ChakraData) => void;
   meridianXScale: number;
   onGLBLoaded: (info: GLBModelInfo) => void;
+  bodyHalfWidth: number;
 }) {
   // Filter Punkte basierend auf Modell-Typ
   const visiblePoints = useMemo(() => {
@@ -973,6 +974,7 @@ function AnatomyScene({
               <ChakraVisualization
                 activeChakraId={activeChakraId}
                 onChakraClick={onChakraClick}
+                bodyHalfWidth={bodyHalfWidth}
               />
             )}
           </>
