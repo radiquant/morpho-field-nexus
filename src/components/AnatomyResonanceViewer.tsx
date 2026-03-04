@@ -451,7 +451,7 @@ function ResonancePoint({
           document.body.style.cursor = 'default';
         }}
       >
-        <sphereGeometry args={[0.012, 16, 16]} />
+        <sphereGeometry args={[0.007, 16, 16]} />
         <meshStandardMaterial
           color={color}
           emissive={color}
