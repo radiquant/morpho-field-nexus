@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       anatomy_models: {
         Row: {
+          applicable_organ_systems: string[] | null
           author: string | null
           body_height_normalized: boolean | null
           category: string
@@ -41,8 +42,10 @@ export type Database = {
           thumbnail_url: string | null
           updated_at: string
           version: string | null
+          visible_layers: string[] | null
         }
         Insert: {
+          applicable_organ_systems?: string[] | null
           author?: string | null
           body_height_normalized?: boolean | null
           category?: string
@@ -68,8 +71,10 @@ export type Database = {
           thumbnail_url?: string | null
           updated_at?: string
           version?: string | null
+          visible_layers?: string[] | null
         }
         Update: {
+          applicable_organ_systems?: string[] | null
           author?: string | null
           body_height_normalized?: boolean | null
           category?: string
@@ -95,6 +100,7 @@ export type Database = {
           thumbnail_url?: string | null
           updated_at?: string
           version?: string | null
+          visible_layers?: string[] | null
         }
         Relationships: []
       }
