@@ -118,7 +118,14 @@ export function ModelUpload({ onUploadComplete }: ModelUploadProps) {
 
     try {
       // 1. Upload to storage via TUS (resumable, no size limit from proxy)
-      const fileName = `${Date.now()}-${selectedFile.name}`;
+      // Sanitize filename: remove umlauts, special chars, spaces
+      const sanitized = selectedFile.name
+        .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue')
+        .replace(/Ä/g, 'Ae').replace(/Ö/g, 'Oe').replace(/Ü/g, 'Ue')
+        .replace(/ß/g, 'ss')
+        .replace(/[^a-zA-Z0-9._-]/g, '-')
+        .replace(/-+/g, '-');
+      const fileName = `${Date.now()}-${sanitized}`;
       const storagePath = fileName;
 
       await uploadWithTus('3d-models', storagePath, selectedFile);
