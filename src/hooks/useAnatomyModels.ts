@@ -71,7 +71,7 @@ export function useAnatomyModels() {
   const loadModels = useCallback(async (category?: string) => {
     setIsLoading(true);
     try {
-      let query = supabase.from('anatomy_models' as any).select('*').order('sort_order');
+      let query = supabase.from('anatomy_models').select('*').order('sort_order');
       
       if (category) {
         query = query.eq('category', category);

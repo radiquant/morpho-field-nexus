@@ -85,7 +85,7 @@ export function ModelUpload({ onUploadComplete }: ModelUploadProps) {
       setUploadProgress(70);
 
       // 2. Register in database
-      const { error: dbError } = await (supabase.from('anatomy_models' as any) as any).insert({
+      const { error: dbError } = await supabase.from('anatomy_models').insert({
         name,
         description: description || null,
         source,
