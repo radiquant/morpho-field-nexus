@@ -937,7 +937,16 @@ function AnatomyScene({
       <group>
         {modelType === 'full_body' && (
           <>
-            <HumanBodyModel opacity={showMeridians ? 0.25 : 0.3} />
+            {useGLBModel ? (
+              <GLBModelLoader
+                modelPath={AVAILABLE_MODELS.fullBody}
+                opacity={showMeridians ? 0.2 : 0.35}
+                scale={0.65}
+                position={[0, -0.1, 0]}
+              />
+            ) : (
+              <HumanBodyModel opacity={showMeridians ? 0.25 : 0.3} />
+            )}
             {showMeridians && (
               <MeridianSystemModel
                 activeMeridianId={activeMeridianId}
@@ -1002,6 +1011,7 @@ const AnatomyResonanceViewer = ({
   const [activeMeridianId, setActiveMeridianId] = useState<string | null>(null);
   const [activeAcupoint, setActiveAcupoint] = useState<{ point: AcupuncturePoint; meridian: MeridianPath } | null>(null);
   const [showMeridianLabels, setShowMeridianLabels] = useState(true);
+  const [useGLBModel, setUseGLBModel] = useState(true);
 
   const { 
     anatomyPoints, 
