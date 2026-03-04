@@ -14,6 +14,90 @@ export type Database = {
   }
   public: {
     Tables: {
+      anatomy_models: {
+        Row: {
+          author: string | null
+          body_height_normalized: boolean | null
+          category: string
+          created_at: string
+          description: string | null
+          draco_compressed: boolean | null
+          file_path: string
+          file_size_bytes: number | null
+          gender: string | null
+          id: string
+          is_default: boolean | null
+          license: string | null
+          license_url: string | null
+          metadata: Json | null
+          name: string
+          polygon_count: number | null
+          sort_order: number | null
+          source: string
+          storage_type: string
+          supports_meridian_mapping: boolean | null
+          supports_organ_layers: boolean | null
+          supports_skeleton: boolean | null
+          thumbnail_url: string | null
+          updated_at: string
+          version: string | null
+        }
+        Insert: {
+          author?: string | null
+          body_height_normalized?: boolean | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          draco_compressed?: boolean | null
+          file_path: string
+          file_size_bytes?: number | null
+          gender?: string | null
+          id?: string
+          is_default?: boolean | null
+          license?: string | null
+          license_url?: string | null
+          metadata?: Json | null
+          name: string
+          polygon_count?: number | null
+          sort_order?: number | null
+          source?: string
+          storage_type?: string
+          supports_meridian_mapping?: boolean | null
+          supports_organ_layers?: boolean | null
+          supports_skeleton?: boolean | null
+          thumbnail_url?: string | null
+          updated_at?: string
+          version?: string | null
+        }
+        Update: {
+          author?: string | null
+          body_height_normalized?: boolean | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          draco_compressed?: boolean | null
+          file_path?: string
+          file_size_bytes?: number | null
+          gender?: string | null
+          id?: string
+          is_default?: boolean | null
+          license?: string | null
+          license_url?: string | null
+          metadata?: Json | null
+          name?: string
+          polygon_count?: number | null
+          sort_order?: number | null
+          source?: string
+          storage_type?: string
+          supports_meridian_mapping?: boolean | null
+          supports_organ_layers?: boolean | null
+          supports_skeleton?: boolean | null
+          thumbnail_url?: string | null
+          updated_at?: string
+          version?: string | null
+        }
+        Relationships: []
+      }
       anatomy_resonance_points: {
         Row: {
           body_region: string
