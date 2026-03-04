@@ -890,6 +890,7 @@ function AnatomyScene({
   meridianXScale,
   onGLBLoaded,
   bodyHalfWidth,
+  showResonancePoints,
 }: {
   modelType: AnatomyModelType;
   anatomyPoints: AnatomyResonancePoint[];
@@ -909,6 +910,7 @@ function AnatomyScene({
   meridianXScale: number;
   onGLBLoaded: (info: GLBModelInfo) => void;
   bodyHalfWidth: number;
+  showResonancePoints: boolean;
 }) {
   // Filter Punkte basierend auf Modell-Typ
   const visiblePoints = useMemo(() => {
@@ -994,7 +996,7 @@ function AnatomyScene({
       </group>
 
       {/* Resonanz-Punkte */}
-      {visiblePoints.map((point) => (
+      {showResonancePoints && visiblePoints.map((point) => (
         <ResonancePoint
           key={point.id}
           point={point}
@@ -1034,6 +1036,7 @@ const AnatomyResonanceViewer = ({
   const [showMeridianLabels, setShowMeridianLabels] = useState(true);
   const [useGLBModel, setUseGLBModel] = useState(true);
   const [showChakras, setShowChakras] = useState(false);
+  const [showResonancePoints, setShowResonancePoints] = useState(false);
   const [activeChakra, setActiveChakra] = useState<ChakraData | null>(null);
   const [glbModelInfo, setGlbModelInfo] = useState<GLBModelInfo | null>(null);
 
@@ -1256,6 +1259,7 @@ const AnatomyResonanceViewer = ({
                   meridianXScale={0.45}
                   onGLBLoaded={(info) => setGlbModelInfo(info)}
                   bodyHalfWidth={glbModelInfo ? Math.min(glbModelInfo.halfWidth, 0.15) : 0.12}
+                  showResonancePoints={showResonancePoints}
                 />
               </Canvas>
             </Suspense>
@@ -1319,6 +1323,17 @@ const AnatomyResonanceViewer = ({
                   />
                   <Label htmlFor="show-chakras" className="text-xs text-foreground">
                     Chakren
+                  </Label>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Switch
+                    id="show-resonance"
+                    checked={showResonancePoints}
+                    onCheckedChange={setShowResonancePoints}
+                    className="scale-75"
+                  />
+                  <Label htmlFor="show-resonance" className="text-xs text-foreground">
+                    Organe
                   </Label>
                 </div>
               </div>
