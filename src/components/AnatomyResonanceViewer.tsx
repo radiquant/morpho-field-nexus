@@ -1461,6 +1461,40 @@ const AnatomyResonanceViewer = ({
                     Frequenz anwenden
                   </Button>
                 </div>
+              ) : activeChakra ? (
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-lg font-bold" style={{ color: activeChakra.color }}>{activeChakra.nameSanskrit}</p>
+                    <p className="text-md font-medium text-foreground">{activeChakra.name}</p>
+                  </div>
+
+                  <div className="p-3 bg-primary/10 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Solfeggio-Frequenz</span>
+                      <span className="font-mono text-primary text-lg">
+                        {activeChakra.frequency} Hz
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Element</p>
+                    <p className="text-sm text-foreground">{activeChakra.element}</p>
+                  </div>
+
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Wirkung</p>
+                    <p className="text-sm text-foreground">{activeChakra.description}</p>
+                  </div>
+
+                  <Button
+                    onClick={() => onFrequencySelect?.(activeChakra.frequency)}
+                    className="w-full gap-2"
+                  >
+                    <Volume2 className="w-4 h-4" />
+                    Frequenz anwenden
+                  </Button>
+                </div>
               ) : (
                 <p className="text-sm text-muted-foreground text-center py-6">
                   Klicken Sie auf einen Punkt im 3D-Modell
