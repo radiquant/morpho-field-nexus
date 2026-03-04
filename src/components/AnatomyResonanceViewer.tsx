@@ -1255,17 +1255,31 @@ const AnatomyResonanceViewer = ({
               </Button>
             </div>
 
-            {/* Meridian-Toggle (nur bei full_body) */}
+            {/* Toggles (nur bei full_body) */}
             {activeModel === 'full_body' && (
-              <div className="absolute bottom-4 right-4 flex items-center gap-2 bg-background/80 backdrop-blur-sm px-3 py-2 rounded-lg border border-border">
-                <Switch
-                  id="show-meridians"
-                  checked={showMeridians}
-                  onCheckedChange={setShowMeridians}
-                />
-                <Label htmlFor="show-meridians" className="text-xs text-foreground">
-                  Meridiane
-                </Label>
+              <div className="absolute bottom-4 right-4 flex items-center gap-4 bg-background/80 backdrop-blur-sm px-3 py-2 rounded-lg border border-border">
+                <div className="flex items-center gap-1.5">
+                  <Switch
+                    id="use-glb"
+                    checked={useGLBModel}
+                    onCheckedChange={setUseGLBModel}
+                    className="scale-75"
+                  />
+                  <Label htmlFor="use-glb" className="text-xs text-foreground">
+                    3D-Modell
+                  </Label>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Switch
+                    id="show-meridians"
+                    checked={showMeridians}
+                    onCheckedChange={setShowMeridians}
+                    className="scale-75"
+                  />
+                  <Label htmlFor="show-meridians" className="text-xs text-foreground">
+                    Meridiane
+                  </Label>
+                </div>
               </div>
             )}
 
