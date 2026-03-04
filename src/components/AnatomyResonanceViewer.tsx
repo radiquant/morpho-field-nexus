@@ -1055,6 +1055,7 @@ const AnatomyResonanceViewer = ({
     setSelectedModel: setSelectedAnatomyModel,
     isLoading: modelsLoading,
     categories: modelCategories,
+    loadModels: reloadAnatomyModels,
   } = useAnatomyModels();
 
   // Punkte laden
@@ -1543,7 +1544,7 @@ const AnatomyResonanceViewer = ({
                 isLoading={modelsLoading}
               />
               <div className="mt-3 pt-3 border-t border-border">
-                <ModelUpload onUploadComplete={() => { /* reload will happen on next render */ }} />
+                <ModelUpload onUploadComplete={() => reloadAnatomyModels()} />
               </div>
             </div>
 
