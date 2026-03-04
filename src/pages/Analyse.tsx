@@ -18,6 +18,7 @@ import RealtimeStatusWidget from '@/components/RealtimeStatusWidget';
 import TreatmentTrendAnalysis from '@/components/TreatmentTrendAnalysis';
 import Footer from '@/components/Footer';
 import type { VectorAnalysis } from '@/services/feldengine';
+import type { NLSScanConfig } from '@/components/NLSScanConfigPanel';
 
 export interface TreatmentResult {
   beforeDimensions: number[];
@@ -31,6 +32,8 @@ const Analyse = () => {
   const [currentVectorAnalysis, setCurrentVectorAnalysis] = useState<VectorAnalysis | null>(null);
   const [selectedFrequency, setSelectedFrequency] = useState<number | null>(null);
   const [treatmentResult, setTreatmentResult] = useState<TreatmentResult | null>(null);
+  const [scanConfig, setScanConfig] = useState<NLSScanConfig | null>(null);
+  const [nlsDysregulationScores, setNlsDysregulationScores] = useState<Map<string, number>>(new Map());
 
   const handleVectorCreated = useCallback((analysis: VectorAnalysis) => {
     setCurrentVectorAnalysis(analysis);
@@ -126,6 +129,8 @@ const Analyse = () => {
         <AnatomyResonanceViewer 
           vectorAnalysis={currentVectorAnalysis} 
           onFrequencySelect={handleFrequencySelect}
+          onScanConfigChange={setScanConfig}
+          onNLSDysregulationScores={setNlsDysregulationScores}
         />
         <MeridianDiagnosisPanel
           vectorAnalysis={currentVectorAnalysis}
