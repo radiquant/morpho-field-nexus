@@ -397,13 +397,9 @@ function ResonancePoint({
 
   useFrame((state) => {
     if (meshRef.current && glowRef.current) {
-      // Pulsieren basierend auf Resonanz-Score
-      const pulse = Math.sin(state.clock.elapsedTime * (2 + resonanceScore * 3)) * 0.15 + 1;
-      const baseScale = 0.02 + resonanceScore * 0.03;
-      meshRef.current.scale.setScalar(baseScale * pulse);
-      glowRef.current.scale.setScalar(baseScale * pulse * 2.5);
-      
-      // Rotation bei aktivem Punkt
+      const pulse = Math.sin(state.clock.elapsedTime * (2 + resonanceScore * 3)) * 0.1 + 1;
+      meshRef.current.scale.setScalar(pulse);
+      glowRef.current.scale.setScalar(pulse);
       if (isActive) {
         meshRef.current.rotation.y += 0.02;
       }
@@ -429,11 +425,12 @@ function ResonancePoint({
     <group position={position}>
       {/* Glow-Effekt */}
       <mesh ref={glowRef}>
-        <sphereGeometry args={[1, 16, 16]} />
+        <sphereGeometry args={[0.025, 12, 12]} />
         <meshBasicMaterial
           color={color}
           transparent
-          opacity={0.2 + resonanceScore * 0.3}
+          opacity={0.15 + resonanceScore * 0.2}
+          depthWrite={false}
         />
       </mesh>
 
@@ -452,7 +449,7 @@ function ResonancePoint({
           document.body.style.cursor = 'default';
         }}
       >
-        <sphereGeometry args={[1, 32, 32]} />
+        <sphereGeometry args={[0.012, 16, 16]} />
         <meshStandardMaterial
           color={color}
           emissive={color}
@@ -777,9 +774,9 @@ function AcupuncturePointMesh({
       // Stärkeres Pulsieren bei höherer Dysregulation
       const pulseSpeed = 4 + dysregulationScore * 4;
       const pulseIntensity = 0.002 + dysregulationScore * 0.003;
-      const pulse = Math.sin(state.clock.elapsedTime * pulseSpeed) * pulseIntensity + 0.015;
+      const pulse = Math.sin(state.clock.elapsedTime * pulseSpeed) * 0.15 + 1;
       
-      const scaleFactor = isActive ? 1.5 : isHovered ? 1.3 : 1;
+      const scaleFactor = isActive ? 1.4 : isHovered ? 1.2 : 1;
       meshRef.current.scale.setScalar(pulse * scaleFactor);
     }
   });
@@ -801,11 +798,12 @@ function AcupuncturePointMesh({
             setIsHovered(false);
           }}
         >
-          <sphereGeometry args={[1, 16, 16]} />
+          <sphereGeometry args={[0.012, 12, 12]} />
           <meshStandardMaterial
             color={pointColor}
             emissive={pointColor}
             emissiveIntensity={isActive ? 1.2 : isHovered ? 0.8 : 0.3 + dysregulationScore * 0.5}
+            depthWrite={false}
           />
         </mesh>
 
@@ -849,11 +847,12 @@ function AcupuncturePointMesh({
           onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
           onPointerOut={() => { document.body.style.cursor = 'default'; }}
         >
-          <sphereGeometry args={[0.015, 16, 16]} />
+          <sphereGeometry args={[0.012, 12, 12]} />
           <meshStandardMaterial
             color={pointColor}
             emissive={pointColor}
             emissiveIntensity={isActive ? 1 : 0.3 + dysregulationScore * 0.4}
+            depthWrite={false}
           />
         </mesh>
       </group>
@@ -868,17 +867,19 @@ function MeridianSystemModel({
   onAcupointClick,
   activeAcupointId,
   dysregulationScores,
+  showBodySilhouette = true,
 }: {
   activeMeridianId: string | null;
   showLabels: boolean;
   onAcupointClick: (point: AcupuncturePoint, meridian: MeridianPath) => void;
   activeAcupointId: string | null;
   dysregulationScores: Map<string, number>;
+  showBodySilhouette?: boolean;
 }) {
   return (
     <group>
-      {/* Körper-Silhouette als Referenz */}
-      <HumanBodyModel opacity={0.15} />
+      {/* Körper-Silhouette nur wenn standalone (nicht full_body) */}
+      {showBodySilhouette && <HumanBodyModel opacity={0.35} />}
 
       {/* Alle Meridiane */}
       {TCM_MERIDIANS.map((meridian) => (
@@ -962,7 +963,7 @@ function AnatomyScene({
       <group>
         {modelType === 'full_body' && (
           <>
-            <HumanBodyModel />
+            <HumanBodyModel opacity={showMeridians ? 0.25 : 0.3} />
             {showMeridians && (
               <MeridianSystemModel
                 activeMeridianId={activeMeridianId}
@@ -970,6 +971,7 @@ function AnatomyScene({
                 onAcupointClick={onAcupointClick}
                 activeAcupointId={activeAcupointId}
                 dysregulationScores={dysregulationScores}
+                showBodySilhouette={false}
               />
             )}
           </>

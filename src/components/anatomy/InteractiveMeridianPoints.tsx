@@ -64,10 +64,9 @@ function PointMesh({
     if (meshRef.current) {
       // Stärkeres Pulsieren bei höherer Dysregulation
       const pulseSpeed = 3 + dysregulationScore * 4;
-      const pulseIntensity = 0.002 + dysregulationScore * 0.004;
-      const pulse = Math.sin(state.clock.elapsedTime * pulseSpeed) * pulseIntensity + 0.012;
+      const pulse = Math.sin(state.clock.elapsedTime * pulseSpeed) * 0.15 + 1;
       
-      const scaleFactor = isActive ? 1.8 : isHovered ? 1.4 : 1;
+      const scaleFactor = isActive ? 1.4 : isHovered ? 1.2 : 1;
       meshRef.current.scale.setScalar(pulse * scaleFactor);
     }
   });
@@ -87,11 +86,12 @@ function PointMesh({
           onUnhover();
         }}
       >
-        <sphereGeometry args={[1, 16, 16]} />
+        <sphereGeometry args={[0.012, 12, 12]} />
         <meshStandardMaterial
           color={color}
           emissive={color}
           emissiveIntensity={isActive ? 1.2 : isHovered ? 0.8 : 0.3 + dysregulationScore * 0.5}
+          depthWrite={false}
         />
       </mesh>
       
