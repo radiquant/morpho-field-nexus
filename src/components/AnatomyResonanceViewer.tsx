@@ -882,6 +882,7 @@ function AnatomyScene({
   onAcupointClick,
   activeAcupointId,
   dysregulationScores,
+  useGLBModel,
 }: {
   modelType: AnatomyModelType;
   anatomyPoints: AnatomyResonancePoint[];
@@ -894,6 +895,7 @@ function AnatomyScene({
   onAcupointClick: (point: AcupuncturePoint, meridian: MeridianPath) => void;
   activeAcupointId: string | null;
   dysregulationScores: Map<string, number>;
+  useGLBModel: boolean;
 }) {
   // Filter Punkte basierend auf Modell-Typ
   const visiblePoints = useMemo(() => {
