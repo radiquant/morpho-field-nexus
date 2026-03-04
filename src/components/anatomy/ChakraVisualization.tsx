@@ -98,10 +98,12 @@ function ChakraSphere({
   chakra,
   isActive,
   onClick,
+  sizeFactor = 1,
 }: {
   chakra: ChakraData;
   isActive: boolean;
   onClick: () => void;
+  sizeFactor?: number;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const glowRef = useRef<THREE.Mesh>(null);
@@ -182,12 +184,18 @@ function ChakraSphere({
 interface ChakraVisualizationProps {
   onChakraClick?: (chakra: ChakraData) => void;
   activeChakraId?: string | null;
+  /** Half-width of the body model for proportional sizing */
+  bodyHalfWidth?: number;
 }
 
 export function ChakraVisualization({
   onChakraClick,
   activeChakraId,
+  bodyHalfWidth = 0.12,
 }: ChakraVisualizationProps) {
+  // Scale chakra sphere sizes relative to body width
+  const sizeFactor = Math.min(1, bodyHalfWidth / 0.15);
+
   return (
     <group>
       {CHAKRAS.map((chakra) => (
@@ -196,6 +204,7 @@ export function ChakraVisualization({
           chakra={chakra}
           isActive={activeChakraId === chakra.id}
           onClick={() => onChakraClick?.(chakra)}
+          sizeFactor={sizeFactor}
         />
       ))}
     </group>
