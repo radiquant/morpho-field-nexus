@@ -9,6 +9,7 @@ import Analyse from "./pages/Analyse";
 import Login from "./pages/Login";
 import Export from "./pages/Export";
 import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -21,8 +22,8 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/analyse" element={<Analyse />} />
-            <Route path="/export" element={<Export />} />
+            <Route path="/analyse" element={<ProtectedRoute><Analyse /></ProtectedRoute>} />
+            <Route path="/export" element={<ProtectedRoute><Export /></ProtectedRoute>} />
             {/* Backward/typo-friendly alias */}
             <Route path="/exports" element={<Navigate to="/export" replace />} />
             <Route path="/login" element={<Login />} />

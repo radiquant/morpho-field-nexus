@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { BiometricClientData, FieldSignature, StateDimensions } from '@/services/feldengine';
 import { ThomVectorEngine } from '@/services/feldengine';
+import { useAuth } from '@/hooks/useAuth';
 
 export interface ClientRecord {
   id: string;
@@ -36,6 +37,7 @@ export interface ClientVectorRecord {
 export function useClientDatabase() {
   const [isLoading, setIsLoading] = useState(false);
   const [clients, setClients] = useState<ClientRecord[]>([]);
+  const { user } = useAuth();
 
   // Klient erstellen
   const createClient = useCallback(async (
@@ -44,6 +46,8 @@ export function useClientDatabase() {
   ): Promise<ClientRecord | null> => {
     setIsLoading(true);
     try {
+      if (!user) throw new Error('Nicht authentifiziert');
+      
       const fieldSignature = ThomVectorEngine.calculateFieldSignature(biometricData);
 
       const { data, error } = await supabase
@@ -56,6 +60,7 @@ export function useClientDatabase() {
           photo_url: biometricData.photoData,
           field_signature: fieldSignature.hash,
           notes,
+          user_id: user.id,
         })
         .select()
         .single();
