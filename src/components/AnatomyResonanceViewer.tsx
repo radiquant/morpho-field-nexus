@@ -687,7 +687,7 @@ function BrainModel({ opacity = 0.5 }: { opacity?: number }) {
 
 // ============= MERIDIAN 3D COMPONENTS =============
 
-// Einzelner Meridian-Pfad
+// Einzelner Meridian-Pfad mit optionaler Surface-Projection
 function MeridianLine({
   meridian,
   isActive,
@@ -695,6 +695,8 @@ function MeridianLine({
   onAcupointClick,
   activeAcupointId,
   dysregulationScores,
+  projectedPoints,
+  projectedPath,
 }: {
   meridian: MeridianPath;
   isActive: boolean;
@@ -702,14 +704,20 @@ function MeridianLine({
   onAcupointClick: (point: AcupuncturePoint, meridian: MeridianPath) => void;
   activeAcupointId: string | null;
   dysregulationScores: Map<string, number>;
+  projectedPoints?: Map<string, ProjectedPoint>;
+  projectedPath?: THREE.Vector3[];
 }) {
   const opacity = isActive ? 0.9 : 0.5;
+
+  // Projizierte oder Original-Pfade verwenden
+  const leftPath = projectedPath || meridian.points;
+  const rightPath = leftPath.map(p => new THREE.Vector3(-p.x, p.y, p.z));
 
   return (
     <group>
       {/* Meridian-Linie */}
       <Line
-        points={meridian.points}
+        points={leftPath}
         color={meridian.color}
         lineWidth={isActive ? 4 : 2}
         transparent
@@ -718,7 +726,7 @@ function MeridianLine({
 
       {/* Gespiegelte Linie (rechte Körperseite) */}
       <Line
-        points={meridian.points.map(p => new THREE.Vector3(-p.x, p.y, p.z))}
+        points={rightPath}
         color={meridian.color}
         lineWidth={isActive ? 4 : 2}
         transparent
@@ -726,17 +734,25 @@ function MeridianLine({
       />
 
       {/* Akupunkturpunkte */}
-      {meridian.acupoints.map((point) => (
-        <AcupuncturePointMesh
-          key={point.id}
-          point={point}
-          meridian={meridian}
-          isActive={activeAcupointId === point.id}
-          showLabel={showLabels || activeAcupointId === point.id}
-          onClick={() => onAcupointClick(point, meridian)}
-          dysregulationScore={dysregulationScores.get(point.id) || 0}
-        />
-      ))}
+      {meridian.acupoints.map((point) => {
+        // Projizierte Position verwenden falls vorhanden
+        const projected = projectedPoints?.get(point.id);
+        const effectivePoint = projected?.wasProjected
+          ? { ...point, position: projected.projectedPosition }
+          : point;
+
+        return (
+          <AcupuncturePointMesh
+            key={point.id}
+            point={effectivePoint}
+            meridian={meridian}
+            isActive={activeAcupointId === point.id}
+            showLabel={showLabels || activeAcupointId === point.id}
+            onClick={() => onAcupointClick(point, meridian)}
+            dysregulationScore={dysregulationScores.get(point.id) || 0}
+          />
+        );
+      })}
     </group>
   );
 }
