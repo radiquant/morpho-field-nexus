@@ -1541,7 +1541,7 @@ const AnatomyResonanceViewer = ({
                 onSelect={(model) => {
                   setSelectedAnatomyModel(model);
                 }}
-                onDelete={() => loadAnatomyModels()}
+                onDelete={() => reloadAnatomyModels()}
                 categories={modelCategories}
                 isLoading={modelsLoading}
               />
