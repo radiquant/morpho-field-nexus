@@ -49,6 +49,7 @@ export function GLBModelLoader({
   wireframe = false,
   highlightColor,
   onLoaded,
+  onMeshesReady,
 }: GLBModelLoaderProps) {
   const groupRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF(modelPath);
