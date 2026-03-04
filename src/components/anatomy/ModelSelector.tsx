@@ -4,10 +4,23 @@
  */
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Box, Download, Check, Lock, Layers, GitBranch, Bone, Heart } from 'lucide-react';
+import { Box, Check, Lock, Layers, GitBranch, Bone, Heart, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import {
   type AnatomyModel,
   getCategoryLabel,
@@ -18,6 +31,7 @@ interface ModelSelectorProps {
   models: AnatomyModel[];
   selectedModel: AnatomyModel | null;
   onSelect: (model: AnatomyModel) => void;
+  onDelete?: () => void;
   categories: string[];
   isLoading?: boolean;
 }
@@ -33,10 +47,31 @@ export function ModelSelector({
   models,
   selectedModel,
   onSelect,
+  onDelete,
   categories,
   isLoading,
 }: ModelSelectorProps) {
   const [activeTab, setActiveTab] = useState(categories[0] || 'full_body');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const handleDelete = async (model: AnatomyModel) => {
+    setDeletingId(model.id);
+    try {
+      if (model.storageType === 'cloud' && model.filePath) {
+        const storagePath = model.filePath.replace('3d-models/', '');
+        await supabase.storage.from('3d-models').remove([storagePath]);
+      }
+      const { error } = await supabase.from('anatomy_models').delete().eq('id', model.id);
+      if (error) throw error;
+      toast.success(`"${model.name}" gelöscht`);
+      onDelete?.();
+    } catch (err: any) {
+      console.error('Lösch-Fehler:', err);
+      toast.error(`Löschen fehlgeschlagen: ${err.message}`);
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -76,7 +111,9 @@ export function ModelSelector({
                     key={model.id}
                     model={model}
                     isSelected={selectedModel?.id === model.id}
+                    isDeleting={deletingId === model.id}
                     onSelect={() => onSelect(model)}
+                    onDelete={() => handleDelete(model)}
                   />
                 ))}
             </AnimatePresence>
@@ -90,11 +127,15 @@ export function ModelSelector({
 function ModelCard({
   model,
   isSelected,
+  isDeleting,
   onSelect,
+  onDelete,
 }: {
   model: AnatomyModel;
   isSelected: boolean;
+  isDeleting: boolean;
   onSelect: () => void;
+  onDelete: () => void;
 }) {
   return (
     <motion.div
@@ -103,19 +144,21 @@ function ModelCard({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
     >
-      <button
-        onClick={onSelect}
-        disabled={!model.isAvailable}
+      <div
         className={`w-full text-left p-2.5 rounded-lg border transition-all ${
           isSelected
             ? 'border-primary bg-primary/10 shadow-sm'
             : model.isAvailable
             ? 'border-border bg-card hover:border-primary/40 hover:bg-muted/50'
-            : 'border-border/50 bg-muted/30 opacity-60 cursor-not-allowed'
+            : 'border-border/50 bg-muted/30 opacity-60'
         }`}
       >
         <div className="flex items-start justify-between gap-2">
-          <div className="flex-1 min-w-0">
+          <button
+            onClick={onSelect}
+            disabled={!model.isAvailable}
+            className="flex-1 min-w-0 text-left"
+          >
             <div className="flex items-center gap-1.5">
               <span className="text-xs font-semibold text-foreground truncate">
                 {model.name}
@@ -154,13 +197,45 @@ function ModelCard({
                   Draco
                 </Badge>
               )}
+              {model.fileSize && (
+                <Badge variant="outline" className="text-[9px] px-1 py-0 h-4">
+                  {(model.fileSize / 1024 / 1024).toFixed(1)} MB
+                </Badge>
+              )}
             </div>
-          </div>
+          </button>
 
-          {!model.isAvailable && (
-            <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" disabled>
-              <Download className="w-3 h-3" />
-            </Button>
+          {!model.isDefault && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 shrink-0 text-muted-foreground hover:text-destructive"
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? (
+                    <div className="animate-spin w-3 h-3 border-2 border-destructive border-t-transparent rounded-full" />
+                  ) : (
+                    <Trash2 className="w-3 h-3" />
+                  )}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Modell löschen?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    „{model.name}" wird unwiderruflich aus der Bibliothek und dem Speicher entfernt.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Abbrechen</AlertDialogCancel>
+                  <AlertDialogAction onClick={onDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                    Löschen
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           )}
         </div>
 
@@ -169,7 +244,7 @@ function ModelCard({
             Lizenz: {model.license}
           </p>
         )}
-      </button>
+      </div>
     </motion.div>
   );
 }

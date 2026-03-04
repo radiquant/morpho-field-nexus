@@ -1540,10 +1540,8 @@ const AnatomyResonanceViewer = ({
                 selectedModel={selectedAnatomyModel}
                 onSelect={(model) => {
                   setSelectedAnatomyModel(model);
-                  if (model.isAvailable) {
-                    // Modell wird automatisch über den GLBModelLoader geladen
-                  }
                 }}
+                onDelete={() => reloadAnatomyModels()}
                 categories={modelCategories}
                 isLoading={modelsLoading}
               />
