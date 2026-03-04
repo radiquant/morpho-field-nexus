@@ -1,0 +1,8961 @@
+[
+  {
+    "id": "LU1",
+    "nameChinese": "Zhongfu",
+    "nameEnglish": "Central Treasury",
+    "nameGerman": "Zentralspeicher",
+    "meridian": "LU",
+    "element": "metal",
+    "location": "6 cun lateral zur vorderen Mittellinie, im 1. ICR",
+    "depth": "0.5-0.8 cun schräg lateral",
+    "frequency": 384,
+    "harmonicFrequencies": [
+      768,
+      1152,
+      1536,
+      1920
+    ],
+    "pointTypes": [
+      "mu_front"
+    ],
+    "functions": [
+      "Zerstreut Hitze",
+      "Reguliert Lungen-Qi",
+      "Stoppt Husten"
+    ],
+    "indications": [
+      "Husten",
+      "Asthma",
+      "Brustschmerzen",
+      "Schulterschmerzen"
+    ],
+    "precautions": [
+      "Nicht tief stechen - Pneumothorax-Risiko"
+    ],
+    "chakraCorrespondence": "anahata"
+  },
+  {
+    "id": "LU2",
+    "nameChinese": "Yunmen",
+    "nameEnglish": "Cloud Gate",
+    "nameGerman": "Wolkentor",
+    "meridian": "LU",
+    "element": "metal",
+    "location": "6 cun lateral zur vorderen Mittellinie, unter der Clavicula",
+    "depth": "0.5-0.8 cun schräg lateral",
+    "frequency": 388.8,
+    "harmonicFrequencies": [
+      777.6,
+      1166.4,
+      1555.2,
+      1944
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Lungen-Qi",
+      "Klärt Hitze"
+    ],
+    "indications": [
+      "Husten",
+      "Asthma",
+      "Schulterschmerzen"
+    ],
+    "precautions": [
+      "Nicht tief stechen"
+    ]
+  },
+  {
+    "id": "LU3",
+    "nameChinese": "Tianfu",
+    "nameEnglish": "Celestial Storehouse",
+    "nameGerman": "Himmelsspeicher",
+    "meridian": "LU",
+    "element": "metal",
+    "location": "3 cun unter dem vorderen Achselfalten-Ende, am lateralen Rand des M. biceps",
+    "depth": "0.5-1 cun",
+    "frequency": 393.6,
+    "harmonicFrequencies": [
+      787.2,
+      1180.8,
+      1574.4,
+      1968
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Klärt Lungen-Hitze",
+      "Kühlt Blut"
+    ],
+    "indications": [
+      "Asthma",
+      "Nasenbluten",
+      "Oberarmschmerzen"
+    ]
+  },
+  {
+    "id": "LU4",
+    "nameChinese": "Xiabai",
+    "nameEnglish": "Guarding White",
+    "nameGerman": "Weißer Wächter",
+    "meridian": "LU",
+    "element": "metal",
+    "location": "4 cun unter dem vorderen Achselfalten-Ende",
+    "depth": "0.5-1 cun",
+    "frequency": 398.4,
+    "harmonicFrequencies": [
+      796.8,
+      1195.2,
+      1593.6,
+      1992
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Qi im Brustkorb"
+    ],
+    "indications": [
+      "Husten",
+      "Atemnot",
+      "Herzschmerzen"
+    ]
+  },
+  {
+    "id": "LU5",
+    "nameChinese": "Chize",
+    "nameEnglish": "Cubit Marsh",
+    "nameGerman": "Ellenbogensee",
+    "meridian": "LU",
+    "element": "metal",
+    "location": "In der Ellenbogenfalte, radial der Bizepssehne",
+    "depth": "0.8-1.2 cun",
+    "frequency": 432,
+    "harmonicFrequencies": [
+      864,
+      1296,
+      1728,
+      2160
+    ],
+    "pointTypes": [
+      "he_sea"
+    ],
+    "functions": [
+      "Klärt Lungen-Hitze",
+      "Senkt rebellierendes Qi",
+      "Entspannt Sehnen"
+    ],
+    "indications": [
+      "Husten",
+      "Hämoptyse",
+      "Fieber",
+      "Ellenbogenschmerzen"
+    ],
+    "chakraCorrespondence": "ajna"
+  },
+  {
+    "id": "LU6",
+    "nameChinese": "Kongzui",
+    "nameEnglish": "Maximum Opening",
+    "nameGerman": "Tiefste Öffnung",
+    "meridian": "LU",
+    "element": "metal",
+    "location": "7 cun proximal der Handgelenksfalte, auf der Verbindung LU5-LU9",
+    "depth": "0.5-1 cun",
+    "frequency": 408,
+    "harmonicFrequencies": [
+      816,
+      1224,
+      1632,
+      2040
+    ],
+    "pointTypes": [
+      "xi_cleft"
+    ],
+    "functions": [
+      "Klärt Hitze",
+      "Stoppt Blutungen",
+      "Lindert Husten"
+    ],
+    "indications": [
+      "Akuter Husten",
+      "Asthma",
+      "Hämoptyse",
+      "Halsschmerzen"
+    ]
+  },
+  {
+    "id": "LU7",
+    "nameChinese": "Lieque",
+    "nameEnglish": "Broken Sequence",
+    "nameGerman": "Unterbrochene Reihe",
+    "meridian": "LU",
+    "element": "metal",
+    "location": "1.5 cun proximal der Handgelenksfalte, über dem Proc. styloideus radii",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 460.8,
+    "harmonicFrequencies": [
+      921.6,
+      1382.4,
+      1843.2,
+      2304
+    ],
+    "pointTypes": [
+      "luo_connecting",
+      "confluent"
+    ],
+    "functions": [
+      "Öffnet Ren Mai",
+      "Zerstreut Wind",
+      "Fördert Lungen-Qi-Absenkung"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Nackensteifigkeit",
+      "Husten",
+      "Asthma",
+      "Handgelenkschmerzen"
+    ],
+    "chakraCorrespondence": "vishuddha"
+  },
+  {
+    "id": "LU8",
+    "nameChinese": "Jingqu",
+    "nameEnglish": "Channel Ditch",
+    "nameGerman": "Kanalrinne",
+    "meridian": "LU",
+    "element": "metal",
+    "location": "1 cun proximal der Handgelenksfalte, in der Vertiefung radial der A. radialis",
+    "depth": "0.3-0.5 cun",
+    "frequency": 480,
+    "harmonicFrequencies": [
+      960,
+      1440,
+      1920,
+      2400
+    ],
+    "pointTypes": [
+      "jing_river"
+    ],
+    "functions": [
+      "Senkt Lungen-Qi",
+      "Klärt Hitze"
+    ],
+    "indications": [
+      "Husten",
+      "Asthma",
+      "Halsschmerzen",
+      "Handgelenkschmerzen"
+    ]
+  },
+  {
+    "id": "LU9",
+    "nameChinese": "Taiyuan",
+    "nameEnglish": "Supreme Abyss",
+    "nameGerman": "Großer Abgrund",
+    "meridian": "LU",
+    "element": "metal",
+    "location": "In der Handgelenksfalte, radial der A. radialis",
+    "depth": "0.3-0.5 cun",
+    "frequency": 512,
+    "harmonicFrequencies": [
+      1024,
+      1536,
+      2048,
+      2560
+    ],
+    "pointTypes": [
+      "shu_stream",
+      "yuan_source",
+      "hui_meeting"
+    ],
+    "functions": [
+      "Tonisiert Lungen-Qi",
+      "Stärkt Blutgefäße",
+      "Transformiert Schleim"
+    ],
+    "indications": [
+      "Husten",
+      "Asthma",
+      "Pulsdiagnose",
+      "Handgelenkschmerzen"
+    ],
+    "chakraCorrespondence": "vishuddha"
+  },
+  {
+    "id": "LU10",
+    "nameChinese": "Yuji",
+    "nameEnglish": "Fish Border",
+    "nameGerman": "Fischrand",
+    "meridian": "LU",
+    "element": "metal",
+    "location": "Am Thenarrand, auf der Grenze zwischen roter und weißer Haut",
+    "depth": "0.5-1 cun",
+    "frequency": 537.6,
+    "harmonicFrequencies": [
+      1075.2,
+      1612.8,
+      2150.4,
+      2688
+    ],
+    "pointTypes": [
+      "ying_spring"
+    ],
+    "functions": [
+      "Klärt Lungen-Hitze",
+      "Befeuchtet Kehle"
+    ],
+    "indications": [
+      "Halsschmerzen",
+      "Heiserkeit",
+      "Fieber"
+    ]
+  },
+  {
+    "id": "LU11",
+    "nameChinese": "Shaoshang",
+    "nameEnglish": "Lesser Shang",
+    "nameGerman": "Kleines Shang",
+    "meridian": "LU",
+    "element": "metal",
+    "location": "Am Daumen, 0.1 cun proximal des radialen Nagelwinkelwinkels",
+    "depth": "0.1 cun oder Blutenlassen",
+    "frequency": 576,
+    "harmonicFrequencies": [
+      1152,
+      1728,
+      2304,
+      2880
+    ],
+    "pointTypes": [
+      "jing_well"
+    ],
+    "functions": [
+      "Klärt Hitze",
+      "Belebt Bewusstsein",
+      "Lindert Halsschmerzen"
+    ],
+    "indications": [
+      "Akute Halsschmerzen",
+      "Fieber",
+      "Bewusstlosigkeit",
+      "Epistaxis"
+    ]
+  },
+  {
+    "id": "LI1",
+    "nameChinese": "Shangyang",
+    "nameEnglish": "Shang Yang",
+    "nameGerman": "Metall-Yang",
+    "meridian": "LI",
+    "element": "metal",
+    "location": "Am Zeigefinger, 0.1 cun proximal des radialen Nagelwinkels",
+    "depth": "0.1 cun oder Blutenlassen",
+    "frequency": 387.2,
+    "harmonicFrequencies": [
+      774.4,
+      1161.6,
+      1548.8,
+      1936
+    ],
+    "pointTypes": [
+      "jing_well"
+    ],
+    "functions": [
+      "Klärt Hitze",
+      "Belebt Bewusstsein"
+    ],
+    "indications": [
+      "Zahnschmerzen",
+      "Halsschmerzen",
+      "Taubheitsgefühl der Finger"
+    ]
+  },
+  {
+    "id": "LI2",
+    "nameChinese": "Erjian",
+    "nameEnglish": "Second Space",
+    "nameGerman": "Zweiter Zwischenraum",
+    "meridian": "LI",
+    "element": "metal",
+    "location": "Radial am Zeigefinger, distal des 2. MCP-Gelenks",
+    "depth": "0.2-0.3 cun",
+    "frequency": 391.7,
+    "harmonicFrequencies": [
+      783.4,
+      1175.1,
+      1566.8,
+      1958.5
+    ],
+    "pointTypes": [
+      "ying_spring"
+    ],
+    "functions": [
+      "Klärt Yang-Ming-Hitze"
+    ],
+    "indications": [
+      "Zahnschmerzen",
+      "Halsschmerzen",
+      "Nasenbluten"
+    ]
+  },
+  {
+    "id": "LI3",
+    "nameChinese": "Sanjian",
+    "nameEnglish": "Third Space",
+    "nameGerman": "Dritter Zwischenraum",
+    "meridian": "LI",
+    "element": "metal",
+    "location": "Radial am Zeigefinger, proximal des 2. MCP-Gelenks",
+    "depth": "0.5-1 cun",
+    "frequency": 396.2,
+    "harmonicFrequencies": [
+      792.4,
+      1188.6,
+      1584.8,
+      1981
+    ],
+    "pointTypes": [
+      "shu_stream"
+    ],
+    "functions": [
+      "Zerstreut Wind und Hitze",
+      "Klärt Yang-Ming"
+    ],
+    "indications": [
+      "Zahnschmerzen",
+      "Halsschmerzen",
+      "Rötung und Schwellung des Auges"
+    ]
+  },
+  {
+    "id": "LI4",
+    "nameChinese": "Hegu",
+    "nameEnglish": "Union Valley",
+    "nameGerman": "Vereinigte Täler",
+    "meridian": "LI",
+    "element": "metal",
+    "location": "Im 1. Intermetakarpalraum, auf der Höhe der Mitte des 2. Metakarpale",
+    "depth": "0.5-1 cun",
+    "frequency": 432,
+    "harmonicFrequencies": [
+      864,
+      1296,
+      1728,
+      2160
+    ],
+    "pointTypes": [
+      "yuan_source"
+    ],
+    "functions": [
+      "Zerstreut Wind und Hitze",
+      "Öffnet die Oberfläche",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Zahnschmerzen",
+      "Gesichtsschmerzen",
+      "Erkältung"
+    ],
+    "precautions": [
+      "Kontraindiziert in der Schwangerschaft"
+    ],
+    "chakraCorrespondence": "ajna"
+  },
+  {
+    "id": "LI5",
+    "nameChinese": "Yangxi",
+    "nameEnglish": "Yang Stream",
+    "nameGerman": "Yang-Bach",
+    "meridian": "LI",
+    "element": "metal",
+    "location": "Auf der radialen Seite des Handgelenks, in der Tabatiere",
+    "depth": "0.5-0.8 cun",
+    "frequency": 410.4,
+    "harmonicFrequencies": [
+      820.8,
+      1231.2,
+      1641.6,
+      2052
+    ],
+    "pointTypes": [
+      "jing_river"
+    ],
+    "functions": [
+      "Klärt Yang-Ming-Hitze",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Handgelenkschmerzen",
+      "Kopfschmerzen",
+      "Zahnschmerzen"
+    ]
+  },
+  {
+    "id": "LI6",
+    "nameChinese": "Pianli",
+    "nameEnglish": "Side Passage",
+    "nameGerman": "Seitenpassage",
+    "meridian": "LI",
+    "element": "metal",
+    "location": "3 cun proximal von LI5, auf der Verbindung LI5-LI11",
+    "depth": "0.5-1 cun",
+    "frequency": 405.6,
+    "harmonicFrequencies": [
+      811.2,
+      1216.8,
+      1622.4,
+      2028
+    ],
+    "pointTypes": [
+      "luo_connecting"
+    ],
+    "functions": [
+      "Öffnet Wasserwege",
+      "Zerstreut Wind"
+    ],
+    "indications": [
+      "Ödeme",
+      "Tinnitus",
+      "Nasenbluten"
+    ]
+  },
+  {
+    "id": "LI7",
+    "nameChinese": "Wenliu",
+    "nameEnglish": "Warm Flow",
+    "nameGerman": "Warmer Fluss",
+    "meridian": "LI",
+    "element": "metal",
+    "location": "5 cun proximal von LI5",
+    "depth": "0.5-1 cun",
+    "frequency": 414.8,
+    "harmonicFrequencies": [
+      829.6,
+      1244.4,
+      1659.2,
+      2074
+    ],
+    "pointTypes": [
+      "xi_cleft"
+    ],
+    "functions": [
+      "Klärt Hitze",
+      "Beruhigt Geist"
+    ],
+    "indications": [
+      "Akute Halsschmerzen",
+      "Gesichtsschwellung",
+      "Zungengeschwür"
+    ]
+  },
+  {
+    "id": "LI8",
+    "nameChinese": "Xialian",
+    "nameEnglish": "Lower Ridge",
+    "nameGerman": "Unterer Kamm",
+    "meridian": "LI",
+    "element": "metal",
+    "location": "4 cun distal von LI11",
+    "depth": "0.5-1 cun",
+    "frequency": 400.8,
+    "harmonicFrequencies": [
+      801.6,
+      1202.4,
+      1603.2,
+      2004
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Darm-Qi"
+    ],
+    "indications": [
+      "Bauchschmerzen",
+      "Ellenbogenschmerzen"
+    ]
+  },
+  {
+    "id": "LI9",
+    "nameChinese": "Shanglian",
+    "nameEnglish": "Upper Ridge",
+    "nameGerman": "Oberer Kamm",
+    "meridian": "LI",
+    "element": "metal",
+    "location": "3 cun distal von LI11",
+    "depth": "0.5-1 cun",
+    "frequency": 419.2,
+    "harmonicFrequencies": [
+      838.4,
+      1257.6,
+      1676.8,
+      2096
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Darm-Qi"
+    ],
+    "indications": [
+      "Bauchschmerzen",
+      "Armschmerzen",
+      "Hemiplegie"
+    ]
+  },
+  {
+    "id": "LI10",
+    "nameChinese": "Shousanli",
+    "nameEnglish": "Arm Three Miles",
+    "nameGerman": "Drei Meilen des Arms",
+    "meridian": "LI",
+    "element": "metal",
+    "location": "2 cun distal von LI11",
+    "depth": "1-1.5 cun",
+    "frequency": 424,
+    "harmonicFrequencies": [
+      848,
+      1272,
+      1696,
+      2120
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Qi und Blut",
+      "Harmonisiert Magen-Darm"
+    ],
+    "indications": [
+      "Bauchschmerzen",
+      "Durchfall",
+      "Zahnschmerzen",
+      "Armschwäche"
+    ]
+  },
+  {
+    "id": "LI11",
+    "nameChinese": "Quchi",
+    "nameEnglish": "Pool at the Bend",
+    "nameGerman": "Teich an der Beuge",
+    "meridian": "LI",
+    "element": "metal",
+    "location": "Am lateralen Ende der Ellenbogenfalte bei gebeugtem Arm",
+    "depth": "1-1.5 cun",
+    "frequency": 460.8,
+    "harmonicFrequencies": [
+      921.6,
+      1382.4,
+      1843.2,
+      2304
+    ],
+    "pointTypes": [
+      "he_sea"
+    ],
+    "functions": [
+      "Klärt Hitze",
+      "Kühlt Blut",
+      "Zerstreut Wind"
+    ],
+    "indications": [
+      "Fieber",
+      "Hauterkrankungen",
+      "Hypertonie",
+      "Ellenbogenschmerzen"
+    ],
+    "chakraCorrespondence": "anahata"
+  },
+  {
+    "id": "LI12",
+    "nameChinese": "Zhouliao",
+    "nameEnglish": "Elbow Bone Hole",
+    "nameGerman": "Ellenbogen-Vertiefung",
+    "meridian": "LI",
+    "element": "metal",
+    "location": "1 cun lateral und proximal von LI11",
+    "depth": "0.5-1 cun",
+    "frequency": 428.8,
+    "harmonicFrequencies": [
+      857.6,
+      1286.4,
+      1715.2,
+      2144
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Entspannt Sehnen"
+    ],
+    "indications": [
+      "Ellenbogenschmerzen",
+      "Armschwäche"
+    ]
+  },
+  {
+    "id": "LI13",
+    "nameChinese": "Shouwuli",
+    "nameEnglish": "Arm Five Miles",
+    "nameGerman": "Fünf Meilen des Arms",
+    "meridian": "LI",
+    "element": "metal",
+    "location": "3 cun proximal von LI11, am lateralen Rand des Humerus",
+    "depth": "0.5-1 cun",
+    "frequency": 433.6,
+    "harmonicFrequencies": [
+      867.2,
+      1300.8,
+      1734.4,
+      2168
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Qi"
+    ],
+    "indications": [
+      "Oberarmschmerzen",
+      "Skrofulose"
+    ]
+  },
+  {
+    "id": "LI14",
+    "nameChinese": "Binao",
+    "nameEnglish": "Upper Arm",
+    "nameGerman": "Oberarm",
+    "meridian": "LI",
+    "element": "metal",
+    "location": "Am unteren Rand des M. deltoideus, 7 cun proximal von LI11",
+    "depth": "0.5-1 cun",
+    "frequency": 438.4,
+    "harmonicFrequencies": [
+      876.8,
+      1315.2,
+      1753.6,
+      2192
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Qi",
+      "Belebt Blut"
+    ],
+    "indications": [
+      "Schulterschmerzen",
+      "Augenerkrankungen"
+    ]
+  },
+  {
+    "id": "LI15",
+    "nameChinese": "Jianyu",
+    "nameEnglish": "Shoulder Bone",
+    "nameGerman": "Schulterknochen",
+    "meridian": "LI",
+    "element": "metal",
+    "location": "In der vorderen Grube des Schulterdaches bei abduziertem Arm",
+    "depth": "0.8-1.5 cun",
+    "frequency": 443.2,
+    "harmonicFrequencies": [
+      886.4,
+      1329.6,
+      1772.8,
+      2216
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Löst Feuchtigkeit"
+    ],
+    "indications": [
+      "Schulterschmerzen",
+      "Frozen Shoulder",
+      "Armlähmung"
+    ]
+  },
+  {
+    "id": "LI16",
+    "nameChinese": "Jugu",
+    "nameEnglish": "Great Bone",
+    "nameGerman": "Großer Knochen",
+    "meridian": "LI",
+    "element": "metal",
+    "location": "In der Vertiefung zwischen Akromion und Spina scapulae",
+    "depth": "0.5-1 cun",
+    "frequency": 448,
+    "harmonicFrequencies": [
+      896,
+      1344,
+      1792,
+      2240
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Öffnet Kollateralen"
+    ],
+    "indications": [
+      "Schulterschmerzen",
+      "Nackenschmerzen"
+    ]
+  },
+  {
+    "id": "LI17",
+    "nameChinese": "Tianding",
+    "nameEnglish": "Celestial Tripod",
+    "nameGerman": "Himmlischer Dreifuß",
+    "meridian": "LI",
+    "element": "metal",
+    "location": "Am Hals, 1 cun unter LI18, am Hinterrand des M. SCM",
+    "depth": "0.5-0.8 cun",
+    "frequency": 452.8,
+    "harmonicFrequencies": [
+      905.6,
+      1358.4,
+      1811.2,
+      2264
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Befeuchtet Kehle",
+      "Zerstreut Schwellung"
+    ],
+    "indications": [
+      "Halsschmerzen",
+      "Heiserkeit",
+      "Schluckbeschwerden"
+    ]
+  },
+  {
+    "id": "LI18",
+    "nameChinese": "Futu",
+    "nameEnglish": "Support the Prominence",
+    "nameGerman": "Stütze des Kehlkopfes",
+    "meridian": "LI",
+    "element": "metal",
+    "location": "Auf Höhe des Adamsapfels, am Hinterrand des M. SCM",
+    "depth": "0.3-0.5 cun",
+    "frequency": 457.6,
+    "harmonicFrequencies": [
+      915.2,
+      1372.8,
+      1830.4,
+      2288
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Qi",
+      "Zerstreut Schwellung"
+    ],
+    "indications": [
+      "Husten",
+      "Heiserkeit",
+      "Halsschmerzen"
+    ],
+    "precautions": [
+      "Nicht tief stechen - Gefäße"
+    ]
+  },
+  {
+    "id": "LI19",
+    "nameChinese": "Kouheliao",
+    "nameEnglish": "Mouth Grain Bone Hole",
+    "nameGerman": "Mundkornvertiefung",
+    "meridian": "LI",
+    "element": "metal",
+    "location": "0.5 cun lateral des Philtrums",
+    "depth": "0.3-0.5 cun",
+    "frequency": 462.4,
+    "harmonicFrequencies": [
+      924.8,
+      1387.2,
+      1849.6,
+      2312
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Öffnet Nasenpassage"
+    ],
+    "indications": [
+      "Nasenbluten",
+      "verstopfte Nase",
+      "Gesichtslähmung"
+    ]
+  },
+  {
+    "id": "LI20",
+    "nameChinese": "Yingxiang",
+    "nameEnglish": "Welcome Fragrance",
+    "nameGerman": "Duft empfangen",
+    "meridian": "LI",
+    "element": "metal",
+    "location": "In der Nasolabialfalte, auf Höhe des Nasenflügels",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 480,
+    "harmonicFrequencies": [
+      960,
+      1440,
+      1920,
+      2400
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Öffnet Nasenpassage"
+    ],
+    "indications": [
+      "Rhinitis",
+      "Sinusitis",
+      "Gesichtslähmung",
+      "Juckreiz im Gesicht"
+    ],
+    "chakraCorrespondence": "ajna"
+  },
+  {
+    "id": "ST1",
+    "nameChinese": "Chengqi",
+    "nameEnglish": "Container of Tears",
+    "nameGerman": "Tränenhalter",
+    "meridian": "ST",
+    "element": "earth",
+    "location": "Direkt unter der Pupille, am Unterrand der Orbita",
+    "depth": "0.3-0.7 cun entlang der Orbita",
+    "frequency": 256,
+    "harmonicFrequencies": [
+      512,
+      768,
+      1024,
+      1280
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Klärt Hitze",
+      "Erhellt Augen"
+    ],
+    "indications": [
+      "Augenerkrankungen",
+      "Tränenfluss",
+      "Gesichtslähmung"
+    ],
+    "precautions": [
+      "Vorsicht - Orbita"
+    ]
+  },
+  {
+    "id": "ST2",
+    "nameChinese": "Sibai",
+    "nameEnglish": "Four Whites",
+    "nameGerman": "Vier Weiße",
+    "meridian": "ST",
+    "element": "earth",
+    "location": "Direkt unter der Pupille, im Foramen infraorbitale",
+    "depth": "0.3-0.5 cun",
+    "frequency": 259.2,
+    "harmonicFrequencies": [
+      518.4,
+      777.6,
+      1036.8,
+      1296
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Erhellt Augen"
+    ],
+    "indications": [
+      "Augenerkrankungen",
+      "Gesichtslähmung",
+      "Trigeminusneuralgie"
+    ]
+  },
+  {
+    "id": "ST3",
+    "nameChinese": "Juliao",
+    "nameEnglish": "Great Bone Hole",
+    "nameGerman": "Große Knochenvertiefung",
+    "meridian": "ST",
+    "element": "earth",
+    "location": "Direkt unter ST2, auf Höhe des Nasenflügels",
+    "depth": "0.3-0.5 cun",
+    "frequency": 262.4,
+    "harmonicFrequencies": [
+      524.8,
+      787.2,
+      1049.6,
+      1312
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Lindert Schwellung"
+    ],
+    "indications": [
+      "Gesichtslähmung",
+      "Nasenbluten",
+      "Zahnschmerzen"
+    ]
+  },
+  {
+    "id": "ST4",
+    "nameChinese": "Dicang",
+    "nameEnglish": "Earth Granary",
+    "nameGerman": "Irdischer Speicher",
+    "meridian": "ST",
+    "element": "earth",
+    "location": "0.4 cun lateral des Mundwinkels",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 265.6,
+    "harmonicFrequencies": [
+      531.2,
+      796.8,
+      1062.4,
+      1328
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Aktiviert Kollateralen"
+    ],
+    "indications": [
+      "Gesichtslähmung",
+      "Speichelfluss",
+      "Trigeminusneuralgie"
+    ]
+  },
+  {
+    "id": "ST5",
+    "nameChinese": "Daying",
+    "nameEnglish": "Great Welcome",
+    "nameGerman": "Großer Empfang",
+    "meridian": "ST",
+    "element": "earth",
+    "location": "Am Vorderrand des M. masseter, in der Vertiefung vor dem Unterkieferwinkel",
+    "depth": "0.3-0.5 cun",
+    "frequency": 268.8,
+    "harmonicFrequencies": [
+      537.6,
+      806.4,
+      1075.2,
+      1344
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Lindert Schwellung"
+    ],
+    "indications": [
+      "Zahnschmerzen",
+      "Kiefergelenksprobleme",
+      "Gesichtslähmung"
+    ]
+  },
+  {
+    "id": "ST6",
+    "nameChinese": "Jiache",
+    "nameEnglish": "Jaw Bone",
+    "nameGerman": "Kieferknochen",
+    "meridian": "ST",
+    "element": "earth",
+    "location": "Einen Fingerbreit vor und oberhalb des Kieferwinkels, am höchsten Punkt des M. masseter",
+    "depth": "0.3-0.5 cun",
+    "frequency": 272,
+    "harmonicFrequencies": [
+      544,
+      816,
+      1088,
+      1360
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Aktiviert Kollateralen"
+    ],
+    "indications": [
+      "Zahnschmerzen",
+      "Kiefergelenksprobleme",
+      "Gesichtslähmung",
+      "Parotitis"
+    ]
+  },
+  {
+    "id": "ST7",
+    "nameChinese": "Xiaguan",
+    "nameEnglish": "Below the Joint",
+    "nameGerman": "Unter dem Gelenk",
+    "meridian": "ST",
+    "element": "earth",
+    "location": "In der Vertiefung unter dem Jochbeinbogen, vor dem Kiefergelenk",
+    "depth": "0.5-1 cun",
+    "frequency": 275.2,
+    "harmonicFrequencies": [
+      550.4,
+      825.6,
+      1100.8,
+      1376
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Aktiviert Kollateralen",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Kiefergelenksprobleme",
+      "Tinnitus",
+      "Schwerhörigkeit",
+      "Zahnschmerzen"
+    ]
+  },
+  {
+    "id": "ST8",
+    "nameChinese": "Touwei",
+    "nameEnglish": "Head Corner",
+    "nameGerman": "Kopfecke",
+    "meridian": "ST",
+    "element": "earth",
+    "location": "0.5 cun hinter dem Haaransatz, am Stirneck",
+    "depth": "0.5-1 cun schräg",
+    "frequency": 278.4,
+    "harmonicFrequencies": [
+      556.8,
+      835.2,
+      1113.6,
+      1392
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Migräne",
+      "Verschwommenes Sehen"
+    ]
+  },
+  {
+    "id": "ST25",
+    "nameChinese": "Tianshu",
+    "nameEnglish": "Celestial Pivot",
+    "nameGerman": "Himmelsscharnier",
+    "meridian": "ST",
+    "element": "earth",
+    "location": "2 cun lateral des Nabels",
+    "depth": "1-1.5 cun",
+    "frequency": 320,
+    "harmonicFrequencies": [
+      640,
+      960,
+      1280,
+      1600
+    ],
+    "pointTypes": [
+      "mu_front"
+    ],
+    "functions": [
+      "Reguliert Magen-Darm",
+      "Lindert Stagnation",
+      "Tonisiert Milz"
+    ],
+    "indications": [
+      "Bauchschmerzen",
+      "Durchfall",
+      "Verstopfung",
+      "Dysmenorrhoe"
+    ],
+    "chakraCorrespondence": "manipura"
+  },
+  {
+    "id": "ST36",
+    "nameChinese": "Zusanli",
+    "nameEnglish": "Leg Three Miles",
+    "nameGerman": "Drei Meilen des Beins",
+    "meridian": "ST",
+    "element": "earth",
+    "location": "3 cun unter ST35, 1 Fingerbreit lateral der Tibiakante",
+    "depth": "1-2 cun",
+    "frequency": 341.3,
+    "harmonicFrequencies": [
+      682.6,
+      1023.9,
+      1365.2,
+      1706.5
+    ],
+    "pointTypes": [
+      "he_sea"
+    ],
+    "functions": [
+      "Stärkt Milz und Magen",
+      "Tonisiert Qi und Blut",
+      "Stärkt Abwehr"
+    ],
+    "indications": [
+      "Magenprobleme",
+      "Erschöpfung",
+      "Immunschwäche",
+      "Knieschmerzen"
+    ],
+    "chakraCorrespondence": "manipura"
+  },
+  {
+    "id": "ST40",
+    "nameChinese": "Fenglong",
+    "nameEnglish": "Abundant Bulge",
+    "nameGerman": "Üppige Erhebung",
+    "meridian": "ST",
+    "element": "earth",
+    "location": "8 cun über dem Außenknöchel, 2 Fingerbreit lateral der Tibiakante",
+    "depth": "1-1.5 cun",
+    "frequency": 307.2,
+    "harmonicFrequencies": [
+      614.4,
+      921.6,
+      1228.8,
+      1536
+    ],
+    "pointTypes": [
+      "luo_connecting"
+    ],
+    "functions": [
+      "Transformiert Schleim",
+      "Beruhigt Geist",
+      "Klärt Hitze"
+    ],
+    "indications": [
+      "Husten mit Schleim",
+      "Schwindel",
+      "Epilepsie",
+      "Beinschwellung"
+    ]
+  },
+  {
+    "id": "ST44",
+    "nameChinese": "Neiting",
+    "nameEnglish": "Inner Court",
+    "nameGerman": "Innerer Hof",
+    "meridian": "ST",
+    "element": "earth",
+    "location": "Zwischen 2. und 3. Zehe, proximal des Schwimmhautrand",
+    "depth": "0.3-0.5 cun",
+    "frequency": 358.4,
+    "harmonicFrequencies": [
+      716.8,
+      1075.2,
+      1433.6,
+      1792
+    ],
+    "pointTypes": [
+      "ying_spring"
+    ],
+    "functions": [
+      "Klärt Magen-Hitze",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Zahnschmerzen",
+      "Gesichtsschmerzen",
+      "Gastritis",
+      "Fußschmerzen"
+    ]
+  },
+  {
+    "id": "ST45",
+    "nameChinese": "Lidui",
+    "nameEnglish": "Severe Mouth",
+    "nameGerman": "Strenger Mund",
+    "meridian": "ST",
+    "element": "earth",
+    "location": "Am 2. Zeh, 0.1 cun lateral des Nagelwinkels",
+    "depth": "0.1 cun oder Blutenlassen",
+    "frequency": 384,
+    "harmonicFrequencies": [
+      768,
+      1152,
+      1536,
+      1920
+    ],
+    "pointTypes": [
+      "jing_well"
+    ],
+    "functions": [
+      "Klärt Hitze",
+      "Beruhigt Geist"
+    ],
+    "indications": [
+      "Gesichtsschwellung",
+      "Alpträume",
+      "Manie"
+    ]
+  },
+  {
+    "id": "SP1",
+    "nameChinese": "Yinbai",
+    "nameEnglish": "Hidden White",
+    "nameGerman": "Verborgenes Weiß",
+    "meridian": "SP",
+    "element": "earth",
+    "location": "Am großen Zeh, 0.1 cun proximal des medialen Nagelwinkels",
+    "depth": "0.1 cun oder Blutenlassen",
+    "frequency": 256,
+    "harmonicFrequencies": [
+      512,
+      768,
+      1024,
+      1280
+    ],
+    "pointTypes": [
+      "jing_well"
+    ],
+    "functions": [
+      "Stärkt Milz",
+      "Stoppt Blutungen",
+      "Beruhigt Geist"
+    ],
+    "indications": [
+      "Menorrhagie",
+      "Uterusblutung",
+      "Schlaflosigkeit",
+      "Alpträume"
+    ],
+    "chakraCorrespondence": "muladhara"
+  },
+  {
+    "id": "SP2",
+    "nameChinese": "Dadu",
+    "nameEnglish": "Great Metropolis",
+    "nameGerman": "Große Stadt",
+    "meridian": "SP",
+    "element": "earth",
+    "location": "Medial am großen Zeh, distal des 1. MTP-Gelenks",
+    "depth": "0.3-0.5 cun",
+    "frequency": 262.4,
+    "harmonicFrequencies": [
+      524.8,
+      787.2,
+      1049.6,
+      1312
+    ],
+    "pointTypes": [
+      "ying_spring"
+    ],
+    "functions": [
+      "Klärt Milz-Hitze",
+      "Reguliert Qi"
+    ],
+    "indications": [
+      "Bauchschmerzen",
+      "Blähungen",
+      "Fieber ohne Schwitzen"
+    ]
+  },
+  {
+    "id": "SP3",
+    "nameChinese": "Taibai",
+    "nameEnglish": "Supreme White",
+    "nameGerman": "Höchstes Weiß",
+    "meridian": "SP",
+    "element": "earth",
+    "location": "Medial am Fuß, proximal des 1. MTP-Gelenks",
+    "depth": "0.5-1 cun",
+    "frequency": 272,
+    "harmonicFrequencies": [
+      544,
+      816,
+      1088,
+      1360
+    ],
+    "pointTypes": [
+      "shu_stream",
+      "yuan_source"
+    ],
+    "functions": [
+      "Stärkt Milz",
+      "Löst Feuchtigkeit",
+      "Harmonisiert Magen"
+    ],
+    "indications": [
+      "Bauchschmerzen",
+      "Durchfall",
+      "Schwere der Glieder",
+      "Fußschmerzen"
+    ],
+    "chakraCorrespondence": "manipura"
+  },
+  {
+    "id": "SP4",
+    "nameChinese": "Gongsun",
+    "nameEnglish": "Yellow Emperor",
+    "nameGerman": "Gelber Kaiser",
+    "meridian": "SP",
+    "element": "earth",
+    "location": "Medial am Fuß, in der Vertiefung distal der Basis des 1. Metatarsale",
+    "depth": "0.5-1 cun",
+    "frequency": 288,
+    "harmonicFrequencies": [
+      576,
+      864,
+      1152,
+      1440
+    ],
+    "pointTypes": [
+      "luo_connecting",
+      "confluent"
+    ],
+    "functions": [
+      "Stärkt Milz",
+      "Reguliert Chong Mai",
+      "Harmonisiert Magen"
+    ],
+    "indications": [
+      "Magenschmerzen",
+      "Übelkeit",
+      "Dysmenorrhoe",
+      "Herzschmerzen"
+    ],
+    "chakraCorrespondence": "manipura"
+  },
+  {
+    "id": "SP5",
+    "nameChinese": "Shangqiu",
+    "nameEnglish": "Shang Mound",
+    "nameGerman": "Shang-Hügel",
+    "meridian": "SP",
+    "element": "earth",
+    "location": "In der Vertiefung vor und unter dem medialen Malleolus",
+    "depth": "0.3-0.5 cun",
+    "frequency": 298.7,
+    "harmonicFrequencies": [
+      597.4,
+      896.1,
+      1194.8,
+      1493.5
+    ],
+    "pointTypes": [
+      "jing_river"
+    ],
+    "functions": [
+      "Stärkt Milz",
+      "Löst Feuchtigkeit"
+    ],
+    "indications": [
+      "Knöchelschwellung",
+      "Bauchschmerzen",
+      "Verstopfung"
+    ]
+  },
+  {
+    "id": "SP6",
+    "nameChinese": "Sanyinjiao",
+    "nameEnglish": "Three Yin Intersection",
+    "nameGerman": "Treffpunkt der drei Yin",
+    "meridian": "SP",
+    "element": "earth",
+    "location": "3 cun über dem medialen Malleolus, am Hinterrand der Tibia",
+    "depth": "1-1.5 cun",
+    "frequency": 307.2,
+    "harmonicFrequencies": [
+      614.4,
+      921.6,
+      1228.8,
+      1536
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Stärkt Milz",
+      "Nährt Leber und Nieren",
+      "Reguliert Menstruation"
+    ],
+    "indications": [
+      "Gynäkologische Beschwerden",
+      "Verdauungsprobleme",
+      "Schlaflosigkeit",
+      "Schmerzen"
+    ],
+    "precautions": [
+      "Kontraindiziert in der Schwangerschaft"
+    ],
+    "chakraCorrespondence": "svadhisthana"
+  },
+  {
+    "id": "SP7",
+    "nameChinese": "Lougu",
+    "nameEnglish": "Leaking Valley",
+    "nameGerman": "Leckendes Tal",
+    "meridian": "SP",
+    "element": "earth",
+    "location": "6 cun über dem medialen Malleolus",
+    "depth": "1-1.5 cun",
+    "frequency": 312,
+    "harmonicFrequencies": [
+      624,
+      936,
+      1248,
+      1560
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Löst Feuchtigkeit",
+      "Reguliert Wasserwege"
+    ],
+    "indications": [
+      "Bauchblähung",
+      "Ödeme",
+      "Knieschmerzen"
+    ]
+  },
+  {
+    "id": "SP8",
+    "nameChinese": "Diji",
+    "nameEnglish": "Earth Pivot",
+    "nameGerman": "Erd-Drehpunkt",
+    "meridian": "SP",
+    "element": "earth",
+    "location": "3 cun unter SP9, am Hinterrand der Tibia",
+    "depth": "1-1.5 cun",
+    "frequency": 316.8,
+    "harmonicFrequencies": [
+      633.6,
+      950.4,
+      1267.2,
+      1584
+    ],
+    "pointTypes": [
+      "xi_cleft"
+    ],
+    "functions": [
+      "Reguliert Menstruation",
+      "Löst Blut-Stase"
+    ],
+    "indications": [
+      "Dysmenorrhoe",
+      "Bauchschmerzen",
+      "Ödeme"
+    ]
+  },
+  {
+    "id": "SP9",
+    "nameChinese": "Yinlingquan",
+    "nameEnglish": "Yin Mound Spring",
+    "nameGerman": "Yin-Hügel-Quelle",
+    "meridian": "SP",
+    "element": "earth",
+    "location": "In der Vertiefung unter dem medialen Tibiakondylus",
+    "depth": "1-2 cun",
+    "frequency": 326.4,
+    "harmonicFrequencies": [
+      652.8,
+      979.2,
+      1305.6,
+      1632
+    ],
+    "pointTypes": [
+      "he_sea"
+    ],
+    "functions": [
+      "Löst Feuchtigkeit",
+      "Öffnet Wasserwege",
+      "Stärkt Milz"
+    ],
+    "indications": [
+      "Ödeme",
+      "Harnprobleme",
+      "Knieschmerzen",
+      "Durchfall"
+    ],
+    "chakraCorrespondence": "manipura"
+  },
+  {
+    "id": "SP10",
+    "nameChinese": "Xuehai",
+    "nameEnglish": "Sea of Blood",
+    "nameGerman": "Meer des Blutes",
+    "meridian": "SP",
+    "element": "earth",
+    "location": "2 cun über dem medialen Patellarand",
+    "depth": "1-1.5 cun",
+    "frequency": 332.8,
+    "harmonicFrequencies": [
+      665.6,
+      998.4,
+      1331.2,
+      1664
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Belebt Blut",
+      "Kühlt Blut",
+      "Reguliert Menstruation"
+    ],
+    "indications": [
+      "Hauterkrankungen",
+      "Menstruationsstörungen",
+      "Knieschmerzen"
+    ],
+    "chakraCorrespondence": "anahata"
+  },
+  {
+    "id": "SP11",
+    "nameChinese": "Jimen",
+    "nameEnglish": "Winnowing Gate",
+    "nameGerman": "Worfelndes Tor",
+    "meridian": "SP",
+    "element": "earth",
+    "location": "6 cun über SP10, am medialen Oberschenkel",
+    "depth": "0.5-1 cun",
+    "frequency": 339.2,
+    "harmonicFrequencies": [
+      678.4,
+      1017.6,
+      1356.8,
+      1696
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Wasserwege"
+    ],
+    "indications": [
+      "Harnverhalt",
+      "Leistenschmerzen"
+    ]
+  },
+  {
+    "id": "SP12",
+    "nameChinese": "Chongmen",
+    "nameEnglish": "Rushing Gate",
+    "nameGerman": "Drängendes Tor",
+    "meridian": "SP",
+    "element": "earth",
+    "location": "3.5 cun lateral der vorderen Mittellinie, am oberen Rand des Schambeins",
+    "depth": "0.5-1 cun",
+    "frequency": 345.6,
+    "harmonicFrequencies": [
+      691.2,
+      1036.8,
+      1382.4,
+      1728
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Qi",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Leistenschmerzen",
+      "Hernie"
+    ]
+  },
+  {
+    "id": "SP13",
+    "nameChinese": "Fushe",
+    "nameEnglish": "Bowel Abode",
+    "nameGerman": "Darmwohnung",
+    "meridian": "SP",
+    "element": "earth",
+    "location": "4 cun lateral des Nabels, 0.7 cun über SP12",
+    "depth": "1-1.5 cun",
+    "frequency": 352,
+    "harmonicFrequencies": [
+      704,
+      1056,
+      1408,
+      1760
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Darm-Qi"
+    ],
+    "indications": [
+      "Bauchschmerzen",
+      "Hernie"
+    ]
+  },
+  {
+    "id": "SP14",
+    "nameChinese": "Fujie",
+    "nameEnglish": "Abdomen Bind",
+    "nameGerman": "Bauchband",
+    "meridian": "SP",
+    "element": "earth",
+    "location": "4 cun lateral des Nabels, 1.3 cun unter SP15",
+    "depth": "1-1.5 cun",
+    "frequency": 358.4,
+    "harmonicFrequencies": [
+      716.8,
+      1075.2,
+      1433.6,
+      1792
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Darm-Qi"
+    ],
+    "indications": [
+      "Bauchschmerzen",
+      "Durchfall",
+      "Verstopfung"
+    ]
+  },
+  {
+    "id": "SP15",
+    "nameChinese": "Daheng",
+    "nameEnglish": "Great Horizontal",
+    "nameGerman": "Große Horizontale",
+    "meridian": "SP",
+    "element": "earth",
+    "location": "4 cun lateral des Nabels",
+    "depth": "1-2 cun",
+    "frequency": 364.8,
+    "harmonicFrequencies": [
+      729.6,
+      1094.4,
+      1459.2,
+      1824
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Stärkt Milz",
+      "Reguliert Darm-Qi"
+    ],
+    "indications": [
+      "Bauchschmerzen",
+      "Durchfall",
+      "Verstopfung",
+      "Erschöpfung"
+    ]
+  },
+  {
+    "id": "SP16",
+    "nameChinese": "Fuai",
+    "nameEnglish": "Abdomen Sorrow",
+    "nameGerman": "Bauchkummer",
+    "meridian": "SP",
+    "element": "earth",
+    "location": "3 cun über dem Nabel, 4 cun lateral der Mittellinie",
+    "depth": "1-1.5 cun",
+    "frequency": 371.2,
+    "harmonicFrequencies": [
+      742.4,
+      1113.6,
+      1484.8,
+      1856
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Darm-Qi"
+    ],
+    "indications": [
+      "Bauchschmerzen",
+      "Verdauungsstörungen"
+    ]
+  },
+  {
+    "id": "SP17",
+    "nameChinese": "Shidou",
+    "nameEnglish": "Food Hole",
+    "nameGerman": "Speisenhöhle",
+    "meridian": "SP",
+    "element": "earth",
+    "location": "Im 5. ICR, 6 cun lateral der vorderen Mittellinie",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 377.6,
+    "harmonicFrequencies": [
+      755.2,
+      1132.8,
+      1510.4,
+      1888
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Qi im Brustkorb"
+    ],
+    "indications": [
+      "Brustschmerzen",
+      "Rippenschmerzen"
+    ],
+    "precautions": [
+      "Nicht tief stechen - Pneumothorax-Risiko"
+    ]
+  },
+  {
+    "id": "SP18",
+    "nameChinese": "Tianxi",
+    "nameEnglish": "Celestial Ravine",
+    "nameGerman": "Himmlische Schlucht",
+    "meridian": "SP",
+    "element": "earth",
+    "location": "Im 4. ICR, 6 cun lateral der vorderen Mittellinie",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 384,
+    "harmonicFrequencies": [
+      768,
+      1152,
+      1536,
+      1920
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Lungen-Qi",
+      "Fördert Laktation"
+    ],
+    "indications": [
+      "Brustschmerzen",
+      "Husten",
+      "Mastitis"
+    ],
+    "precautions": [
+      "Nicht tief stechen"
+    ]
+  },
+  {
+    "id": "SP19",
+    "nameChinese": "Xiongxiang",
+    "nameEnglish": "Chest Village",
+    "nameGerman": "Brustdorf",
+    "meridian": "SP",
+    "element": "earth",
+    "location": "Im 3. ICR, 6 cun lateral der vorderen Mittellinie",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 390.4,
+    "harmonicFrequencies": [
+      780.8,
+      1171.2,
+      1561.6,
+      1952
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Qi im Brustkorb"
+    ],
+    "indications": [
+      "Brustschmerzen",
+      "Rippenschmerzen"
+    ],
+    "precautions": [
+      "Nicht tief stechen"
+    ]
+  },
+  {
+    "id": "SP20",
+    "nameChinese": "Zhourong",
+    "nameEnglish": "Encircling Glory",
+    "nameGerman": "Umgebender Glanz",
+    "meridian": "SP",
+    "element": "earth",
+    "location": "Im 2. ICR, 6 cun lateral der vorderen Mittellinie",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 396.8,
+    "harmonicFrequencies": [
+      793.6,
+      1190.4,
+      1587.2,
+      1984
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Qi",
+      "Lindert Husten"
+    ],
+    "indications": [
+      "Husten",
+      "Atemnot",
+      "Rippenschmerzen"
+    ],
+    "precautions": [
+      "Nicht tief stechen"
+    ]
+  },
+  {
+    "id": "SP21",
+    "nameChinese": "Dabao",
+    "nameEnglish": "Great Embracement",
+    "nameGerman": "Große Umarmung",
+    "meridian": "SP",
+    "element": "earth",
+    "location": "Auf der mittleren Axillarlinie, im 6. ICR",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 403.2,
+    "harmonicFrequencies": [
+      806.4,
+      1209.6,
+      1612.8,
+      2016
+    ],
+    "pointTypes": [
+      "luo_connecting"
+    ],
+    "functions": [
+      "Reguliert Qi und Blut im ganzen Körper"
+    ],
+    "indications": [
+      "Ganzkörperschmerzen",
+      "Schwäche der Extremitäten",
+      "Rippenschmerzen"
+    ],
+    "precautions": [
+      "Nicht tief stechen"
+    ],
+    "chakraCorrespondence": "anahata"
+  },
+  {
+    "id": "HT1",
+    "nameChinese": "Jiquan",
+    "nameEnglish": "Highest Spring",
+    "nameGerman": "Höchste Quelle",
+    "meridian": "HT",
+    "element": "fire",
+    "location": "In der Achselhöhle, medial der A. axillaris",
+    "depth": "0.5-1 cun",
+    "frequency": 341.3,
+    "harmonicFrequencies": [
+      682.6,
+      1023.9,
+      1365.2,
+      1706.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Herz-Qi",
+      "Öffnet Brust",
+      "Belebt Arme"
+    ],
+    "indications": [
+      "Herzschmerzen",
+      "Armschmerzen",
+      "Depression",
+      "Schulterschmerzen"
+    ],
+    "precautions": [
+      "Vorsicht - A. axillaris"
+    ],
+    "chakraCorrespondence": "anahata"
+  },
+  {
+    "id": "HT2",
+    "nameChinese": "Qingling",
+    "nameEnglish": "Cyan Spirit",
+    "nameGerman": "Blaugrüner Geist",
+    "meridian": "HT",
+    "element": "fire",
+    "location": "3 cun über dem medialen Epikondylus, in der Furche des M. biceps",
+    "depth": "0.5-1 cun",
+    "frequency": 349.9,
+    "harmonicFrequencies": [
+      699.8,
+      1049.7,
+      1399.6,
+      1749.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Herz-Qi"
+    ],
+    "indications": [
+      "Herzschmerzen",
+      "Schulterschmerzen",
+      "Rippenschmerzen"
+    ]
+  },
+  {
+    "id": "HT3",
+    "nameChinese": "Shaohai",
+    "nameEnglish": "Lesser Sea",
+    "nameGerman": "Kleines Meer",
+    "meridian": "HT",
+    "element": "fire",
+    "location": "Bei gebeugtem Ellenbogen, zwischen medialem Epikondylus und Ulnarer Flexorensehne",
+    "depth": "0.5-1 cun",
+    "frequency": 358.4,
+    "harmonicFrequencies": [
+      716.8,
+      1075.2,
+      1433.6,
+      1792
+    ],
+    "pointTypes": [
+      "he_sea"
+    ],
+    "functions": [
+      "Beruhigt Herz",
+      "Transformiert Schleim",
+      "Aktiviert Kanal"
+    ],
+    "indications": [
+      "Herzschmerzen",
+      "Ellenbogenschmerzen",
+      "Angst",
+      "Gedächtnisprobleme"
+    ],
+    "chakraCorrespondence": "anahata"
+  },
+  {
+    "id": "HT4",
+    "nameChinese": "Lingdao",
+    "nameEnglish": "Spirit Pathway",
+    "nameGerman": "Geistespfad",
+    "meridian": "HT",
+    "element": "fire",
+    "location": "1.5 cun proximal der Handgelenksfalte, radial der Sehne des M. flexor carpi ulnaris",
+    "depth": "0.3-0.5 cun",
+    "frequency": 367,
+    "harmonicFrequencies": [
+      734,
+      1101,
+      1468,
+      1835
+    ],
+    "pointTypes": [
+      "jing_river"
+    ],
+    "functions": [
+      "Beruhigt Herz",
+      "Reguliert Qi"
+    ],
+    "indications": [
+      "Herzschmerzen",
+      "Stimmverlust",
+      "Handgelenkschmerzen"
+    ]
+  },
+  {
+    "id": "HT5",
+    "nameChinese": "Tongli",
+    "nameEnglish": "Connecting Li",
+    "nameGerman": "Verbindung zum Inneren",
+    "meridian": "HT",
+    "element": "fire",
+    "location": "1 cun proximal der Handgelenksfalte, radial der Sehne des M. flexor carpi ulnaris",
+    "depth": "0.3-0.5 cun",
+    "frequency": 375.5,
+    "harmonicFrequencies": [
+      751,
+      1126.5,
+      1502,
+      1877.5
+    ],
+    "pointTypes": [
+      "luo_connecting"
+    ],
+    "functions": [
+      "Beruhigt Herz",
+      "Stärkt Zunge",
+      "Reguliert Rhythmus"
+    ],
+    "indications": [
+      "Herzrhythmusstörungen",
+      "Sprachstörungen",
+      "Handgelenkschmerzen"
+    ],
+    "chakraCorrespondence": "vishuddha"
+  },
+  {
+    "id": "HT6",
+    "nameChinese": "Yinxi",
+    "nameEnglish": "Yin Cleft",
+    "nameGerman": "Yin-Spalt",
+    "meridian": "HT",
+    "element": "fire",
+    "location": "0.5 cun proximal der Handgelenksfalte, radial der Sehne des M. flexor carpi ulnaris",
+    "depth": "0.3-0.5 cun",
+    "frequency": 384.1,
+    "harmonicFrequencies": [
+      768.2,
+      1152.3,
+      1536.4,
+      1920.5
+    ],
+    "pointTypes": [
+      "xi_cleft"
+    ],
+    "functions": [
+      "Nährt Herz-Yin",
+      "Stoppt Nachtschweiß",
+      "Beruhigt Geist"
+    ],
+    "indications": [
+      "Nachtschweiß",
+      "Herzschmerzen",
+      "Angst",
+      "Schlaflosigkeit"
+    ]
+  },
+  {
+    "id": "HT7",
+    "nameChinese": "Shenmen",
+    "nameEnglish": "Spirit Gate",
+    "nameGerman": "Tor des Geistes",
+    "meridian": "HT",
+    "element": "fire",
+    "location": "In der Handgelenksfalte, ulnar der Sehne des M. flexor carpi ulnaris",
+    "depth": "0.3-0.5 cun",
+    "frequency": 392.6,
+    "harmonicFrequencies": [
+      785.2,
+      1177.8,
+      1570.4,
+      1963
+    ],
+    "pointTypes": [
+      "shu_stream",
+      "yuan_source"
+    ],
+    "functions": [
+      "Beruhigt Herz und Geist",
+      "Nährt Herz-Blut",
+      "Öffnet Sinne"
+    ],
+    "indications": [
+      "Schlaflosigkeit",
+      "Angst",
+      "Depression",
+      "Herzrhythmusstörungen",
+      "Gedächtnisprobleme"
+    ],
+    "chakraCorrespondence": "anahata"
+  },
+  {
+    "id": "HT8",
+    "nameChinese": "Shaofu",
+    "nameEnglish": "Lesser Mansion",
+    "nameGerman": "Kleiner Palast",
+    "meridian": "HT",
+    "element": "fire",
+    "location": "In der Handfläche, zwischen 4. und 5. Metakarpale, wo der kleine Finger beim Faustschluss zeigt",
+    "depth": "0.3-0.5 cun",
+    "frequency": 401.2,
+    "harmonicFrequencies": [
+      802.4,
+      1203.6,
+      1604.8,
+      2006
+    ],
+    "pointTypes": [
+      "ying_spring"
+    ],
+    "functions": [
+      "Klärt Herz-Hitze",
+      "Beruhigt Geist"
+    ],
+    "indications": [
+      "Herzklopfen",
+      "Brustschmerzen",
+      "Juckreiz",
+      "Harnbeschwerden"
+    ]
+  },
+  {
+    "id": "HT9",
+    "nameChinese": "Shaochong",
+    "nameEnglish": "Lesser Rushing",
+    "nameGerman": "Kleines Drängen",
+    "meridian": "HT",
+    "element": "fire",
+    "location": "Am kleinen Finger, 0.1 cun proximal des radialen Nagelwinkels",
+    "depth": "0.1 cun oder Blutenlassen",
+    "frequency": 409.7,
+    "harmonicFrequencies": [
+      819.4,
+      1229.1,
+      1638.8,
+      2048.5
+    ],
+    "pointTypes": [
+      "jing_well"
+    ],
+    "functions": [
+      "Belebt Bewusstsein",
+      "Klärt Hitze",
+      "Öffnet Sinne"
+    ],
+    "indications": [
+      "Bewusstlosigkeit",
+      "Fieber",
+      "Herzschmerzen",
+      "Zungengeschwür"
+    ]
+  },
+  {
+    "id": "SI1",
+    "nameChinese": "Shaoze",
+    "nameEnglish": "Lesser Marsh",
+    "nameGerman": "Kleiner Sumpf",
+    "meridian": "SI",
+    "element": "fire",
+    "location": "Am kleinen Finger, 0.1 cun proximal des ulnaren Nagelwinkels",
+    "depth": "0.1 cun oder Blutenlassen",
+    "frequency": 343.5,
+    "harmonicFrequencies": [
+      687,
+      1030.5,
+      1374,
+      1717.5
+    ],
+    "pointTypes": [
+      "jing_well"
+    ],
+    "functions": [
+      "Klärt Hitze",
+      "Fördert Laktation",
+      "Belebt Bewusstsein"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Fieber",
+      "Laktationsprobleme",
+      "Konjunktivitis"
+    ]
+  },
+  {
+    "id": "SI2",
+    "nameChinese": "Qiangu",
+    "nameEnglish": "Front Valley",
+    "nameGerman": "Vorderes Tal",
+    "meridian": "SI",
+    "element": "fire",
+    "location": "Ulnar am kleinen Finger, distal des 5. MCP-Gelenks",
+    "depth": "0.3-0.5 cun",
+    "frequency": 350.4,
+    "harmonicFrequencies": [
+      700.8,
+      1051.2,
+      1401.6,
+      1752
+    ],
+    "pointTypes": [
+      "ying_spring"
+    ],
+    "functions": [
+      "Klärt Hitze",
+      "Fördert Laktation"
+    ],
+    "indications": [
+      "Fieber",
+      "Tinnitus",
+      "Kopfschmerzen"
+    ]
+  },
+  {
+    "id": "SI3",
+    "nameChinese": "Houxi",
+    "nameEnglish": "Back Stream",
+    "nameGerman": "Hinterer Bach",
+    "meridian": "SI",
+    "element": "fire",
+    "location": "Ulnar an der Hand, proximal des 5. MCP-Gelenks, bei geballter Faust",
+    "depth": "0.5-1 cun",
+    "frequency": 357.3,
+    "harmonicFrequencies": [
+      714.6,
+      1071.9,
+      1429.2,
+      1786.5
+    ],
+    "pointTypes": [
+      "shu_stream",
+      "confluent"
+    ],
+    "functions": [
+      "Öffnet Du Mai",
+      "Zerstreut Wind",
+      "Lindert Nacken und Rücken"
+    ],
+    "indications": [
+      "Nackensteifigkeit",
+      "Kopfschmerzen",
+      "Rückenschmerzen",
+      "Epilepsie"
+    ],
+    "chakraCorrespondence": "vishuddha"
+  },
+  {
+    "id": "SI4",
+    "nameChinese": "Wangu",
+    "nameEnglish": "Wrist Bone",
+    "nameGerman": "Handgelenkknochen",
+    "meridian": "SI",
+    "element": "fire",
+    "location": "Ulnar am Handgelenk, in der Vertiefung zwischen Os triquetrum und Os pisiforme",
+    "depth": "0.3-0.5 cun",
+    "frequency": 364.2,
+    "harmonicFrequencies": [
+      728.4,
+      1092.6,
+      1456.8,
+      1821
+    ],
+    "pointTypes": [
+      "yuan_source"
+    ],
+    "functions": [
+      "Klärt Hitze",
+      "Aktiviert Kanal"
+    ],
+    "indications": [
+      "Handgelenkschmerzen",
+      "Fieber",
+      "Gelbsucht"
+    ]
+  },
+  {
+    "id": "SI5",
+    "nameChinese": "Yanggu",
+    "nameEnglish": "Yang Valley",
+    "nameGerman": "Yang-Tal",
+    "meridian": "SI",
+    "element": "fire",
+    "location": "Ulnar am Handgelenk, in der Vertiefung zwischen Ulna und Os triquetrum",
+    "depth": "0.3-0.5 cun",
+    "frequency": 371.1,
+    "harmonicFrequencies": [
+      742.2,
+      1113.3,
+      1484.4,
+      1855.5
+    ],
+    "pointTypes": [
+      "jing_river"
+    ],
+    "functions": [
+      "Klärt Hitze",
+      "Lindert Schwellung"
+    ],
+    "indications": [
+      "Handgelenkschmerzen",
+      "Tinnitus",
+      "Fieber"
+    ]
+  },
+  {
+    "id": "SI6",
+    "nameChinese": "Yanglao",
+    "nameEnglish": "Nursing the Aged",
+    "nameGerman": "Pflege des Alten",
+    "meridian": "SI",
+    "element": "fire",
+    "location": "1 cun proximal von SI5, in der Vertiefung radial des Ulnaköpfchens",
+    "depth": "0.3-0.5 cun",
+    "frequency": 378,
+    "harmonicFrequencies": [
+      756,
+      1134,
+      1512,
+      1890
+    ],
+    "pointTypes": [
+      "xi_cleft"
+    ],
+    "functions": [
+      "Erhellt Augen",
+      "Aktiviert Kanal"
+    ],
+    "indications": [
+      "Sehstörungen",
+      "Schulter- und Armschmerzen",
+      "Steifer Nacken"
+    ]
+  },
+  {
+    "id": "SI7",
+    "nameChinese": "Zhizheng",
+    "nameEnglish": "Branch to the Correct",
+    "nameGerman": "Zweig zum Richtigen",
+    "meridian": "SI",
+    "element": "fire",
+    "location": "5 cun proximal von SI5, auf der Verbindung SI5-SI8",
+    "depth": "0.5-1 cun",
+    "frequency": 384.9,
+    "harmonicFrequencies": [
+      769.8,
+      1154.7,
+      1539.6,
+      1924.5
+    ],
+    "pointTypes": [
+      "luo_connecting"
+    ],
+    "functions": [
+      "Beruhigt Geist",
+      "Klärt Hitze"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Nackensteifigkeit",
+      "Angst",
+      "Manie"
+    ]
+  },
+  {
+    "id": "SI8",
+    "nameChinese": "Xiaohai",
+    "nameEnglish": "Small Sea",
+    "nameGerman": "Kleines Meer",
+    "meridian": "SI",
+    "element": "fire",
+    "location": "Bei gebeugtem Ellenbogen, in der Vertiefung zwischen Olekranon und medialem Epikondylus",
+    "depth": "0.5-1 cun",
+    "frequency": 391.8,
+    "harmonicFrequencies": [
+      783.6,
+      1175.4,
+      1567.2,
+      1959
+    ],
+    "pointTypes": [
+      "he_sea"
+    ],
+    "functions": [
+      "Klärt Hitze",
+      "Beruhigt Geist",
+      "Aktiviert Kanal"
+    ],
+    "indications": [
+      "Ellenbogenschmerzen",
+      "Taubheit des Arms",
+      "Epilepsie"
+    ]
+  },
+  {
+    "id": "SI9",
+    "nameChinese": "Jianzhen",
+    "nameEnglish": "True Shoulder",
+    "nameGerman": "Wahre Schulter",
+    "meridian": "SI",
+    "element": "fire",
+    "location": "1 cun über dem hinteren Achselfaltenende, bei adduziertem Arm",
+    "depth": "1-1.5 cun",
+    "frequency": 398.7,
+    "harmonicFrequencies": [
+      797.4,
+      1196.1,
+      1594.8,
+      1993.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Aktiviert Kanal",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Schulterschmerzen",
+      "Armlähmung",
+      "Tinnitus"
+    ]
+  },
+  {
+    "id": "SI10",
+    "nameChinese": "Naoshu",
+    "nameEnglish": "Upper Arm Shu",
+    "nameGerman": "Oberarm-Transportpunkt",
+    "meridian": "SI",
+    "element": "fire",
+    "location": "Direkt über SI9, in der Vertiefung unter der Spina scapulae",
+    "depth": "0.5-1 cun",
+    "frequency": 405.6,
+    "harmonicFrequencies": [
+      811.2,
+      1216.8,
+      1622.4,
+      2028
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Aktiviert Kanal",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Schulterschmerzen",
+      "Schultersteifigkeit"
+    ]
+  },
+  {
+    "id": "SI11",
+    "nameChinese": "Tianzong",
+    "nameEnglish": "Celestial Gathering",
+    "nameGerman": "Himmlische Versammlung",
+    "meridian": "SI",
+    "element": "fire",
+    "location": "In der Mitte der Fossa infraspinata, auf der Verbindung SI10-SI13",
+    "depth": "0.5-1 cun",
+    "frequency": 412.5,
+    "harmonicFrequencies": [
+      825,
+      1237.5,
+      1650,
+      2062.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Aktiviert Kanal",
+      "Lindert Schmerzen",
+      "Fördert Laktation"
+    ],
+    "indications": [
+      "Schulterschmerzen",
+      "Armschmerzen",
+      "Mastitis"
+    ]
+  },
+  {
+    "id": "SI12",
+    "nameChinese": "Bingfeng",
+    "nameEnglish": "Grasping the Wind",
+    "nameGerman": "Wind Ergreifen",
+    "meridian": "SI",
+    "element": "fire",
+    "location": "In der Mitte der Fossa supraspinata, über SI11",
+    "depth": "0.5-1 cun",
+    "frequency": 419.4,
+    "harmonicFrequencies": [
+      838.8,
+      1258.2,
+      1677.6,
+      2097
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Aktiviert Kanal"
+    ],
+    "indications": [
+      "Schulterschmerzen",
+      "Taubheit der Schulter"
+    ]
+  },
+  {
+    "id": "SI13",
+    "nameChinese": "Quyuan",
+    "nameEnglish": "Crooked Wall",
+    "nameGerman": "Gekrümmte Mauer",
+    "meridian": "SI",
+    "element": "fire",
+    "location": "Am medialen Ende der Fossa supraspinata",
+    "depth": "0.5-1 cun",
+    "frequency": 426.3,
+    "harmonicFrequencies": [
+      852.6,
+      1278.9,
+      1705.2,
+      2131.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Aktiviert Kanal",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Schulterschmerzen",
+      "Schulterblattschmerzen"
+    ]
+  },
+  {
+    "id": "SI14",
+    "nameChinese": "Jianwaishu",
+    "nameEnglish": "Outer Shoulder Shu",
+    "nameGerman": "Äußerer Schulter-Transportpunkt",
+    "meridian": "SI",
+    "element": "fire",
+    "location": "3 cun lateral des Dornfortsatzes T1",
+    "depth": "0.5-1 cun",
+    "frequency": 433.2,
+    "harmonicFrequencies": [
+      866.4,
+      1299.6,
+      1732.8,
+      2166
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Aktiviert Kanal",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Schulter- und Rückenschmerzen",
+      "Nackensteifigkeit"
+    ]
+  },
+  {
+    "id": "SI15",
+    "nameChinese": "Jianzhongshu",
+    "nameEnglish": "Middle Shoulder Shu",
+    "nameGerman": "Mittlerer Schulter-Transportpunkt",
+    "meridian": "SI",
+    "element": "fire",
+    "location": "2 cun lateral des Dornfortsatzes C7",
+    "depth": "0.5-1 cun",
+    "frequency": 440.1,
+    "harmonicFrequencies": [
+      880.2,
+      1320.3,
+      1760.4,
+      2200.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Klärt Hitze"
+    ],
+    "indications": [
+      "Husten",
+      "Asthma",
+      "Schulterschmerzen"
+    ]
+  },
+  {
+    "id": "SI16",
+    "nameChinese": "Tianchuang",
+    "nameEnglish": "Celestial Window",
+    "nameGerman": "Himmlisches Fenster",
+    "meridian": "SI",
+    "element": "fire",
+    "location": "Am Hinterrand des M. SCM, auf Höhe des Adamsapfels",
+    "depth": "0.5-1 cun",
+    "frequency": 447,
+    "harmonicFrequencies": [
+      894,
+      1341,
+      1788,
+      2235
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Fördert Hören",
+      "Klärt Hitze"
+    ],
+    "indications": [
+      "Tinnitus",
+      "Schwerhörigkeit",
+      "Halsschmerzen"
+    ],
+    "precautions": [
+      "Vorsicht - Gefäße"
+    ],
+    "chakraCorrespondence": "vishuddha"
+  },
+  {
+    "id": "SI17",
+    "nameChinese": "Tianrong",
+    "nameEnglish": "Celestial Countenance",
+    "nameGerman": "Himmlisches Antlitz",
+    "meridian": "SI",
+    "element": "fire",
+    "location": "Hinter dem Unterkieferwinkel, am Vorderrand des M. SCM",
+    "depth": "0.5-1 cun",
+    "frequency": 453.9,
+    "harmonicFrequencies": [
+      907.8,
+      1361.7,
+      1815.6,
+      2269.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Klärt Hitze",
+      "Lindert Schwellung"
+    ],
+    "indications": [
+      "Halsschmerzen",
+      "Mandelentzündung",
+      "Tinnitus"
+    ],
+    "precautions": [
+      "Vorsicht - Gefäße"
+    ]
+  },
+  {
+    "id": "SI18",
+    "nameChinese": "Quanliao",
+    "nameEnglish": "Cheekbone Hole",
+    "nameGerman": "Jochbeinvertiefung",
+    "meridian": "SI",
+    "element": "fire",
+    "location": "Direkt unter dem Jochbein, unter dem äußeren Augenwinkel",
+    "depth": "0.3-0.5 cun",
+    "frequency": 460.8,
+    "harmonicFrequencies": [
+      921.6,
+      1382.4,
+      1843.2,
+      2304
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Lindert Schwellung"
+    ],
+    "indications": [
+      "Gesichtslähmung",
+      "Trigeminusneuralgie",
+      "Zahnschmerzen"
+    ]
+  },
+  {
+    "id": "SI19",
+    "nameChinese": "Tinggong",
+    "nameEnglish": "Auditory Palace",
+    "nameGerman": "Hörpalast",
+    "meridian": "SI",
+    "element": "fire",
+    "location": "Vor dem Tragus, bei geöffnetem Mund in der Vertiefung",
+    "depth": "0.5-1 cun",
+    "frequency": 467.7,
+    "harmonicFrequencies": [
+      935.4,
+      1403.1,
+      1870.8,
+      2338.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Öffnet Ohren",
+      "Beruhigt Geist"
+    ],
+    "indications": [
+      "Tinnitus",
+      "Schwerhörigkeit",
+      "Ohrenschmerzen",
+      "Kiefergelenksprobleme"
+    ],
+    "chakraCorrespondence": "ajna"
+  },
+  {
+    "id": "BL1",
+    "nameChinese": "Jingming",
+    "nameEnglish": "Bright Eyes",
+    "nameGerman": "Helle Augen",
+    "meridian": "BL",
+    "element": "water",
+    "location": "0.1 cun über dem inneren Augenwinkel",
+    "depth": "0.3-0.5 cun entlang der Orbita",
+    "frequency": 192,
+    "harmonicFrequencies": [
+      384,
+      576,
+      768,
+      960
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Erhellt Augen",
+      "Zerstreut Wind"
+    ],
+    "indications": [
+      "Augenerkrankungen",
+      "Konjunktivitis",
+      "Nachtblindheit",
+      "Tränenfluss"
+    ],
+    "precautions": [
+      "Nicht manipulieren - Blutungsgefahr"
+    ],
+    "chakraCorrespondence": "ajna"
+  },
+  {
+    "id": "BL2",
+    "nameChinese": "Zanzhu",
+    "nameEnglish": "Bamboo Gathering",
+    "nameGerman": "Bambusansammlung",
+    "meridian": "BL",
+    "element": "water",
+    "location": "Am medialen Augenbrauenende, über BL1",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 194.5,
+    "harmonicFrequencies": [
+      389,
+      583.5,
+      778,
+      972.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Erhellt Augen",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Augenschmerzen",
+      "Tränende Augen",
+      "Schluckauf"
+    ]
+  },
+  {
+    "id": "BL3",
+    "nameChinese": "Meichong",
+    "nameEnglish": "Eyebrow Ascension",
+    "nameGerman": "Augenbrauenaufstieg",
+    "meridian": "BL",
+    "element": "water",
+    "location": "0.5 cun hinter dem vorderen Haaransatz, oberhalb von BL2",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 197,
+    "harmonicFrequencies": [
+      394,
+      591,
+      788,
+      985
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Schwindel",
+      "Epilepsie"
+    ]
+  },
+  {
+    "id": "BL4",
+    "nameChinese": "Quchai",
+    "nameEnglish": "Deviating Turn",
+    "nameGerman": "Abweichende Kurve",
+    "meridian": "BL",
+    "element": "water",
+    "location": "0.5 cun hinter dem Haaransatz, 1.5 cun lateral der Mittellinie",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 199.5,
+    "harmonicFrequencies": [
+      399,
+      598.5,
+      798,
+      997.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Erhellt Augen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Verschwommenes Sehen",
+      "Nasenbluten"
+    ]
+  },
+  {
+    "id": "BL5",
+    "nameChinese": "Wuchu",
+    "nameEnglish": "Fifth Place",
+    "nameGerman": "Fünfter Platz",
+    "meridian": "BL",
+    "element": "water",
+    "location": "1 cun hinter dem Haaransatz, 1.5 cun lateral der Mittellinie",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 202,
+    "harmonicFrequencies": [
+      404,
+      606,
+      808,
+      1010
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Epilepsie",
+      "Schwindel"
+    ]
+  },
+  {
+    "id": "BL6",
+    "nameChinese": "Chengguang",
+    "nameEnglish": "Light Guard",
+    "nameGerman": "Lichtwächter",
+    "meridian": "BL",
+    "element": "water",
+    "location": "2.5 cun hinter dem Haaransatz, 1.5 cun lateral der Mittellinie",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 204.5,
+    "harmonicFrequencies": [
+      409,
+      613.5,
+      818,
+      1022.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Erhellt Augen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Verschwommenes Sehen",
+      "Nasenprobleme"
+    ]
+  },
+  {
+    "id": "BL7",
+    "nameChinese": "Tongtian",
+    "nameEnglish": "Celestial Connection",
+    "nameGerman": "Himmlische Verbindung",
+    "meridian": "BL",
+    "element": "water",
+    "location": "4 cun hinter dem Haaransatz, 1.5 cun lateral der Mittellinie",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 207,
+    "harmonicFrequencies": [
+      414,
+      621,
+      828,
+      1035
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Öffnet Nase"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Rhinitis",
+      "Nasenbluten"
+    ]
+  },
+  {
+    "id": "BL8",
+    "nameChinese": "Luoque",
+    "nameEnglish": "Declining Connection",
+    "nameGerman": "Abnehmende Verbindung",
+    "meridian": "BL",
+    "element": "water",
+    "location": "5.5 cun hinter dem Haaransatz, 1.5 cun lateral der Mittellinie",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 209.5,
+    "harmonicFrequencies": [
+      419,
+      628.5,
+      838,
+      1047.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Beruhigt Geist",
+      "Erhellt Augen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Sehstörungen",
+      "Tinnitus"
+    ]
+  },
+  {
+    "id": "BL9",
+    "nameChinese": "Yuzhen",
+    "nameEnglish": "Jade Pillow",
+    "nameGerman": "Jadekissen",
+    "meridian": "BL",
+    "element": "water",
+    "location": "2.5 cun über dem hinteren Haaransatz, 1.3 cun lateral der Mittellinie",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 212,
+    "harmonicFrequencies": [
+      424,
+      636,
+      848,
+      1060
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Erhellt Augen",
+      "Zerstreut Wind"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Sehstörungen",
+      "Nasenprobleme"
+    ]
+  },
+  {
+    "id": "BL10",
+    "nameChinese": "Tianzhu",
+    "nameEnglish": "Celestial Pillar",
+    "nameGerman": "Himmlische Säule",
+    "meridian": "BL",
+    "element": "water",
+    "location": "1.3 cun lateral von DU15, im Trapezius",
+    "depth": "0.5-1 cun",
+    "frequency": 214.5,
+    "harmonicFrequencies": [
+      429,
+      643.5,
+      858,
+      1072.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Öffnet Sinne",
+      "Entspannt Sehnen"
+    ],
+    "indications": [
+      "Nackensteifigkeit",
+      "Kopfschmerzen",
+      "Schulterschmerzen"
+    ],
+    "chakraCorrespondence": "vishuddha"
+  },
+  {
+    "id": "BL11",
+    "nameChinese": "Dazhu",
+    "nameEnglish": "Great Shuttle",
+    "nameGerman": "Großes Weberschiffchen",
+    "meridian": "BL",
+    "element": "water",
+    "location": "1.5 cun lateral des Dornfortsatzes T1",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 217,
+    "harmonicFrequencies": [
+      434,
+      651,
+      868,
+      1085
+    ],
+    "pointTypes": [
+      "hui_meeting"
+    ],
+    "functions": [
+      "Stärkt Knochen",
+      "Zerstreut Wind"
+    ],
+    "indications": [
+      "Nacken- und Rückenschmerzen",
+      "Husten",
+      "Fieber"
+    ]
+  },
+  {
+    "id": "BL12",
+    "nameChinese": "Fengmen",
+    "nameEnglish": "Wind Gate",
+    "nameGerman": "Windtor",
+    "meridian": "BL",
+    "element": "water",
+    "location": "1.5 cun lateral des Dornfortsatzes T2",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 219.5,
+    "harmonicFrequencies": [
+      439,
+      658.5,
+      878,
+      1097.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Öffnet Oberfläche",
+      "Reguliert Lungen-Qi"
+    ],
+    "indications": [
+      "Erkältung",
+      "Husten",
+      "Nackensteifigkeit",
+      "Rückenschmerzen"
+    ]
+  },
+  {
+    "id": "BL13",
+    "nameChinese": "Feishu",
+    "nameEnglish": "Lung Shu",
+    "nameGerman": "Lungen-Transportpunkt",
+    "meridian": "BL",
+    "element": "water",
+    "location": "1.5 cun lateral des Dornfortsatzes T3",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 222,
+    "harmonicFrequencies": [
+      444,
+      666,
+      888,
+      1110
+    ],
+    "pointTypes": [
+      "shu_back"
+    ],
+    "functions": [
+      "Tonisiert Lungen-Qi",
+      "Nährt Lungen-Yin",
+      "Klärt Hitze"
+    ],
+    "indications": [
+      "Husten",
+      "Asthma",
+      "Tuberkulose",
+      "Nachtschweiß"
+    ],
+    "chakraCorrespondence": "anahata"
+  },
+  {
+    "id": "BL14",
+    "nameChinese": "Jueyinshu",
+    "nameEnglish": "Pericardium Shu",
+    "nameGerman": "Perikard-Transportpunkt",
+    "meridian": "BL",
+    "element": "water",
+    "location": "1.5 cun lateral des Dornfortsatzes T4",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 224.5,
+    "harmonicFrequencies": [
+      449,
+      673.5,
+      898,
+      1122.5
+    ],
+    "pointTypes": [
+      "shu_back"
+    ],
+    "functions": [
+      "Reguliert Herz-Qi",
+      "Beruhigt Geist"
+    ],
+    "indications": [
+      "Herzschmerzen",
+      "Herzklopfen",
+      "Husten"
+    ]
+  },
+  {
+    "id": "BL15",
+    "nameChinese": "Xinshu",
+    "nameEnglish": "Heart Shu",
+    "nameGerman": "Herz-Transportpunkt",
+    "meridian": "BL",
+    "element": "water",
+    "location": "1.5 cun lateral des Dornfortsatzes T5",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 227,
+    "harmonicFrequencies": [
+      454,
+      681,
+      908,
+      1135
+    ],
+    "pointTypes": [
+      "shu_back"
+    ],
+    "functions": [
+      "Tonisiert Herz",
+      "Beruhigt Geist",
+      "Nährt Blut"
+    ],
+    "indications": [
+      "Herzschmerzen",
+      "Schlaflosigkeit",
+      "Angst",
+      "Gedächtnisprobleme"
+    ],
+    "chakraCorrespondence": "anahata"
+  },
+  {
+    "id": "BL16",
+    "nameChinese": "Dushu",
+    "nameEnglish": "Governing Vessel Shu",
+    "nameGerman": "Du Mai-Transportpunkt",
+    "meridian": "BL",
+    "element": "water",
+    "location": "1.5 cun lateral des Dornfortsatzes T6",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 229.5,
+    "harmonicFrequencies": [
+      459,
+      688.5,
+      918,
+      1147.5
+    ],
+    "pointTypes": [
+      "shu_back"
+    ],
+    "functions": [
+      "Reguliert Herz-Qi",
+      "Lindert Brustschmerzen"
+    ],
+    "indications": [
+      "Herzschmerzen",
+      "Bauchschmerzen",
+      "Fieber"
+    ]
+  },
+  {
+    "id": "BL17",
+    "nameChinese": "Geshu",
+    "nameEnglish": "Diaphragm Shu",
+    "nameGerman": "Zwerchfell-Transportpunkt",
+    "meridian": "BL",
+    "element": "water",
+    "location": "1.5 cun lateral des Dornfortsatzes T7",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 232,
+    "harmonicFrequencies": [
+      464,
+      696,
+      928,
+      1160
+    ],
+    "pointTypes": [
+      "shu_back",
+      "hui_meeting"
+    ],
+    "functions": [
+      "Nährt und belebt Blut",
+      "Kühlt Blut-Hitze",
+      "Harmonisiert Zwerchfell"
+    ],
+    "indications": [
+      "Anämie",
+      "Blutungen",
+      "Schluckauf",
+      "Erbrechen"
+    ],
+    "chakraCorrespondence": "manipura"
+  },
+  {
+    "id": "BL18",
+    "nameChinese": "Ganshu",
+    "nameEnglish": "Liver Shu",
+    "nameGerman": "Leber-Transportpunkt",
+    "meridian": "BL",
+    "element": "water",
+    "location": "1.5 cun lateral des Dornfortsatzes T9",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 237,
+    "harmonicFrequencies": [
+      474,
+      711,
+      948,
+      1185
+    ],
+    "pointTypes": [
+      "shu_back"
+    ],
+    "functions": [
+      "Reguliert Leber-Qi",
+      "Erhellt Augen",
+      "Löst Stagnation"
+    ],
+    "indications": [
+      "Hepatitis",
+      "Augenkrankheiten",
+      "Rippenschmerzen",
+      "Depression"
+    ]
+  },
+  {
+    "id": "BL19",
+    "nameChinese": "Danshu",
+    "nameEnglish": "Gallbladder Shu",
+    "nameGerman": "Gallenblasen-Transportpunkt",
+    "meridian": "BL",
+    "element": "water",
+    "location": "1.5 cun lateral des Dornfortsatzes T10",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 239.5,
+    "harmonicFrequencies": [
+      479,
+      718.5,
+      958,
+      1197.5
+    ],
+    "pointTypes": [
+      "shu_back"
+    ],
+    "functions": [
+      "Reguliert Gallenblasen-Qi",
+      "Klärt Feuchtigkeit-Hitze"
+    ],
+    "indications": [
+      "Gallenblasenentzündung",
+      "Bitterer Mundgeschmack",
+      "Rippenschmerzen"
+    ]
+  },
+  {
+    "id": "BL20",
+    "nameChinese": "Pishu",
+    "nameEnglish": "Spleen Shu",
+    "nameGerman": "Milz-Transportpunkt",
+    "meridian": "BL",
+    "element": "water",
+    "location": "1.5 cun lateral des Dornfortsatzes T11",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 242,
+    "harmonicFrequencies": [
+      484,
+      726,
+      968,
+      1210
+    ],
+    "pointTypes": [
+      "shu_back"
+    ],
+    "functions": [
+      "Stärkt Milz",
+      "Transformiert Feuchtigkeit",
+      "Nährt Blut"
+    ],
+    "indications": [
+      "Verdauungsprobleme",
+      "Erschöpfung",
+      "Ödeme",
+      "Anämie"
+    ],
+    "chakraCorrespondence": "manipura"
+  },
+  {
+    "id": "BL21",
+    "nameChinese": "Weishu",
+    "nameEnglish": "Stomach Shu",
+    "nameGerman": "Magen-Transportpunkt",
+    "meridian": "BL",
+    "element": "water",
+    "location": "1.5 cun lateral des Dornfortsatzes T12",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 244.5,
+    "harmonicFrequencies": [
+      489,
+      733.5,
+      978,
+      1222.5
+    ],
+    "pointTypes": [
+      "shu_back"
+    ],
+    "functions": [
+      "Harmonisiert Magen",
+      "Reguliert Qi",
+      "Löst Stagnation"
+    ],
+    "indications": [
+      "Magenschmerzen",
+      "Übelkeit",
+      "Erbrechen",
+      "Appetitlosigkeit"
+    ]
+  },
+  {
+    "id": "BL22",
+    "nameChinese": "Sanjiaoshu",
+    "nameEnglish": "Triple Burner Shu",
+    "nameGerman": "Dreifacher Erwärmer-Transportpunkt",
+    "meridian": "BL",
+    "element": "water",
+    "location": "1.5 cun lateral des Dornfortsatzes L1",
+    "depth": "0.5-1 cun",
+    "frequency": 247,
+    "harmonicFrequencies": [
+      494,
+      741,
+      988,
+      1235
+    ],
+    "pointTypes": [
+      "shu_back"
+    ],
+    "functions": [
+      "Reguliert Wasserwege",
+      "Transformiert Feuchtigkeit"
+    ],
+    "indications": [
+      "Ödeme",
+      "Harnprobleme",
+      "Verdauungsprobleme"
+    ]
+  },
+  {
+    "id": "BL23",
+    "nameChinese": "Shenshu",
+    "nameEnglish": "Kidney Shu",
+    "nameGerman": "Nieren-Transportpunkt",
+    "meridian": "BL",
+    "element": "water",
+    "location": "1.5 cun lateral des Dornfortsatzes L2",
+    "depth": "0.5-1 cun",
+    "frequency": 249.5,
+    "harmonicFrequencies": [
+      499,
+      748.5,
+      998,
+      1247.5
+    ],
+    "pointTypes": [
+      "shu_back"
+    ],
+    "functions": [
+      "Tonisiert Nieren",
+      "Stärkt Rücken",
+      "Nährt Essenz"
+    ],
+    "indications": [
+      "Lendenschmerzen",
+      "Impotenz",
+      "Tinnitus",
+      "Erschöpfung"
+    ],
+    "chakraCorrespondence": "svadhisthana"
+  },
+  {
+    "id": "BL24",
+    "nameChinese": "Qihaishu",
+    "nameEnglish": "Sea of Qi Shu",
+    "nameGerman": "Qi-Meer-Transportpunkt",
+    "meridian": "BL",
+    "element": "water",
+    "location": "1.5 cun lateral des Dornfortsatzes L3",
+    "depth": "0.5-1 cun",
+    "frequency": 252,
+    "harmonicFrequencies": [
+      504,
+      756,
+      1008,
+      1260
+    ],
+    "pointTypes": [
+      "shu_back"
+    ],
+    "functions": [
+      "Stärkt Lendenbereich",
+      "Reguliert Qi"
+    ],
+    "indications": [
+      "Lendenschmerzen",
+      "Hämorrhoiden",
+      "Dysmenorrhoe"
+    ]
+  },
+  {
+    "id": "BL25",
+    "nameChinese": "Dachangshu",
+    "nameEnglish": "Large Intestine Shu",
+    "nameGerman": "Dickdarm-Transportpunkt",
+    "meridian": "BL",
+    "element": "water",
+    "location": "1.5 cun lateral des Dornfortsatzes L4",
+    "depth": "0.8-1.2 cun",
+    "frequency": 254.5,
+    "harmonicFrequencies": [
+      509,
+      763.5,
+      1018,
+      1272.5
+    ],
+    "pointTypes": [
+      "shu_back"
+    ],
+    "functions": [
+      "Reguliert Dickdarm",
+      "Stärkt Rücken"
+    ],
+    "indications": [
+      "Lendenschmerzen",
+      "Durchfall",
+      "Verstopfung",
+      "Darmentzündung"
+    ]
+  },
+  {
+    "id": "BL26",
+    "nameChinese": "Guanyuanshu",
+    "nameEnglish": "Origin Pass Shu",
+    "nameGerman": "Ursprungstor-Transportpunkt",
+    "meridian": "BL",
+    "element": "water",
+    "location": "1.5 cun lateral des Dornfortsatzes L5",
+    "depth": "0.8-1.2 cun",
+    "frequency": 257,
+    "harmonicFrequencies": [
+      514,
+      771,
+      1028,
+      1285
+    ],
+    "pointTypes": [
+      "shu_back"
+    ],
+    "functions": [
+      "Stärkt Lendenbereich",
+      "Reguliert untere Körperöffnungen"
+    ],
+    "indications": [
+      "Lendenschmerzen",
+      "Durchfall",
+      "Harnprobleme"
+    ]
+  },
+  {
+    "id": "BL27",
+    "nameChinese": "Xiaochangshu",
+    "nameEnglish": "Small Intestine Shu",
+    "nameGerman": "Dünndarm-Transportpunkt",
+    "meridian": "BL",
+    "element": "water",
+    "location": "1.5 cun lateral des 1. Sakralforamens",
+    "depth": "0.8-1.2 cun",
+    "frequency": 259.5,
+    "harmonicFrequencies": [
+      519,
+      778.5,
+      1038,
+      1297.5
+    ],
+    "pointTypes": [
+      "shu_back"
+    ],
+    "functions": [
+      "Reguliert Dünndarm",
+      "Trennt klares und trübes"
+    ],
+    "indications": [
+      "Unterbauchschmerzen",
+      "Harnprobleme",
+      "Lendenschmerzen"
+    ]
+  },
+  {
+    "id": "BL28",
+    "nameChinese": "Pangguangshu",
+    "nameEnglish": "Bladder Shu",
+    "nameGerman": "Blasen-Transportpunkt",
+    "meridian": "BL",
+    "element": "water",
+    "location": "1.5 cun lateral des 2. Sakralforamens",
+    "depth": "0.8-1.2 cun",
+    "frequency": 262,
+    "harmonicFrequencies": [
+      524,
+      786,
+      1048,
+      1310
+    ],
+    "pointTypes": [
+      "shu_back"
+    ],
+    "functions": [
+      "Reguliert Blase",
+      "Öffnet Wasserwege"
+    ],
+    "indications": [
+      "Harnprobleme",
+      "Lendenschmerzen",
+      "Ischias"
+    ]
+  },
+  {
+    "id": "BL29",
+    "nameChinese": "Zhonglüshu",
+    "nameEnglish": "Middle Backbone Shu",
+    "nameGerman": "Mittlerer Wirbelsäulen-Transportpunkt",
+    "meridian": "BL",
+    "element": "water",
+    "location": "1.5 cun lateral des 3. Sakralforamens",
+    "depth": "0.8-1.2 cun",
+    "frequency": 264.5,
+    "harmonicFrequencies": [
+      529,
+      793.5,
+      1058,
+      1322.5
+    ],
+    "pointTypes": [
+      "shu_back"
+    ],
+    "functions": [
+      "Stärkt Lendenbereich"
+    ],
+    "indications": [
+      "Lendenschmerzen",
+      "Durchfall",
+      "Hernie"
+    ]
+  },
+  {
+    "id": "BL30",
+    "nameChinese": "Baihuanshu",
+    "nameEnglish": "White Ring Shu",
+    "nameGerman": "Weißer Ring-Transportpunkt",
+    "meridian": "BL",
+    "element": "water",
+    "location": "1.5 cun lateral des 4. Sakralforamens",
+    "depth": "0.8-1.5 cun",
+    "frequency": 267,
+    "harmonicFrequencies": [
+      534,
+      801,
+      1068,
+      1335
+    ],
+    "pointTypes": [
+      "shu_back"
+    ],
+    "functions": [
+      "Reguliert untere Körperöffnungen",
+      "Stärkt Lendenbereich"
+    ],
+    "indications": [
+      "Lendenschmerzen",
+      "Hernie",
+      "Leukorr",
+      "Hämorrhoiden"
+    ]
+  },
+  {
+    "id": "BL31",
+    "nameChinese": "Shangliao",
+    "nameEnglish": "Upper Bone Hole",
+    "nameGerman": "Obere Knochenvertiefung",
+    "meridian": "BL",
+    "element": "water",
+    "location": "Im 1. dorsalen Sakralforamen",
+    "depth": "0.8-1.2 cun",
+    "frequency": 269.5,
+    "harmonicFrequencies": [
+      539,
+      808.5,
+      1078,
+      1347.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert untere Körperöffnungen",
+      "Stärkt Lendenbereich"
+    ],
+    "indications": [
+      "Lendenschmerzen",
+      "Menstruationsstörungen",
+      "Harnprobleme"
+    ]
+  },
+  {
+    "id": "BL32",
+    "nameChinese": "Ciliao",
+    "nameEnglish": "Second Bone Hole",
+    "nameGerman": "Zweite Knochenvertiefung",
+    "meridian": "BL",
+    "element": "water",
+    "location": "Im 2. dorsalen Sakralforamen",
+    "depth": "0.8-1.2 cun",
+    "frequency": 272,
+    "harmonicFrequencies": [
+      544,
+      816,
+      1088,
+      1360
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Menstruation",
+      "Stärkt Lendenbereich"
+    ],
+    "indications": [
+      "Lendenschmerzen",
+      "Dysmenorrhoe",
+      "Leukorr",
+      "Impotenz"
+    ]
+  },
+  {
+    "id": "BL33",
+    "nameChinese": "Zhongliao",
+    "nameEnglish": "Middle Bone Hole",
+    "nameGerman": "Mittlere Knochenvertiefung",
+    "meridian": "BL",
+    "element": "water",
+    "location": "Im 3. dorsalen Sakralforamen",
+    "depth": "0.8-1.2 cun",
+    "frequency": 274.5,
+    "harmonicFrequencies": [
+      549,
+      823.5,
+      1098,
+      1372.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert untere Körperöffnungen"
+    ],
+    "indications": [
+      "Lendenschmerzen",
+      "Verstopfung",
+      "Harnprobleme"
+    ]
+  },
+  {
+    "id": "BL34",
+    "nameChinese": "Xialiao",
+    "nameEnglish": "Lower Bone Hole",
+    "nameGerman": "Untere Knochenvertiefung",
+    "meridian": "BL",
+    "element": "water",
+    "location": "Im 4. dorsalen Sakralforamen",
+    "depth": "0.8-1.2 cun",
+    "frequency": 277,
+    "harmonicFrequencies": [
+      554,
+      831,
+      1108,
+      1385
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert untere Körperöffnungen"
+    ],
+    "indications": [
+      "Lendenschmerzen",
+      "Bauchschmerzen",
+      "Verstopfung"
+    ]
+  },
+  {
+    "id": "BL35",
+    "nameChinese": "Huiyang",
+    "nameEnglish": "Meeting of Yang",
+    "nameGerman": "Treffen des Yang",
+    "meridian": "BL",
+    "element": "water",
+    "location": "0.5 cun lateral des Steißbeins",
+    "depth": "0.5-1 cun",
+    "frequency": 279.5,
+    "harmonicFrequencies": [
+      559,
+      838.5,
+      1118,
+      1397.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert untere Körperöffnungen"
+    ],
+    "indications": [
+      "Hämorrhoiden",
+      "Impotenz",
+      "Leukorr",
+      "Durchfall"
+    ]
+  },
+  {
+    "id": "BL36",
+    "nameChinese": "Chengfu",
+    "nameEnglish": "Support",
+    "nameGerman": "Unterstützung",
+    "meridian": "BL",
+    "element": "water",
+    "location": "In der Mitte der Glutealfalte",
+    "depth": "1-2 cun",
+    "frequency": 282,
+    "harmonicFrequencies": [
+      564,
+      846,
+      1128,
+      1410
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Aktiviert Kanal",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Ischias",
+      "Hämorrhoiden",
+      "Gesäßschmerzen"
+    ]
+  },
+  {
+    "id": "BL37",
+    "nameChinese": "Yinmen",
+    "nameEnglish": "Gate of Abundance",
+    "nameGerman": "Tor des Überflusses",
+    "meridian": "BL",
+    "element": "water",
+    "location": "6 cun unter BL36, auf der Linie BL36-BL40",
+    "depth": "1-2 cun",
+    "frequency": 284.5,
+    "harmonicFrequencies": [
+      569,
+      853.5,
+      1138,
+      1422.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Entspannt Sehnen",
+      "Aktiviert Kanal"
+    ],
+    "indications": [
+      "Lendenschmerzen",
+      "Oberschenkelschmerzen",
+      "Beinlähmung"
+    ]
+  },
+  {
+    "id": "BL38",
+    "nameChinese": "Fuxi",
+    "nameEnglish": "Superficial Cleft",
+    "nameGerman": "Oberflächliche Spalte",
+    "meridian": "BL",
+    "element": "water",
+    "location": "1 cun über BL39, medial der Bizepssehne",
+    "depth": "0.5-1 cun",
+    "frequency": 287,
+    "harmonicFrequencies": [
+      574,
+      861,
+      1148,
+      1435
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Entspannt Sehnen",
+      "Aktiviert Kanal"
+    ],
+    "indications": [
+      "Knieschmerzen",
+      "Taubheit des Beins"
+    ]
+  },
+  {
+    "id": "BL39",
+    "nameChinese": "Weiyang",
+    "nameEnglish": "Bend Yang",
+    "nameGerman": "Yang-Beugung",
+    "meridian": "BL",
+    "element": "water",
+    "location": "Lateral in der Kniekehle, medial der Bizepssehne",
+    "depth": "0.5-1 cun",
+    "frequency": 289.5,
+    "harmonicFrequencies": [
+      579,
+      868.5,
+      1158,
+      1447.5
+    ],
+    "pointTypes": [
+      "he_sea"
+    ],
+    "functions": [
+      "Öffnet Wasserwege",
+      "Entspannt Sehnen"
+    ],
+    "indications": [
+      "Harnprobleme",
+      "Beinkrämpfe",
+      "Rückenschmerzen"
+    ]
+  },
+  {
+    "id": "BL40",
+    "nameChinese": "Weizhong",
+    "nameEnglish": "Bend Middle",
+    "nameGerman": "Mitte der Beuge",
+    "meridian": "BL",
+    "element": "water",
+    "location": "In der Mitte der Kniekehle, zwischen den Sehnen",
+    "depth": "1-1.5 cun oder Blutenlassen",
+    "frequency": 292,
+    "harmonicFrequencies": [
+      584,
+      876,
+      1168,
+      1460
+    ],
+    "pointTypes": [
+      "he_sea"
+    ],
+    "functions": [
+      "Entspannt Sehnen",
+      "Aktiviert Kanal",
+      "Kühlt Blut"
+    ],
+    "indications": [
+      "Lendenschmerzen",
+      "Knieschmerzen",
+      "Beinlähmung",
+      "Hauterkrankungen"
+    ],
+    "chakraCorrespondence": "muladhara"
+  },
+  {
+    "id": "BL41",
+    "nameChinese": "Fufen",
+    "nameEnglish": "Attached Branch",
+    "nameGerman": "Angehängter Zweig",
+    "meridian": "BL",
+    "element": "water",
+    "location": "3 cun lateral des Dornfortsatzes T2",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 294.5,
+    "harmonicFrequencies": [
+      589,
+      883.5,
+      1178,
+      1472.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Aktiviert Kanal"
+    ],
+    "indications": [
+      "Nackensteifigkeit",
+      "Schulterschmerzen",
+      "Taubheit des Arms"
+    ]
+  },
+  {
+    "id": "BL42",
+    "nameChinese": "Pohu",
+    "nameEnglish": "Door of the Corporeal Soul",
+    "nameGerman": "Tor der Körperseele",
+    "meridian": "BL",
+    "element": "water",
+    "location": "3 cun lateral des Dornfortsatzes T3",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 297,
+    "harmonicFrequencies": [
+      594,
+      891,
+      1188,
+      1485
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Lungen-Qi",
+      "Stärkt Abwehr"
+    ],
+    "indications": [
+      "Husten",
+      "Asthma",
+      "Nackensteifigkeit",
+      "Schulterschmerzen"
+    ]
+  },
+  {
+    "id": "BL43",
+    "nameChinese": "Gaohuang",
+    "nameEnglish": "Vital Region Shu",
+    "nameGerman": "Vitale Region-Transportpunkt",
+    "meridian": "BL",
+    "element": "water",
+    "location": "3 cun lateral des Dornfortsatzes T4",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 299.5,
+    "harmonicFrequencies": [
+      599,
+      898.5,
+      1198,
+      1497.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Tonisiert Lunge und Nieren",
+      "Stärkt das Ursprüngliche"
+    ],
+    "indications": [
+      "Chronische Erschöpfung",
+      "Tuberkulose",
+      "Gedächtnisprobleme",
+      "Nachtschweiß"
+    ],
+    "chakraCorrespondence": "anahata"
+  },
+  {
+    "id": "BL44",
+    "nameChinese": "Shentang",
+    "nameEnglish": "Spirit Hall",
+    "nameGerman": "Geisteshalle",
+    "meridian": "BL",
+    "element": "water",
+    "location": "3 cun lateral des Dornfortsatzes T5",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 302,
+    "harmonicFrequencies": [
+      604,
+      906,
+      1208,
+      1510
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Beruhigt Geist",
+      "Reguliert Herz"
+    ],
+    "indications": [
+      "Herzschmerzen",
+      "Husten",
+      "Rückenschmerzen"
+    ]
+  },
+  {
+    "id": "BL45",
+    "nameChinese": "Yixi",
+    "nameEnglish": "Yi Xi",
+    "nameGerman": "Seufzer",
+    "meridian": "BL",
+    "element": "water",
+    "location": "3 cun lateral des Dornfortsatzes T6",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 304.5,
+    "harmonicFrequencies": [
+      609,
+      913.5,
+      1218,
+      1522.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Qi",
+      "Lindert Husten"
+    ],
+    "indications": [
+      "Husten",
+      "Asthma",
+      "Rückenschmerzen",
+      "Fieber"
+    ]
+  },
+  {
+    "id": "BL46",
+    "nameChinese": "Geguan",
+    "nameEnglish": "Diaphragm Gate",
+    "nameGerman": "Zwerchfelltor",
+    "meridian": "BL",
+    "element": "water",
+    "location": "3 cun lateral des Dornfortsatzes T7",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 307,
+    "harmonicFrequencies": [
+      614,
+      921,
+      1228,
+      1535
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Harmonisiert Zwerchfell",
+      "Lindert Erbrechen"
+    ],
+    "indications": [
+      "Schluckauf",
+      "Erbrechen",
+      "Rückenschmerzen"
+    ]
+  },
+  {
+    "id": "BL47",
+    "nameChinese": "Hunmen",
+    "nameEnglish": "Soul Gate",
+    "nameGerman": "Seelentor",
+    "meridian": "BL",
+    "element": "water",
+    "location": "3 cun lateral des Dornfortsatzes T9",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 312,
+    "harmonicFrequencies": [
+      624,
+      936,
+      1248,
+      1560
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Leber",
+      "Beruhigt Geist"
+    ],
+    "indications": [
+      "Rippenschmerzen",
+      "Rückenschmerzen",
+      "Durchfall",
+      "Erbrechen"
+    ]
+  },
+  {
+    "id": "BL48",
+    "nameChinese": "Yanggang",
+    "nameEnglish": "Yang Headrope",
+    "nameGerman": "Yang-Hauptseil",
+    "meridian": "BL",
+    "element": "water",
+    "location": "3 cun lateral des Dornfortsatzes T10",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 314.5,
+    "harmonicFrequencies": [
+      629,
+      943.5,
+      1258,
+      1572.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Gallenblase",
+      "Klärt Feuchtigkeit-Hitze"
+    ],
+    "indications": [
+      "Gallenblasenentzündung",
+      "Rippenschmerzen",
+      "Bitterer Mundgeschmack"
+    ]
+  },
+  {
+    "id": "BL49",
+    "nameChinese": "Yishe",
+    "nameEnglish": "Reflection Abode",
+    "nameGerman": "Reflexionswohnung",
+    "meridian": "BL",
+    "element": "water",
+    "location": "3 cun lateral des Dornfortsatzes T11",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 317,
+    "harmonicFrequencies": [
+      634,
+      951,
+      1268,
+      1585
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Stärkt Milz",
+      "Reguliert Verdauung"
+    ],
+    "indications": [
+      "Bauchschmerzen",
+      "Durchfall",
+      "Erbrechen",
+      "Rückenschmerzen"
+    ]
+  },
+  {
+    "id": "BL50",
+    "nameChinese": "Weicang",
+    "nameEnglish": "Stomach Granary",
+    "nameGerman": "Magenspeicher",
+    "meridian": "BL",
+    "element": "water",
+    "location": "3 cun lateral des Dornfortsatzes T12",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 319.5,
+    "harmonicFrequencies": [
+      639,
+      958.5,
+      1278,
+      1597.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Harmonisiert Magen",
+      "Reguliert Verdauung"
+    ],
+    "indications": [
+      "Magenschmerzen",
+      "Bauchschmerzen",
+      "Rückenschmerzen"
+    ]
+  },
+  {
+    "id": "BL51",
+    "nameChinese": "Huangmen",
+    "nameEnglish": "Vitals Gate",
+    "nameGerman": "Vitaltor",
+    "meridian": "BL",
+    "element": "water",
+    "location": "3 cun lateral des Dornfortsatzes L1",
+    "depth": "0.5-1 cun",
+    "frequency": 322,
+    "harmonicFrequencies": [
+      644,
+      966,
+      1288,
+      1610
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Qi",
+      "Löst Stagnation"
+    ],
+    "indications": [
+      "Bauchschmerzen",
+      "Verstopfung",
+      "Brustmasse"
+    ]
+  },
+  {
+    "id": "BL52",
+    "nameChinese": "Zhishi",
+    "nameEnglish": "Will Chamber",
+    "nameGerman": "Willenskammer",
+    "meridian": "BL",
+    "element": "water",
+    "location": "3 cun lateral des Dornfortsatzes L2",
+    "depth": "0.5-1 cun",
+    "frequency": 324.5,
+    "harmonicFrequencies": [
+      649,
+      973.5,
+      1298,
+      1622.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Tonisiert Nieren",
+      "Stärkt Willenskraft"
+    ],
+    "indications": [
+      "Lendenschmerzen",
+      "Impotenz",
+      "Harnprobleme",
+      "Ödeme"
+    ],
+    "chakraCorrespondence": "svadhisthana"
+  },
+  {
+    "id": "BL53",
+    "nameChinese": "Baohuang",
+    "nameEnglish": "Bladder Vitals",
+    "nameGerman": "Blasenvitalität",
+    "meridian": "BL",
+    "element": "water",
+    "location": "3 cun lateral des 2. Sakralforamens",
+    "depth": "1-1.5 cun",
+    "frequency": 327,
+    "harmonicFrequencies": [
+      654,
+      981,
+      1308,
+      1635
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Blase",
+      "Stärkt Lendenbereich"
+    ],
+    "indications": [
+      "Lendenschmerzen",
+      "Bauchschmerzen",
+      "Harnprobleme"
+    ]
+  },
+  {
+    "id": "BL54",
+    "nameChinese": "Zhibian",
+    "nameEnglish": "Sequential Limit",
+    "nameGerman": "Sequenzielle Grenze",
+    "meridian": "BL",
+    "element": "water",
+    "location": "3 cun lateral des 4. Sakralforamens, auf Höhe von BL30",
+    "depth": "1.5-2 cun",
+    "frequency": 329.5,
+    "harmonicFrequencies": [
+      659,
+      988.5,
+      1318,
+      1647.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Aktiviert Kanal",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Ischias",
+      "Hämorrhoiden",
+      "Beinlähmung",
+      "Harnprobleme"
+    ]
+  },
+  {
+    "id": "BL55",
+    "nameChinese": "Heyang",
+    "nameEnglish": "Yang Union",
+    "nameGerman": "Yang-Vereinigung",
+    "meridian": "BL",
+    "element": "water",
+    "location": "2 cun unter BL40, zwischen den Köpfen des Gastrocnemius",
+    "depth": "1-2 cun",
+    "frequency": 332,
+    "harmonicFrequencies": [
+      664,
+      996,
+      1328,
+      1660
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Entspannt Sehnen",
+      "Aktiviert Kanal"
+    ],
+    "indications": [
+      "Lendenschmerzen",
+      "Wadenkrämpfe",
+      "Uterusblutung"
+    ]
+  },
+  {
+    "id": "BL56",
+    "nameChinese": "Chengjin",
+    "nameEnglish": "Sinew Support",
+    "nameGerman": "Sehnenstütze",
+    "meridian": "BL",
+    "element": "water",
+    "location": "5 cun unter BL40, zwischen den Köpfen des Gastrocnemius",
+    "depth": "1-1.5 cun",
+    "frequency": 334.5,
+    "harmonicFrequencies": [
+      669,
+      1003.5,
+      1338,
+      1672.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Entspannt Sehnen",
+      "Lindert Krämpfe"
+    ],
+    "indications": [
+      "Wadenkrämpfe",
+      "Lendenschmerzen",
+      "Hämorrhoiden"
+    ]
+  },
+  {
+    "id": "BL57",
+    "nameChinese": "Chengshan",
+    "nameEnglish": "Mountain Support",
+    "nameGerman": "Bergstütze",
+    "meridian": "BL",
+    "element": "water",
+    "location": "In der Mitte der Wade, am unteren Ende des Gastrocnemius-Muskelbauchs",
+    "depth": "1-2 cun",
+    "frequency": 337,
+    "harmonicFrequencies": [
+      674,
+      1011,
+      1348,
+      1685
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Entspannt Sehnen",
+      "Aktiviert Kanal",
+      "Lindert Hämorrhoiden"
+    ],
+    "indications": [
+      "Wadenkrämpfe",
+      "Hämorrhoiden",
+      "Lendenschmerzen",
+      "Verstopfung"
+    ]
+  },
+  {
+    "id": "BL58",
+    "nameChinese": "Feiyang",
+    "nameEnglish": "Taking Flight",
+    "nameGerman": "Abflug",
+    "meridian": "BL",
+    "element": "water",
+    "location": "7 cun über dem Außenknöchel, am lateralen Rand des Gastrocnemius",
+    "depth": "1-1.5 cun",
+    "frequency": 339.5,
+    "harmonicFrequencies": [
+      679,
+      1018.5,
+      1358,
+      1697.5
+    ],
+    "pointTypes": [
+      "luo_connecting"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Stärkt Lendenbereich"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Nasenbluten",
+      "Lendenschmerzen",
+      "Beinschwäche"
+    ]
+  },
+  {
+    "id": "BL59",
+    "nameChinese": "Fuyang",
+    "nameEnglish": "Instep Yang",
+    "nameGerman": "Fußrücken-Yang",
+    "meridian": "BL",
+    "element": "water",
+    "location": "3 cun über dem Außenknöchel, am Hinterrand der Fibula",
+    "depth": "0.5-1 cun",
+    "frequency": 342,
+    "harmonicFrequencies": [
+      684,
+      1026,
+      1368,
+      1710
+    ],
+    "pointTypes": [
+      "xi_cleft"
+    ],
+    "functions": [
+      "Aktiviert Yang Qiao Mai",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Lendenschmerzen",
+      "Beinlähmung",
+      "Knöchelschmerzen"
+    ]
+  },
+  {
+    "id": "BL60",
+    "nameChinese": "Kunlun",
+    "nameEnglish": "Kunlun Mountains",
+    "nameGerman": "Kunlun-Gebirge",
+    "meridian": "BL",
+    "element": "water",
+    "location": "Zwischen dem lateralen Malleolus und der Achillessehne",
+    "depth": "0.5-1 cun",
+    "frequency": 344.5,
+    "harmonicFrequencies": [
+      689,
+      1033.5,
+      1378,
+      1722.5
+    ],
+    "pointTypes": [
+      "jing_river"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Entspannt Sehnen",
+      "Stärkt Rücken"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Nackensteifigkeit",
+      "Lendenschmerzen",
+      "Fersenschmerzen"
+    ],
+    "precautions": [
+      "Kontraindiziert in der Schwangerschaft"
+    ]
+  },
+  {
+    "id": "BL61",
+    "nameChinese": "Pushen",
+    "nameEnglish": "Subservient Visitor",
+    "nameGerman": "Dienender Besucher",
+    "meridian": "BL",
+    "element": "water",
+    "location": "Unter dem Außenknöchel, in der Vertiefung am Fersenbein",
+    "depth": "0.3-0.5 cun",
+    "frequency": 347,
+    "harmonicFrequencies": [
+      694,
+      1041,
+      1388,
+      1735
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Entspannt Sehnen",
+      "Stärkt Knöchel"
+    ],
+    "indications": [
+      "Knöchelschmerzen",
+      "Fersenschmerzen",
+      "Beinlähmung"
+    ]
+  },
+  {
+    "id": "BL62",
+    "nameChinese": "Shenmai",
+    "nameEnglish": "Extending Vessel",
+    "nameGerman": "Ausdehnungsgefäß",
+    "meridian": "BL",
+    "element": "water",
+    "location": "In der Vertiefung unter dem lateralen Malleolus",
+    "depth": "0.3-0.5 cun",
+    "frequency": 349.5,
+    "harmonicFrequencies": [
+      699,
+      1048.5,
+      1398,
+      1747.5
+    ],
+    "pointTypes": [
+      "confluent"
+    ],
+    "functions": [
+      "Öffnet Yang Qiao Mai",
+      "Entspannt Sehnen",
+      "Beruhigt Geist"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Epilepsie",
+      "Schlaflosigkeit",
+      "Knöchelschmerzen"
+    ],
+    "chakraCorrespondence": "muladhara"
+  },
+  {
+    "id": "BL63",
+    "nameChinese": "Jinmen",
+    "nameEnglish": "Metal Gate",
+    "nameGerman": "Metalltor",
+    "meridian": "BL",
+    "element": "water",
+    "location": "Vor und unter dem Außenknöchel, in der Vertiefung vor dem Fersenbein",
+    "depth": "0.3-0.5 cun",
+    "frequency": 352,
+    "harmonicFrequencies": [
+      704,
+      1056,
+      1408,
+      1760
+    ],
+    "pointTypes": [
+      "xi_cleft"
+    ],
+    "functions": [
+      "Beruhigt Geist",
+      "Aktiviert Kanal"
+    ],
+    "indications": [
+      "Epilepsie",
+      "Kinderkrämpfe",
+      "Lendenschmerzen",
+      "Knöchelschmerzen"
+    ]
+  },
+  {
+    "id": "BL64",
+    "nameChinese": "Jinggu",
+    "nameEnglish": "Capital Bone",
+    "nameGerman": "Hauptknochen",
+    "meridian": "BL",
+    "element": "water",
+    "location": "Lateral am Fuß, hinter der Tuberositas ossis metatarsalis V",
+    "depth": "0.3-0.5 cun",
+    "frequency": 354.5,
+    "harmonicFrequencies": [
+      709,
+      1063.5,
+      1418,
+      1772.5
+    ],
+    "pointTypes": [
+      "yuan_source"
+    ],
+    "functions": [
+      "Klärt Hitze",
+      "Beruhigt Geist",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Nackensteifigkeit",
+      "Augenschmerzen",
+      "Epilepsie"
+    ]
+  },
+  {
+    "id": "BL65",
+    "nameChinese": "Shugu",
+    "nameEnglish": "Bone Binder",
+    "nameGerman": "Knochenbinder",
+    "meridian": "BL",
+    "element": "water",
+    "location": "Lateral am Fuß, hinter dem 5. MTP-Gelenk",
+    "depth": "0.3-0.5 cun",
+    "frequency": 357,
+    "harmonicFrequencies": [
+      714,
+      1071,
+      1428,
+      1785
+    ],
+    "pointTypes": [
+      "shu_stream"
+    ],
+    "functions": [
+      "Klärt Hitze",
+      "Beruhigt Geist"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Nackensteifigkeit",
+      "Sehstörungen"
+    ]
+  },
+  {
+    "id": "BL66",
+    "nameChinese": "Tonggu",
+    "nameEnglish": "Foot Connecting Valley",
+    "nameGerman": "Verbindungstal des Fußes",
+    "meridian": "BL",
+    "element": "water",
+    "location": "Lateral am 5. Zeh, distal des 5. MTP-Gelenks",
+    "depth": "0.2-0.3 cun",
+    "frequency": 359.5,
+    "harmonicFrequencies": [
+      719,
+      1078.5,
+      1438,
+      1797.5
+    ],
+    "pointTypes": [
+      "ying_spring"
+    ],
+    "functions": [
+      "Klärt Hitze",
+      "Zerstreut Wind"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Nackensteifigkeit",
+      "Nasenbluten"
+    ]
+  },
+  {
+    "id": "BL67",
+    "nameChinese": "Zhiyin",
+    "nameEnglish": "Reaching Yin",
+    "nameGerman": "Yin Erreichen",
+    "meridian": "BL",
+    "element": "water",
+    "location": "Am kleinen Zeh, 0.1 cun lateral des Nagelwinkels",
+    "depth": "0.1 cun oder Moxibustion",
+    "frequency": 362,
+    "harmonicFrequencies": [
+      724,
+      1086,
+      1448,
+      1810
+    ],
+    "pointTypes": [
+      "jing_well"
+    ],
+    "functions": [
+      "Korrigiert Fehllagen des Fötus",
+      "Zerstreut Wind",
+      "Erhellt Augen"
+    ],
+    "indications": [
+      "Steißlage",
+      "Kopfschmerzen",
+      "Augenschmerzen",
+      "verstopfte Nase"
+    ]
+  },
+  {
+    "id": "KI1",
+    "nameChinese": "Yongquan",
+    "nameEnglish": "Gushing Spring",
+    "nameGerman": "Sprudelnde Quelle",
+    "meridian": "KI",
+    "element": "water",
+    "location": "Auf der Fußsohle, zwischen 2. und 3. Metatarsale, im vorderen Drittel",
+    "depth": "0.5-1 cun",
+    "frequency": 192,
+    "harmonicFrequencies": [
+      384,
+      576,
+      768,
+      960
+    ],
+    "pointTypes": [
+      "jing_well"
+    ],
+    "functions": [
+      "Senkt Hitze",
+      "Beruhigt Geist",
+      "Belebt Bewusstsein",
+      "Tonisiert Yin"
+    ],
+    "indications": [
+      "Bewusstlosigkeit",
+      "Schock",
+      "Kopfschmerzen",
+      "Schlaflosigkeit",
+      "Fußsohlenschmerzen"
+    ],
+    "chakraCorrespondence": "muladhara"
+  },
+  {
+    "id": "KI2",
+    "nameChinese": "Rangu",
+    "nameEnglish": "Blazing Valley",
+    "nameGerman": "Brennendes Tal",
+    "meridian": "KI",
+    "element": "water",
+    "location": "Medial am Fuß, unterhalb der Tuberositas ossis navicularis",
+    "depth": "0.5-1 cun",
+    "frequency": 197.3,
+    "harmonicFrequencies": [
+      394.6,
+      591.9,
+      789.2,
+      986.5
+    ],
+    "pointTypes": [
+      "ying_spring"
+    ],
+    "functions": [
+      "Klärt Nieren-Leere-Hitze",
+      "Kühlt Blut"
+    ],
+    "indications": [
+      "Nachtschweiß",
+      "Halsschmerzen",
+      "Menstruationsstörungen",
+      "Fußschmerzen"
+    ]
+  },
+  {
+    "id": "KI3",
+    "nameChinese": "Taixi",
+    "nameEnglish": "Supreme Stream",
+    "nameGerman": "Höchster Bach",
+    "meridian": "KI",
+    "element": "water",
+    "location": "Zwischen medialem Malleolus und Achillessehne",
+    "depth": "0.5-1 cun",
+    "frequency": 202.6,
+    "harmonicFrequencies": [
+      405.2,
+      607.8,
+      810.4,
+      1013
+    ],
+    "pointTypes": [
+      "shu_stream",
+      "yuan_source"
+    ],
+    "functions": [
+      "Tonisiert Nieren",
+      "Stärkt Lendenbereich",
+      "Reguliert Uterus"
+    ],
+    "indications": [
+      "Lendenschmerzen",
+      "Tinnitus",
+      "Impotenz",
+      "Menstruationsstörungen",
+      "Schlaflosigkeit"
+    ],
+    "chakraCorrespondence": "svadhisthana"
+  },
+  {
+    "id": "KI4",
+    "nameChinese": "Dazhong",
+    "nameEnglish": "Large Goblet",
+    "nameGerman": "Großer Kelch",
+    "meridian": "KI",
+    "element": "water",
+    "location": "0.5 cun unter KI3, am Ansatz der Achillessehne",
+    "depth": "0.3-0.5 cun",
+    "frequency": 207.9,
+    "harmonicFrequencies": [
+      415.8,
+      623.7,
+      831.6,
+      1039.5
+    ],
+    "pointTypes": [
+      "luo_connecting"
+    ],
+    "functions": [
+      "Stärkt Willenskraft",
+      "Hebt Geist"
+    ],
+    "indications": [
+      "Fersenschmerzen",
+      "Asthma",
+      "Blut im Urin",
+      "Willenslosigkeit"
+    ]
+  },
+  {
+    "id": "KI5",
+    "nameChinese": "Shuiquan",
+    "nameEnglish": "Water Spring",
+    "nameGerman": "Wasserquelle",
+    "meridian": "KI",
+    "element": "water",
+    "location": "1 cun unter KI3, in der Vertiefung vor der Achillessehne",
+    "depth": "0.3-0.5 cun",
+    "frequency": 213.2,
+    "harmonicFrequencies": [
+      426.4,
+      639.6,
+      852.8,
+      1066
+    ],
+    "pointTypes": [
+      "xi_cleft"
+    ],
+    "functions": [
+      "Reguliert Uterus",
+      "Belebt Blut"
+    ],
+    "indications": [
+      "Dysmenorrhoe",
+      "Amenorrhoe",
+      "Prolaps",
+      "Sehstörungen"
+    ]
+  },
+  {
+    "id": "KI6",
+    "nameChinese": "Zhaohai",
+    "nameEnglish": "Shining Sea",
+    "nameGerman": "Strahlendes Meer",
+    "meridian": "KI",
+    "element": "water",
+    "location": "1 cun unter dem medialen Malleolus",
+    "depth": "0.3-0.5 cun",
+    "frequency": 218.5,
+    "harmonicFrequencies": [
+      437,
+      655.5,
+      874,
+      1092.5
+    ],
+    "pointTypes": [
+      "confluent"
+    ],
+    "functions": [
+      "Öffnet Yin Qiao Mai",
+      "Nährt Nieren-Yin",
+      "Befeuchtet Kehle"
+    ],
+    "indications": [
+      "Schlaflosigkeit",
+      "Halsschmerzen",
+      "Menstruationsstörungen",
+      "Epilepsie"
+    ],
+    "chakraCorrespondence": "vishuddha"
+  },
+  {
+    "id": "KI7",
+    "nameChinese": "Fuliu",
+    "nameEnglish": "Recover Flow",
+    "nameGerman": "Wiederhergestellter Fluss",
+    "meridian": "KI",
+    "element": "water",
+    "location": "2 cun über KI3, am Vorderrand der Achillessehne",
+    "depth": "0.5-1 cun",
+    "frequency": 223.8,
+    "harmonicFrequencies": [
+      447.6,
+      671.4,
+      895.2,
+      1119
+    ],
+    "pointTypes": [
+      "jing_river"
+    ],
+    "functions": [
+      "Tonisiert Nieren-Yang",
+      "Reguliert Schwitzen"
+    ],
+    "indications": [
+      "Ödeme",
+      "Spontanschweiß",
+      "Durchfall",
+      "Lendenschmerzen"
+    ]
+  },
+  {
+    "id": "KI8",
+    "nameChinese": "Jiaoxin",
+    "nameEnglish": "Intersection Reach",
+    "nameGerman": "Kreuzungsreichweite",
+    "meridian": "KI",
+    "element": "water",
+    "location": "2 cun über KI3, 0.5 cun anterior von KI7",
+    "depth": "0.5-1 cun",
+    "frequency": 229.1,
+    "harmonicFrequencies": [
+      458.2,
+      687.3,
+      916.4,
+      1145.5
+    ],
+    "pointTypes": [
+      "xi_cleft"
+    ],
+    "functions": [
+      "Reguliert Yin Qiao Mai",
+      "Reguliert Menstruation"
+    ],
+    "indications": [
+      "Menstruationsstörungen",
+      "Uterusblutung",
+      "Prolaps"
+    ]
+  },
+  {
+    "id": "KI9",
+    "nameChinese": "Zhubin",
+    "nameEnglish": "Guest House",
+    "nameGerman": "Gasthaus",
+    "meridian": "KI",
+    "element": "water",
+    "location": "5 cun über KI3, am medialen Rand des Gastrocnemius",
+    "depth": "1-1.5 cun",
+    "frequency": 234.4,
+    "harmonicFrequencies": [
+      468.8,
+      703.2,
+      937.6,
+      1172
+    ],
+    "pointTypes": [
+      "xi_cleft"
+    ],
+    "functions": [
+      "Reguliert Yin Wei Mai",
+      "Beruhigt Geist"
+    ],
+    "indications": [
+      "Manie",
+      "Wadenkrämpfe",
+      "Erbrechen",
+      "Hernie"
+    ]
+  },
+  {
+    "id": "KI10",
+    "nameChinese": "Yingu",
+    "nameEnglish": "Yin Valley",
+    "nameGerman": "Yin-Tal",
+    "meridian": "KI",
+    "element": "water",
+    "location": "Medial in der Kniekehle, zwischen den Sehnen",
+    "depth": "1-1.5 cun",
+    "frequency": 239.7,
+    "harmonicFrequencies": [
+      479.4,
+      719.1,
+      958.8,
+      1198.5
+    ],
+    "pointTypes": [
+      "he_sea"
+    ],
+    "functions": [
+      "Tonisiert Nieren-Yin",
+      "Klärt Feuchtigkeit-Hitze"
+    ],
+    "indications": [
+      "Impotenz",
+      "Hernie",
+      "Uterusblutung",
+      "Knieschmerzen"
+    ],
+    "chakraCorrespondence": "svadhisthana"
+  },
+  {
+    "id": "KI11",
+    "nameChinese": "Henggu",
+    "nameEnglish": "Pubic Bone",
+    "nameGerman": "Schambein",
+    "meridian": "KI",
+    "element": "water",
+    "location": "0.5 cun lateral der Mittellinie, am oberen Rand des Schambeins",
+    "depth": "0.5-1 cun",
+    "frequency": 245,
+    "harmonicFrequencies": [
+      490,
+      735,
+      980,
+      1225
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Tonisiert Nieren",
+      "Reguliert Urogenitalsystem"
+    ],
+    "indications": [
+      "Impotenz",
+      "Hernie",
+      "Harnprobleme"
+    ]
+  },
+  {
+    "id": "KI12",
+    "nameChinese": "Dahe",
+    "nameEnglish": "Great Manifestation",
+    "nameGerman": "Große Manifestation",
+    "meridian": "KI",
+    "element": "water",
+    "location": "0.5 cun lateral der Mittellinie, 1 cun über KI11",
+    "depth": "0.5-1 cun",
+    "frequency": 250.3,
+    "harmonicFrequencies": [
+      500.6,
+      750.9,
+      1001.2,
+      1251.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Tonisiert Nieren",
+      "Reguliert Chong Mai"
+    ],
+    "indications": [
+      "Impotenz",
+      "Leukorr",
+      "Prolaps"
+    ]
+  },
+  {
+    "id": "KI13",
+    "nameChinese": "Qixue",
+    "nameEnglish": "Qi Hole",
+    "nameGerman": "Qi-Loch",
+    "meridian": "KI",
+    "element": "water",
+    "location": "0.5 cun lateral der Mittellinie, 3 cun unter dem Nabel",
+    "depth": "0.5-1 cun",
+    "frequency": 255.6,
+    "harmonicFrequencies": [
+      511.2,
+      766.8,
+      1022.4,
+      1278
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Chong Mai",
+      "Tonisiert Nieren"
+    ],
+    "indications": [
+      "Menstruationsstörungen",
+      "Durchfall",
+      "Lendenschmerzen"
+    ]
+  },
+  {
+    "id": "KI14",
+    "nameChinese": "Siman",
+    "nameEnglish": "Fourfold Fullness",
+    "nameGerman": "Vierfache Fülle",
+    "meridian": "KI",
+    "element": "water",
+    "location": "0.5 cun lateral der Mittellinie, 2 cun unter dem Nabel",
+    "depth": "0.5-1 cun",
+    "frequency": 260.9,
+    "harmonicFrequencies": [
+      521.8,
+      782.7,
+      1043.6,
+      1304.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Menstruation",
+      "Fördert Wasserlassen"
+    ],
+    "indications": [
+      "Menstruationsstörungen",
+      "Postpartale Schmerzen",
+      "Ödeme"
+    ]
+  },
+  {
+    "id": "KI16",
+    "nameChinese": "Huangshu",
+    "nameEnglish": "Vitals Shu",
+    "nameGerman": "Vitaler Transportpunkt",
+    "meridian": "KI",
+    "element": "water",
+    "location": "0.5 cun lateral des Nabels",
+    "depth": "0.5-1 cun",
+    "frequency": 271.5,
+    "harmonicFrequencies": [
+      543,
+      814.5,
+      1086,
+      1357.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Darm-Qi",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Bauchschmerzen",
+      "Verstopfung",
+      "Durchfall"
+    ]
+  },
+  {
+    "id": "KI21",
+    "nameChinese": "Youmen",
+    "nameEnglish": "Dark Gate",
+    "nameGerman": "Dunkles Tor",
+    "meridian": "KI",
+    "element": "water",
+    "location": "0.5 cun lateral der Mittellinie, 6 cun über dem Nabel",
+    "depth": "0.5-1 cun",
+    "frequency": 298,
+    "harmonicFrequencies": [
+      596,
+      894,
+      1192,
+      1490
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Harmonisiert Magen",
+      "Senkt rebellierendes Qi"
+    ],
+    "indications": [
+      "Übelkeit",
+      "Erbrechen",
+      "Bauchschmerzen"
+    ]
+  },
+  {
+    "id": "KI22",
+    "nameChinese": "Bulang",
+    "nameEnglish": "Walking Corridor",
+    "nameGerman": "Wandelnder Korridor",
+    "meridian": "KI",
+    "element": "water",
+    "location": "2 cun lateral der Mittellinie, im 5. ICR",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 303.3,
+    "harmonicFrequencies": [
+      606.6,
+      909.9,
+      1213.2,
+      1516.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Senkt rebellierendes Qi",
+      "Lindert Husten"
+    ],
+    "indications": [
+      "Husten",
+      "Asthma",
+      "Brustschmerzen"
+    ],
+    "precautions": [
+      "Nicht tief stechen"
+    ]
+  },
+  {
+    "id": "KI23",
+    "nameChinese": "Shenfeng",
+    "nameEnglish": "Spirit Seal",
+    "nameGerman": "Geistsiegel",
+    "meridian": "KI",
+    "element": "water",
+    "location": "2 cun lateral der Mittellinie, im 4. ICR",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 308.6,
+    "harmonicFrequencies": [
+      617.2,
+      925.8,
+      1234.4,
+      1543
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Qi im Brustkorb",
+      "Beruhigt Geist"
+    ],
+    "indications": [
+      "Husten",
+      "Asthma",
+      "Brustschmerzen",
+      "Mastitis"
+    ],
+    "precautions": [
+      "Nicht tief stechen"
+    ]
+  },
+  {
+    "id": "KI24",
+    "nameChinese": "Lingxu",
+    "nameEnglish": "Spirit Ruins",
+    "nameGerman": "Geistesruinen",
+    "meridian": "KI",
+    "element": "water",
+    "location": "2 cun lateral der Mittellinie, im 3. ICR",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 313.9,
+    "harmonicFrequencies": [
+      627.8,
+      941.7,
+      1255.6,
+      1569.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Qi",
+      "Lindert Husten"
+    ],
+    "indications": [
+      "Husten",
+      "Asthma",
+      "Brustschmerzen"
+    ],
+    "precautions": [
+      "Nicht tief stechen"
+    ]
+  },
+  {
+    "id": "KI25",
+    "nameChinese": "Shencang",
+    "nameEnglish": "Spirit Storehouse",
+    "nameGerman": "Geistesspeicher",
+    "meridian": "KI",
+    "element": "water",
+    "location": "2 cun lateral der Mittellinie, im 2. ICR",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 319.2,
+    "harmonicFrequencies": [
+      638.4,
+      957.6,
+      1276.8,
+      1596
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Qi",
+      "Lindert Husten"
+    ],
+    "indications": [
+      "Husten",
+      "Asthma",
+      "Brustschmerzen"
+    ],
+    "precautions": [
+      "Nicht tief stechen"
+    ]
+  },
+  {
+    "id": "KI26",
+    "nameChinese": "Yuzhong",
+    "nameEnglish": "Lively Center",
+    "nameGerman": "Lebendige Mitte",
+    "meridian": "KI",
+    "element": "water",
+    "location": "2 cun lateral der Mittellinie, im 1. ICR",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 324.5,
+    "harmonicFrequencies": [
+      649,
+      973.5,
+      1298,
+      1622.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Qi",
+      "Lindert Husten"
+    ],
+    "indications": [
+      "Husten",
+      "Asthma",
+      "Brustschmerzen"
+    ],
+    "precautions": [
+      "Nicht tief stechen"
+    ]
+  },
+  {
+    "id": "KI27",
+    "nameChinese": "Shufu",
+    "nameEnglish": "Shu Mansion",
+    "nameGerman": "Transportpunkt-Palast",
+    "meridian": "KI",
+    "element": "water",
+    "location": "2 cun lateral der Mittellinie, in der Vertiefung unter der Clavicula",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 329.8,
+    "harmonicFrequencies": [
+      659.6,
+      989.4,
+      1319.2,
+      1649
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Tonisiert Nieren",
+      "Senkt rebellierendes Qi",
+      "Lindert Husten"
+    ],
+    "indications": [
+      "Husten",
+      "Asthma",
+      "Brustschmerzen",
+      "Erbrechen"
+    ],
+    "precautions": [
+      "Nicht tief stechen"
+    ],
+    "chakraCorrespondence": "vishuddha"
+  },
+  {
+    "id": "PC1",
+    "nameChinese": "Tianchi",
+    "nameEnglish": "Celestial Pool",
+    "nameGerman": "Himmlischer Teich",
+    "meridian": "PC",
+    "element": "fire",
+    "location": "1 cun lateral der Brustwarze, im 4. ICR",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 341.3,
+    "harmonicFrequencies": [
+      682.6,
+      1023.9,
+      1365.2,
+      1706.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Qi im Brustkorb",
+      "Zerstreut Schwellung"
+    ],
+    "indications": [
+      "Brustschmerzen",
+      "Achselschwellung",
+      "Mastitis"
+    ],
+    "precautions": [
+      "Nicht tief stechen - Pneumothorax-Risiko"
+    ],
+    "chakraCorrespondence": "anahata"
+  },
+  {
+    "id": "PC2",
+    "nameChinese": "Tianquan",
+    "nameEnglish": "Celestial Spring",
+    "nameGerman": "Himmlische Quelle",
+    "meridian": "PC",
+    "element": "fire",
+    "location": "2 cun unter dem vorderen Achselfaltenende, zwischen den Köpfen des M. biceps",
+    "depth": "0.5-1 cun",
+    "frequency": 349.9,
+    "harmonicFrequencies": [
+      699.8,
+      1049.7,
+      1399.6,
+      1749.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Herz-Qi",
+      "Belebt Blut"
+    ],
+    "indications": [
+      "Herzschmerzen",
+      "Brustschmerzen",
+      "Husten",
+      "Armschmerzen"
+    ]
+  },
+  {
+    "id": "PC3",
+    "nameChinese": "Quze",
+    "nameEnglish": "Marsh at the Bend",
+    "nameGerman": "Sumpf an der Beuge",
+    "meridian": "PC",
+    "element": "fire",
+    "location": "In der Ellenbogenfalte, ulnar der Bizepssehne",
+    "depth": "0.5-1 cun oder Blutenlassen",
+    "frequency": 358.4,
+    "harmonicFrequencies": [
+      716.8,
+      1075.2,
+      1433.6,
+      1792
+    ],
+    "pointTypes": [
+      "he_sea"
+    ],
+    "functions": [
+      "Klärt Herz-Hitze",
+      "Kühlt Blut",
+      "Harmonisiert Magen"
+    ],
+    "indications": [
+      "Herzschmerzen",
+      "Herzklopfen",
+      "Erbrechen",
+      "Fieber"
+    ],
+    "chakraCorrespondence": "anahata"
+  },
+  {
+    "id": "PC4",
+    "nameChinese": "Ximen",
+    "nameEnglish": "Xi-Cleft Gate",
+    "nameGerman": "Spalt-Tor",
+    "meridian": "PC",
+    "element": "fire",
+    "location": "5 cun proximal der Handgelenksfalte, zwischen den Sehnen",
+    "depth": "0.5-1 cun",
+    "frequency": 367,
+    "harmonicFrequencies": [
+      734,
+      1101,
+      1468,
+      1835
+    ],
+    "pointTypes": [
+      "xi_cleft"
+    ],
+    "functions": [
+      "Beruhigt Herz",
+      "Stoppt Blutungen",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Herzschmerzen",
+      "Herzklopfen",
+      "Nasenbluten",
+      "Angst"
+    ]
+  },
+  {
+    "id": "PC5",
+    "nameChinese": "Jianshi",
+    "nameEnglish": "Intermediary Courier",
+    "nameGerman": "Vermittelnder Bote",
+    "meridian": "PC",
+    "element": "fire",
+    "location": "3 cun proximal der Handgelenksfalte, zwischen den Sehnen",
+    "depth": "0.5-1 cun",
+    "frequency": 375.5,
+    "harmonicFrequencies": [
+      751,
+      1126.5,
+      1502,
+      1877.5
+    ],
+    "pointTypes": [
+      "jing_river"
+    ],
+    "functions": [
+      "Beruhigt Herz",
+      "Transformiert Schleim",
+      "Öffnet Brust"
+    ],
+    "indications": [
+      "Herzschmerzen",
+      "Herzklopfen",
+      "Epilepsie",
+      "Manie"
+    ]
+  },
+  {
+    "id": "PC6",
+    "nameChinese": "Neiguan",
+    "nameEnglish": "Inner Pass",
+    "nameGerman": "Innere Grenze",
+    "meridian": "PC",
+    "element": "fire",
+    "location": "2 cun proximal der Handgelenksfalte, zwischen den Sehnen",
+    "depth": "0.5-1 cun",
+    "frequency": 384.1,
+    "harmonicFrequencies": [
+      768.2,
+      1152.3,
+      1536.4,
+      1920.5
+    ],
+    "pointTypes": [
+      "luo_connecting",
+      "confluent"
+    ],
+    "functions": [
+      "Öffnet Yin Wei Mai",
+      "Beruhigt Herz",
+      "Harmonisiert Magen",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Übelkeit",
+      "Erbrechen",
+      "Herzschmerzen",
+      "Schlaflosigkeit",
+      "Angst"
+    ],
+    "chakraCorrespondence": "anahata"
+  },
+  {
+    "id": "PC7",
+    "nameChinese": "Daling",
+    "nameEnglish": "Great Mound",
+    "nameGerman": "Großer Hügel",
+    "meridian": "PC",
+    "element": "fire",
+    "location": "In der Mitte der Handgelenksfalte, zwischen den Sehnen",
+    "depth": "0.3-0.5 cun",
+    "frequency": 392.6,
+    "harmonicFrequencies": [
+      785.2,
+      1177.8,
+      1570.4,
+      1963
+    ],
+    "pointTypes": [
+      "shu_stream",
+      "yuan_source"
+    ],
+    "functions": [
+      "Beruhigt Herz",
+      "Klärt Hitze",
+      "Harmonisiert Magen"
+    ],
+    "indications": [
+      "Herzschmerzen",
+      "Herzklopfen",
+      "Mundgeruch",
+      "Handgelenkschmerzen"
+    ],
+    "chakraCorrespondence": "anahata"
+  },
+  {
+    "id": "PC8",
+    "nameChinese": "Laogong",
+    "nameEnglish": "Palace of Toil",
+    "nameGerman": "Palast der Arbeit",
+    "meridian": "PC",
+    "element": "fire",
+    "location": "In der Handfläche, wo die Fingerspitze des Mittelfingers bei geballter Faust zeigt",
+    "depth": "0.3-0.5 cun",
+    "frequency": 401.2,
+    "harmonicFrequencies": [
+      802.4,
+      1203.6,
+      1604.8,
+      2006
+    ],
+    "pointTypes": [
+      "ying_spring"
+    ],
+    "functions": [
+      "Klärt Herz-Hitze",
+      "Beruhigt Geist",
+      "Belebt Bewusstsein"
+    ],
+    "indications": [
+      "Mundgeschwüre",
+      "Bewusstlosigkeit",
+      "Epilepsie",
+      "Fieber"
+    ],
+    "chakraCorrespondence": "manipura"
+  },
+  {
+    "id": "PC9",
+    "nameChinese": "Zhongchong",
+    "nameEnglish": "Central Hub",
+    "nameGerman": "Zentrale Nabe",
+    "meridian": "PC",
+    "element": "fire",
+    "location": "Am Mittelfinger, 0.1 cun proximal des radialen Nagelwinkels",
+    "depth": "0.1 cun oder Blutenlassen",
+    "frequency": 409.7,
+    "harmonicFrequencies": [
+      819.4,
+      1229.1,
+      1638.8,
+      2048.5
+    ],
+    "pointTypes": [
+      "jing_well"
+    ],
+    "functions": [
+      "Klärt Hitze",
+      "Belebt Bewusstsein",
+      "Öffnet Sinne"
+    ],
+    "indications": [
+      "Bewusstlosigkeit",
+      "Fieber",
+      "Hitzschlag",
+      "Zungengeschwür"
+    ]
+  },
+  {
+    "id": "TE1",
+    "nameChinese": "Guanchong",
+    "nameEnglish": "Rushing Pass",
+    "nameGerman": "Drängende Passage",
+    "meridian": "TE",
+    "element": "fire",
+    "location": "Am Ringfinger, 0.1 cun proximal des ulnaren Nagelwinkels",
+    "depth": "0.1 cun oder Blutenlassen",
+    "frequency": 343.5,
+    "harmonicFrequencies": [
+      687,
+      1030.5,
+      1374,
+      1717.5
+    ],
+    "pointTypes": [
+      "jing_well"
+    ],
+    "functions": [
+      "Klärt Hitze",
+      "Belebt Bewusstsein"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Halsschmerzen",
+      "Fieber",
+      "Konjunktivitis"
+    ]
+  },
+  {
+    "id": "TE2",
+    "nameChinese": "Yemen",
+    "nameEnglish": "Humor Gate",
+    "nameGerman": "Flüssigkeitstor",
+    "meridian": "TE",
+    "element": "fire",
+    "location": "Zwischen 4. und 5. Finger, proximal des Schwimmhautrandes",
+    "depth": "0.3-0.5 cun",
+    "frequency": 350.4,
+    "harmonicFrequencies": [
+      700.8,
+      1051.2,
+      1401.6,
+      1752
+    ],
+    "pointTypes": [
+      "ying_spring"
+    ],
+    "functions": [
+      "Klärt Hitze",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Ohrenschmerzen",
+      "Halsschmerzen",
+      "Malaria"
+    ]
+  },
+  {
+    "id": "TE3",
+    "nameChinese": "Zhongzhu",
+    "nameEnglish": "Central Islet",
+    "nameGerman": "Zentrale Insel",
+    "meridian": "TE",
+    "element": "fire",
+    "location": "Auf dem Handrücken, zwischen 4. und 5. Metakarpale, proximal des MCP-Gelenks",
+    "depth": "0.5-1 cun",
+    "frequency": 357.3,
+    "harmonicFrequencies": [
+      714.6,
+      1071.9,
+      1429.2,
+      1786.5
+    ],
+    "pointTypes": [
+      "shu_stream"
+    ],
+    "functions": [
+      "Zerstreut Wind-Hitze",
+      "Öffnet Ohren",
+      "Aktiviert Kanal"
+    ],
+    "indications": [
+      "Tinnitus",
+      "Schwerhörigkeit",
+      "Kopfschmerzen",
+      "Handschmerzen"
+    ]
+  },
+  {
+    "id": "TE4",
+    "nameChinese": "Yangchi",
+    "nameEnglish": "Yang Pool",
+    "nameGerman": "Yang-Teich",
+    "meridian": "TE",
+    "element": "fire",
+    "location": "Auf dem Handrücken, in der Handgelenksfalte, ulnar der Strecksehnen",
+    "depth": "0.3-0.5 cun",
+    "frequency": 364.2,
+    "harmonicFrequencies": [
+      728.4,
+      1092.6,
+      1456.8,
+      1821
+    ],
+    "pointTypes": [
+      "yuan_source"
+    ],
+    "functions": [
+      "Entspannt Sehnen",
+      "Stärkt Yuan-Qi"
+    ],
+    "indications": [
+      "Handgelenkschmerzen",
+      "Schulterschmerzen",
+      "Diabetes"
+    ]
+  },
+  {
+    "id": "TE5",
+    "nameChinese": "Waiguan",
+    "nameEnglish": "Outer Pass",
+    "nameGerman": "Äußere Grenze",
+    "meridian": "TE",
+    "element": "fire",
+    "location": "2 cun proximal der Handgelenksfalte, zwischen Radius und Ulna",
+    "depth": "0.5-1 cun",
+    "frequency": 371.1,
+    "harmonicFrequencies": [
+      742.2,
+      1113.3,
+      1484.4,
+      1855.5
+    ],
+    "pointTypes": [
+      "luo_connecting",
+      "confluent"
+    ],
+    "functions": [
+      "Öffnet Yang Wei Mai",
+      "Zerstreut Wind-Hitze",
+      "Aktiviert Kanal"
+    ],
+    "indications": [
+      "Erkältung",
+      "Kopfschmerzen",
+      "Tinnitus",
+      "Armschmerzen"
+    ],
+    "chakraCorrespondence": "vishuddha"
+  },
+  {
+    "id": "TE6",
+    "nameChinese": "Zhigou",
+    "nameEnglish": "Branch Ditch",
+    "nameGerman": "Zweiggraben",
+    "meridian": "TE",
+    "element": "fire",
+    "location": "3 cun proximal der Handgelenksfalte, zwischen Radius und Ulna",
+    "depth": "0.5-1 cun",
+    "frequency": 378,
+    "harmonicFrequencies": [
+      756,
+      1134,
+      1512,
+      1890
+    ],
+    "pointTypes": [
+      "jing_river"
+    ],
+    "functions": [
+      "Reguliert Qi",
+      "Klärt Hitze",
+      "Fördert Stuhlgang"
+    ],
+    "indications": [
+      "Verstopfung",
+      "Rippenschmerzen",
+      "Schulterschmerzen"
+    ]
+  },
+  {
+    "id": "TE7",
+    "nameChinese": "Huizong",
+    "nameEnglish": "Convergence and Gathering",
+    "nameGerman": "Zusammenkunft",
+    "meridian": "TE",
+    "element": "fire",
+    "location": "3 cun proximal der Handgelenksfalte, am radialen Rand der Ulna",
+    "depth": "0.5-1 cun",
+    "frequency": 384.9,
+    "harmonicFrequencies": [
+      769.8,
+      1154.7,
+      1539.6,
+      1924.5
+    ],
+    "pointTypes": [
+      "xi_cleft"
+    ],
+    "functions": [
+      "Öffnet Ohren",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Schwerhörigkeit",
+      "Epilepsie",
+      "Armschmerzen"
+    ]
+  },
+  {
+    "id": "TE8",
+    "nameChinese": "Sanyangluo",
+    "nameEnglish": "Three Yang Connection",
+    "nameGerman": "Drei-Yang-Verbindung",
+    "meridian": "TE",
+    "element": "fire",
+    "location": "4 cun proximal der Handgelenksfalte, zwischen Radius und Ulna",
+    "depth": "0.5-1 cun",
+    "frequency": 391.8,
+    "harmonicFrequencies": [
+      783.6,
+      1175.4,
+      1567.2,
+      1959
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Öffnet Ohren",
+      "Aktiviert Kanal"
+    ],
+    "indications": [
+      "Schwerhörigkeit",
+      "Zahnschmerzen",
+      "Armschmerzen"
+    ]
+  },
+  {
+    "id": "TE9",
+    "nameChinese": "Sidu",
+    "nameEnglish": "Four Rivers",
+    "nameGerman": "Vier Flüsse",
+    "meridian": "TE",
+    "element": "fire",
+    "location": "5 cun distal des Olekranons, zwischen Radius und Ulna",
+    "depth": "0.5-1 cun",
+    "frequency": 398.7,
+    "harmonicFrequencies": [
+      797.4,
+      1196.1,
+      1594.8,
+      1993.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Öffnet Ohren",
+      "Lindert Halsschmerzen"
+    ],
+    "indications": [
+      "Schwerhörigkeit",
+      "Halsschmerzen",
+      "Zahnschmerzen"
+    ]
+  },
+  {
+    "id": "TE10",
+    "nameChinese": "Tianjing",
+    "nameEnglish": "Celestial Well",
+    "nameGerman": "Himmlischer Brunnen",
+    "meridian": "TE",
+    "element": "fire",
+    "location": "1 cun über dem Olekranon, bei gebeugtem Ellenbogen",
+    "depth": "0.5-1 cun",
+    "frequency": 405.6,
+    "harmonicFrequencies": [
+      811.2,
+      1216.8,
+      1622.4,
+      2028
+    ],
+    "pointTypes": [
+      "he_sea"
+    ],
+    "functions": [
+      "Transformiert Schleim",
+      "Zerstreut Stagnation",
+      "Beruhigt Geist"
+    ],
+    "indications": [
+      "Ellenbogenschmerzen",
+      "Nackensteifigkeit",
+      "Skrofulose",
+      "Depression"
+    ]
+  },
+  {
+    "id": "TE11",
+    "nameChinese": "Qinglengyuan",
+    "nameEnglish": "Clear Cold Abyss",
+    "nameGerman": "Klarer kalter Abgrund",
+    "meridian": "TE",
+    "element": "fire",
+    "location": "2 cun über dem Olekranon",
+    "depth": "0.5-1 cun",
+    "frequency": 412.5,
+    "harmonicFrequencies": [
+      825,
+      1237.5,
+      1650,
+      2062.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Aktiviert Kanal",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Schulterschmerzen",
+      "Kopfschmerzen"
+    ]
+  },
+  {
+    "id": "TE12",
+    "nameChinese": "Xiaoluo",
+    "nameEnglish": "Dispersing Riverbed",
+    "nameGerman": "Zerstreuendes Flussbett",
+    "meridian": "TE",
+    "element": "fire",
+    "location": "Auf der Linie zwischen Olekranon und TE14, in der Mitte des Oberarms",
+    "depth": "0.5-1 cun",
+    "frequency": 419.4,
+    "harmonicFrequencies": [
+      838.8,
+      1258.2,
+      1677.6,
+      2097
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Aktiviert Kanal",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Nackensteifigkeit",
+      "Armschmerzen"
+    ]
+  },
+  {
+    "id": "TE13",
+    "nameChinese": "Naohui",
+    "nameEnglish": "Upper Arm Convergence",
+    "nameGerman": "Oberarm-Zusammenkunft",
+    "meridian": "TE",
+    "element": "fire",
+    "location": "3 cun unter TE14, am hinteren Rand des Deltoideus",
+    "depth": "0.5-1 cun",
+    "frequency": 426.3,
+    "harmonicFrequencies": [
+      852.6,
+      1278.9,
+      1705.2,
+      2131.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Transformiert Schleim",
+      "Zerstreut Stagnation"
+    ],
+    "indications": [
+      "Skrofulose",
+      "Armschmerzen"
+    ]
+  },
+  {
+    "id": "TE14",
+    "nameChinese": "Jianliao",
+    "nameEnglish": "Shoulder Bone Hole",
+    "nameGerman": "Schulterknochen-Vertiefung",
+    "meridian": "TE",
+    "element": "fire",
+    "location": "Posterior und inferior zum Akromion, bei abduziertem Arm",
+    "depth": "0.5-1 cun",
+    "frequency": 433.2,
+    "harmonicFrequencies": [
+      866.4,
+      1299.6,
+      1732.8,
+      2166
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Aktiviert Kanal"
+    ],
+    "indications": [
+      "Schulterschmerzen",
+      "Schultersteifigkeit",
+      "Armlähmung"
+    ]
+  },
+  {
+    "id": "TE15",
+    "nameChinese": "Tianliao",
+    "nameEnglish": "Celestial Bone Hole",
+    "nameGerman": "Himmlische Knochenvertiefung",
+    "meridian": "TE",
+    "element": "fire",
+    "location": "Auf der Mitte zwischen GB21 und SI13",
+    "depth": "0.5-1 cun",
+    "frequency": 440.1,
+    "harmonicFrequencies": [
+      880.2,
+      1320.3,
+      1760.4,
+      2200.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Aktiviert Kanal"
+    ],
+    "indications": [
+      "Nacken- und Schulterschmerzen",
+      "Armschmerzen"
+    ]
+  },
+  {
+    "id": "TE16",
+    "nameChinese": "Tianyou",
+    "nameEnglish": "Celestial Window",
+    "nameGerman": "Himmlisches Fenster",
+    "meridian": "TE",
+    "element": "fire",
+    "location": "Am Hinterrand des M. SCM, auf Höhe des Unterkieferwinkels",
+    "depth": "0.5-1 cun",
+    "frequency": 447,
+    "harmonicFrequencies": [
+      894,
+      1341,
+      1788,
+      2235
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Erhellt Sinne"
+    ],
+    "indications": [
+      "Gesichtsschwellung",
+      "Sehstörungen",
+      "Schwerhörigkeit"
+    ],
+    "precautions": [
+      "Vorsicht - Gefäße"
+    ]
+  },
+  {
+    "id": "TE17",
+    "nameChinese": "Yifeng",
+    "nameEnglish": "Wind Screen",
+    "nameGerman": "Windschirm",
+    "meridian": "TE",
+    "element": "fire",
+    "location": "Hinter dem Ohrläppchen, zwischen Processus mastoideus und Unterkieferast",
+    "depth": "0.5-1 cun",
+    "frequency": 453.9,
+    "harmonicFrequencies": [
+      907.8,
+      1361.7,
+      1815.6,
+      2269.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Öffnet Ohren",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Tinnitus",
+      "Schwerhörigkeit",
+      "Gesichtslähmung",
+      "Ohrenschmerzen"
+    ],
+    "chakraCorrespondence": "ajna"
+  },
+  {
+    "id": "TE18",
+    "nameChinese": "Chimai",
+    "nameEnglish": "Spasm Vessel",
+    "nameGerman": "Krampfgefäß",
+    "meridian": "TE",
+    "element": "fire",
+    "location": "In der Mitte des Processus mastoideus, an der Haargrenze",
+    "depth": "0.3-0.5 cun schräg oder Blutenlassen",
+    "frequency": 460.8,
+    "harmonicFrequencies": [
+      921.6,
+      1382.4,
+      1843.2,
+      2304
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Tinnitus",
+      "Kinderkrämpfe"
+    ]
+  },
+  {
+    "id": "TE19",
+    "nameChinese": "Luxi",
+    "nameEnglish": "Skull Rest",
+    "nameGerman": "Schädelruhe",
+    "meridian": "TE",
+    "element": "fire",
+    "location": "Am Hinterrand des Ohres, auf Höhe der Ohrmuschelmitte",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 467.7,
+    "harmonicFrequencies": [
+      935.4,
+      1403.1,
+      1870.8,
+      2338.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Tinnitus",
+      "Ohrenschmerzen"
+    ]
+  },
+  {
+    "id": "TE20",
+    "nameChinese": "Jiaosun",
+    "nameEnglish": "Minute Angle",
+    "nameGerman": "Winziger Winkel",
+    "meridian": "TE",
+    "element": "fire",
+    "location": "An der Ohrspitze, an der Haargrenze",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 474.6,
+    "harmonicFrequencies": [
+      949.2,
+      1423.8,
+      1898.4,
+      2373
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Lindert Schwellung"
+    ],
+    "indications": [
+      "Augenrötung",
+      "Zahnschmerzen",
+      "Ohrenschwellung"
+    ]
+  },
+  {
+    "id": "TE21",
+    "nameChinese": "Ermen",
+    "nameEnglish": "Ear Gate",
+    "nameGerman": "Ohrentor",
+    "meridian": "TE",
+    "element": "fire",
+    "location": "Vor der Incisura supratragica, bei geöffnetem Mund",
+    "depth": "0.5-1 cun",
+    "frequency": 481.5,
+    "harmonicFrequencies": [
+      963,
+      1444.5,
+      1926,
+      2407.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Öffnet Ohren",
+      "Zerstreut Wind-Hitze"
+    ],
+    "indications": [
+      "Tinnitus",
+      "Schwerhörigkeit",
+      "Ohrenschmerzen",
+      "Zahnschmerzen"
+    ],
+    "chakraCorrespondence": "ajna"
+  },
+  {
+    "id": "TE22",
+    "nameChinese": "Heliao",
+    "nameEnglish": "Harmony Bone Hole",
+    "nameGerman": "Harmonie-Knochenvertiefung",
+    "meridian": "TE",
+    "element": "fire",
+    "location": "An der Haargrenze, hinter der A. temporalis superficialis",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 488.4,
+    "harmonicFrequencies": [
+      976.8,
+      1465.2,
+      1953.6,
+      2442
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Aktiviert Kanal"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Tinnitus",
+      "Kiefergelenksprobleme"
+    ],
+    "precautions": [
+      "Vorsicht - A. temporalis"
+    ]
+  },
+  {
+    "id": "TE23",
+    "nameChinese": "Sizhukong",
+    "nameEnglish": "Silk Bamboo Hole",
+    "nameGerman": "Seidenbambus-Vertiefung",
+    "meridian": "TE",
+    "element": "fire",
+    "location": "Am lateralen Ende der Augenbraue, in der Vertiefung",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 495.3,
+    "harmonicFrequencies": [
+      990.6,
+      1485.9,
+      1981.2,
+      2476.5
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Erhellt Augen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Augenschmerzen",
+      "Gesichtslähmung",
+      "Epilepsie"
+    ],
+    "chakraCorrespondence": "ajna"
+  },
+  {
+    "id": "GB1",
+    "nameChinese": "Tongziliao",
+    "nameEnglish": "Pupil Bone Hole",
+    "nameGerman": "Pupillen-Knochenvertiefung",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "0.5 cun lateral des äußeren Augenwinkels",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 288,
+    "harmonicFrequencies": [
+      576,
+      864,
+      1152,
+      1440
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind-Hitze",
+      "Erhellt Augen"
+    ],
+    "indications": [
+      "Augenerkrankungen",
+      "Kopfschmerzen",
+      "Gesichtslähmung"
+    ],
+    "chakraCorrespondence": "ajna"
+  },
+  {
+    "id": "GB2",
+    "nameChinese": "Tinghui",
+    "nameEnglish": "Auditory Convergence",
+    "nameGerman": "Hörvereinigung",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "Vor der Incisura intertragica, bei geöffnetem Mund",
+    "depth": "0.5-1 cun",
+    "frequency": 292.4,
+    "harmonicFrequencies": [
+      584.8,
+      877.2,
+      1169.6,
+      1462
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Öffnet Ohren",
+      "Zerstreut Wind-Hitze"
+    ],
+    "indications": [
+      "Tinnitus",
+      "Schwerhörigkeit",
+      "Kiefergelenksprobleme",
+      "Gesichtslähmung"
+    ]
+  },
+  {
+    "id": "GB3",
+    "nameChinese": "Shangguan",
+    "nameEnglish": "Upper Gate",
+    "nameGerman": "Oberes Tor",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "Oberhalb des Jochbogens, in der Vertiefung vor dem Ohr",
+    "depth": "0.3-0.5 cun",
+    "frequency": 296.8,
+    "harmonicFrequencies": [
+      593.6,
+      890.4,
+      1187.2,
+      1484
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Tinnitus",
+      "Zahnschmerzen",
+      "Gesichtslähmung"
+    ]
+  },
+  {
+    "id": "GB4",
+    "nameChinese": "Hanyan",
+    "nameEnglish": "Jaw Serenity",
+    "nameGerman": "Kieferruhe",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "An der Schläfe, am Haaransatz, über der A. temporalis",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 301.2,
+    "harmonicFrequencies": [
+      602.4,
+      903.6,
+      1204.8,
+      1506
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Migräne",
+      "Schwindel",
+      "Tinnitus"
+    ],
+    "precautions": [
+      "Vorsicht - A. temporalis"
+    ]
+  },
+  {
+    "id": "GB5",
+    "nameChinese": "Xuanlu",
+    "nameEnglish": "Suspended Skull",
+    "nameGerman": "Aufgehängter Schädel",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "An der Schläfe, auf halber Strecke zwischen ST8 und GB7",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 305.6,
+    "harmonicFrequencies": [
+      611.2,
+      916.8,
+      1222.4,
+      1528
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind-Hitze",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Migräne",
+      "Augenrötung",
+      "Zahnschmerzen"
+    ]
+  },
+  {
+    "id": "GB6",
+    "nameChinese": "Xuanli",
+    "nameEnglish": "Suspended Tuft",
+    "nameGerman": "Aufgehängter Büschel",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "An der Schläfe, auf der Verbindung GB4-GB7",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 310,
+    "harmonicFrequencies": [
+      620,
+      930,
+      1240,
+      1550
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Migräne",
+      "Augenrötung",
+      "Tinnitus"
+    ]
+  },
+  {
+    "id": "GB7",
+    "nameChinese": "Qubin",
+    "nameEnglish": "Temporal Hairline Curve",
+    "nameGerman": "Schläfenhaaransatzkurve",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "An der Schläfe, auf der Horizontalen durch die Ohrspitze",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 314.4,
+    "harmonicFrequencies": [
+      628.8,
+      943.2,
+      1257.6,
+      1572
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Kiefergelenksprobleme",
+      "Schwellung der Wange"
+    ]
+  },
+  {
+    "id": "GB8",
+    "nameChinese": "Shuaigu",
+    "nameEnglish": "Leading Valley",
+    "nameGerman": "Führendes Tal",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "1.5 cun über der Ohrspitze",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 318.8,
+    "harmonicFrequencies": [
+      637.6,
+      956.4,
+      1275.2,
+      1594
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Lindert Alkoholvergiftung"
+    ],
+    "indications": [
+      "Migräne",
+      "Übelkeit",
+      "Erbrechen",
+      "Kinderkrämpfe"
+    ]
+  },
+  {
+    "id": "GB9",
+    "nameChinese": "Tianchong",
+    "nameEnglish": "Celestial Hub",
+    "nameGerman": "Himmlische Nabe",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "0.5 cun posterior zu GB8",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 323.2,
+    "harmonicFrequencies": [
+      646.4,
+      969.6,
+      1292.8,
+      1616
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Beruhigt Geist",
+      "Lindert Krämpfe"
+    ],
+    "indications": [
+      "Epilepsie",
+      "Kopfschmerzen",
+      "Zahnfleischschwellung"
+    ]
+  },
+  {
+    "id": "GB10",
+    "nameChinese": "Fubai",
+    "nameEnglish": "Floating White",
+    "nameGerman": "Schwebendes Weiß",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "Posterior und inferior zu GB9, an der Haargrenze",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 327.6,
+    "harmonicFrequencies": [
+      655.2,
+      982.8,
+      1310.4,
+      1638
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Öffnet Ohren"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Tinnitus",
+      "Schwerhörigkeit"
+    ]
+  },
+  {
+    "id": "GB11",
+    "nameChinese": "Head Qiaoyin",
+    "nameEnglish": "Head Orifice Yin",
+    "nameGerman": "Kopf-Öffnungs-Yin",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "Zwischen GB10 und GB12, an der Haargrenze",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 332,
+    "harmonicFrequencies": [
+      664,
+      996,
+      1328,
+      1660
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Öffnet Ohren"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Tinnitus",
+      "Ohrenschmerzen"
+    ]
+  },
+  {
+    "id": "GB12",
+    "nameChinese": "Wangu",
+    "nameEnglish": "Mastoid Process",
+    "nameGerman": "Warzenfortsatz",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "In der Vertiefung posteroinferior zum Processus mastoideus",
+    "depth": "0.5-0.8 cun",
+    "frequency": 336.4,
+    "harmonicFrequencies": [
+      672.8,
+      1009.2,
+      1345.6,
+      1682
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Beruhigt Geist"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Schlaflosigkeit",
+      "Gesichtslähmung",
+      "Zahnschmerzen"
+    ]
+  },
+  {
+    "id": "GB13",
+    "nameChinese": "Benshen",
+    "nameEnglish": "Root Spirit",
+    "nameGerman": "Wurzelgeist",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "0.5 cun hinter dem Haaransatz, 3 cun lateral der Mittellinie",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 340.8,
+    "harmonicFrequencies": [
+      681.6,
+      1022.4,
+      1363.2,
+      1704
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Beruhigt Geist",
+      "Zerstreut Wind"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Schwindel",
+      "Epilepsie",
+      "Angst"
+    ],
+    "chakraCorrespondence": "ajna"
+  },
+  {
+    "id": "GB14",
+    "nameChinese": "Yangbai",
+    "nameEnglish": "Yang White",
+    "nameGerman": "Yang-Weiß",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "1 cun über der Augenbraue, in der Pupillenlinie",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 345.2,
+    "harmonicFrequencies": [
+      690.4,
+      1035.6,
+      1380.8,
+      1726
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Erhellt Augen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Augenschmerzen",
+      "Gesichtslähmung",
+      "Zucken der Augenlider"
+    ],
+    "chakraCorrespondence": "ajna"
+  },
+  {
+    "id": "GB15",
+    "nameChinese": "Head Linqi",
+    "nameEnglish": "Head Overlooking Tears",
+    "nameGerman": "Kopf-Tränenübersicht",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "0.5 cun hinter dem Haaransatz, in der Pupillenlinie",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 349.6,
+    "harmonicFrequencies": [
+      699.2,
+      1048.8,
+      1398.4,
+      1748
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Erhellt Augen",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Augenerkrankungen",
+      "verstopfte Nase"
+    ]
+  },
+  {
+    "id": "GB16",
+    "nameChinese": "Muchuang",
+    "nameEnglish": "Eye Window",
+    "nameGerman": "Augenfenster",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "1.5 cun hinter dem Haaransatz, in der Pupillenlinie",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 354,
+    "harmonicFrequencies": [
+      708,
+      1062,
+      1416,
+      1770
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Erhellt Augen",
+      "Zerstreut Wind"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Augenrötung",
+      "Gesichtsschwellung"
+    ]
+  },
+  {
+    "id": "GB17",
+    "nameChinese": "Zhengying",
+    "nameEnglish": "Upright Construction",
+    "nameGerman": "Aufrechte Konstruktion",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "2.5 cun hinter dem Haaransatz, in der Pupillenlinie",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 358.4,
+    "harmonicFrequencies": [
+      716.8,
+      1075.2,
+      1433.6,
+      1792
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Schwindel",
+      "Zahnschmerzen"
+    ]
+  },
+  {
+    "id": "GB18",
+    "nameChinese": "Chengling",
+    "nameEnglish": "Spirit Support",
+    "nameGerman": "Geistunterstützung",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "4 cun hinter dem Haaransatz, in der Pupillenlinie",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 362.8,
+    "harmonicFrequencies": [
+      725.6,
+      1088.4,
+      1451.2,
+      1814
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Beruhigt Geist",
+      "Öffnet Nase"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Rhinitis",
+      "Nasenbluten",
+      "Asthma"
+    ]
+  },
+  {
+    "id": "GB19",
+    "nameChinese": "Naokong",
+    "nameEnglish": "Brain Hollow",
+    "nameGerman": "Gehirnhöhle",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "Auf Höhe von DU17, 2.25 cun lateral der Mittellinie",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 367.2,
+    "harmonicFrequencies": [
+      734.4,
+      1101.6,
+      1468.8,
+      1836
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Nackensteifigkeit",
+      "Schwindel",
+      "Epilepsie"
+    ]
+  },
+  {
+    "id": "GB20",
+    "nameChinese": "Fengchi",
+    "nameEnglish": "Wind Pool",
+    "nameGerman": "Windteich",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "Unter dem Hinterhaupt, zwischen M. SCM und M. trapezius",
+    "depth": "0.8-1.2 cun zur Nasenspitze",
+    "frequency": 371.6,
+    "harmonicFrequencies": [
+      743.2,
+      1114.8,
+      1486.4,
+      1858
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Unterdrückt Yang",
+      "Erhellt Sinne",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Schwindel",
+      "Erkältung",
+      "Nackensteifigkeit",
+      "Hypertonie"
+    ],
+    "chakraCorrespondence": "ajna"
+  },
+  {
+    "id": "GB21",
+    "nameChinese": "Jianjing",
+    "nameEnglish": "Shoulder Well",
+    "nameGerman": "Schulterbrunnen",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "Auf der Mitte zwischen Akromion und Dornfortsatz C7",
+    "depth": "0.5-1 cun",
+    "frequency": 376,
+    "harmonicFrequencies": [
+      752,
+      1128,
+      1504,
+      1880
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Aktiviert Kanal",
+      "Fördert Laktation"
+    ],
+    "indications": [
+      "Schulterschmerzen",
+      "Nackensteifigkeit",
+      "Mastitis",
+      "verzögerte Geburt"
+    ],
+    "precautions": [
+      "Kontraindiziert in der Schwangerschaft - kann Wehen auslösen"
+    ],
+    "chakraCorrespondence": "vishuddha"
+  },
+  {
+    "id": "GB22",
+    "nameChinese": "Yuanye",
+    "nameEnglish": "Armpit Abyss",
+    "nameGerman": "Achselhöhlenabgrund",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "3 cun unter der Achselhöhle, auf der mittleren Axillarlinie",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 380.4,
+    "harmonicFrequencies": [
+      760.8,
+      1141.2,
+      1521.6,
+      1902
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Qi",
+      "Lindert Schwellung"
+    ],
+    "indications": [
+      "Rippenschmerzen",
+      "Armschwellung",
+      "Achselschwellung"
+    ],
+    "precautions": [
+      "Nicht tief stechen"
+    ]
+  },
+  {
+    "id": "GB23",
+    "nameChinese": "Zhejin",
+    "nameEnglish": "Sinew Seat",
+    "nameGerman": "Sehnensitz",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "1 cun anterior zu GB22, auf Höhe der Brustwarze",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 384.8,
+    "harmonicFrequencies": [
+      769.6,
+      1154.4,
+      1539.2,
+      1924
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Qi",
+      "Entspannt Sehnen"
+    ],
+    "indications": [
+      "Rippenschmerzen",
+      "Asthma",
+      "Erbrechen"
+    ],
+    "precautions": [
+      "Nicht tief stechen"
+    ]
+  },
+  {
+    "id": "GB24",
+    "nameChinese": "Riyue",
+    "nameEnglish": "Sun and Moon",
+    "nameGerman": "Sonne und Mond",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "Im 7. ICR, auf der Mamillarlinie",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 389.2,
+    "harmonicFrequencies": [
+      778.4,
+      1167.6,
+      1556.8,
+      1946
+    ],
+    "pointTypes": [
+      "mu_front"
+    ],
+    "functions": [
+      "Reguliert Leber und Gallenblase",
+      "Harmonisiert Shaoyang"
+    ],
+    "indications": [
+      "Gallenblasenentzündung",
+      "Rippenschmerzen",
+      "Erbrechen",
+      "bitterer Mundgeschmack"
+    ],
+    "precautions": [
+      "Nicht tief stechen"
+    ]
+  },
+  {
+    "id": "GB25",
+    "nameChinese": "Jingmen",
+    "nameEnglish": "Capital Gate",
+    "nameGerman": "Hauptstadttor",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "An der Spitze der 12. Rippe",
+    "depth": "0.5-1 cun",
+    "frequency": 393.6,
+    "harmonicFrequencies": [
+      787.2,
+      1180.8,
+      1574.4,
+      1968
+    ],
+    "pointTypes": [
+      "mu_front"
+    ],
+    "functions": [
+      "Stärkt Nieren",
+      "Reguliert Wasserwege"
+    ],
+    "indications": [
+      "Lendenschmerzen",
+      "Harnprobleme",
+      "Rippenschmerzen"
+    ]
+  },
+  {
+    "id": "GB26",
+    "nameChinese": "Daimai",
+    "nameEnglish": "Girdling Vessel",
+    "nameGerman": "Gürtelgefäß",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "Auf der Höhe des Nabels, unter LR13",
+    "depth": "0.5-1 cun",
+    "frequency": 398,
+    "harmonicFrequencies": [
+      796,
+      1194,
+      1592,
+      1990
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Dai Mai",
+      "Reguliert Menstruation"
+    ],
+    "indications": [
+      "Menstruationsstörungen",
+      "Leukorr",
+      "Lendenschmerzen",
+      "Hernie"
+    ]
+  },
+  {
+    "id": "GB27",
+    "nameChinese": "Wushu",
+    "nameEnglish": "Five Pivots",
+    "nameGerman": "Fünf Drehpunkte",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "3 cun unter dem Nabel, auf Höhe von REN4, lateral der Spina iliaca",
+    "depth": "0.5-1 cun",
+    "frequency": 402.4,
+    "harmonicFrequencies": [
+      804.8,
+      1207.2,
+      1609.6,
+      2012
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Dai Mai",
+      "Stärkt Lendenbereich"
+    ],
+    "indications": [
+      "Leistenschmerzen",
+      "Hernie",
+      "Leukorr",
+      "Verstopfung"
+    ]
+  },
+  {
+    "id": "GB28",
+    "nameChinese": "Weidao",
+    "nameEnglish": "Linking Path",
+    "nameGerman": "Verbindungspfad",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "0.5 cun anterior und inferior zu GB27",
+    "depth": "0.5-1 cun",
+    "frequency": 406.8,
+    "harmonicFrequencies": [
+      813.6,
+      1220.4,
+      1627.2,
+      2034
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Dai Mai",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Leistenschmerzen",
+      "Leukorr",
+      "Prolaps"
+    ]
+  },
+  {
+    "id": "GB29",
+    "nameChinese": "Juliao",
+    "nameEnglish": "Stationary Crevice",
+    "nameGerman": "Stationäre Spalte",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "Auf der Mitte zwischen Spina iliaca anterior superior und Trochanter major",
+    "depth": "1-1.5 cun",
+    "frequency": 411.2,
+    "harmonicFrequencies": [
+      822.4,
+      1233.6,
+      1644.8,
+      2056
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind-Feuchtigkeit",
+      "Aktiviert Kanal"
+    ],
+    "indications": [
+      "Hüftschmerzen",
+      "Beinlähmung",
+      "Lendenschmerzen"
+    ]
+  },
+  {
+    "id": "GB30",
+    "nameChinese": "Huantiao",
+    "nameEnglish": "Jumping Circle",
+    "nameGerman": "Springender Kreis",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "Am Gesäß, am Schnittpunkt des lateralen und mittleren Drittels zwischen Trochanter major und Hiatus sacralis",
+    "depth": "2-3 cun",
+    "frequency": 415.6,
+    "harmonicFrequencies": [
+      831.2,
+      1246.8,
+      1662.4,
+      2078
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind-Feuchtigkeit",
+      "Stärkt Lendenbereich und Beine"
+    ],
+    "indications": [
+      "Ischias",
+      "Hüftschmerzen",
+      "Beinlähmung",
+      "Hauterkrankungen"
+    ],
+    "chakraCorrespondence": "muladhara"
+  },
+  {
+    "id": "GB31",
+    "nameChinese": "Fengshi",
+    "nameEnglish": "Wind Market",
+    "nameGerman": "Windmarkt",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "Lateral am Oberschenkel, wo die Mittelfingerspitze bei herabhängendem Arm endet",
+    "depth": "1-2 cun",
+    "frequency": 420,
+    "harmonicFrequencies": [
+      840,
+      1260,
+      1680,
+      2100
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Lindert Juckreiz"
+    ],
+    "indications": [
+      "Beinschmerzen",
+      "Lähmung",
+      "Urtikaria",
+      "Pruritus"
+    ]
+  },
+  {
+    "id": "GB32",
+    "nameChinese": "Zhongdu",
+    "nameEnglish": "Central River",
+    "nameGerman": "Zentraler Fluss",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "5 cun über dem lateralen Kniegelenk, zwischen Vastus lateralis und Bizeps femoris",
+    "depth": "1-2 cun",
+    "frequency": 424.4,
+    "harmonicFrequencies": [
+      848.8,
+      1273.2,
+      1697.6,
+      2122
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Aktiviert Kanal"
+    ],
+    "indications": [
+      "Oberschenkelschmerzen",
+      "Beinlähmung",
+      "Knieschmerzen"
+    ]
+  },
+  {
+    "id": "GB33",
+    "nameChinese": "Xiyangguan",
+    "nameEnglish": "Knee Yang Joint",
+    "nameGerman": "Knie-Yang-Gelenk",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "3 cun über GB34, in der Vertiefung zwischen Femur und Bizepssehne",
+    "depth": "0.5-1 cun",
+    "frequency": 428.8,
+    "harmonicFrequencies": [
+      857.6,
+      1286.4,
+      1715.2,
+      2144
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind-Feuchtigkeit",
+      "Lindert Knieschmerzen"
+    ],
+    "indications": [
+      "Knieschmerzen",
+      "Kniesteifigkeit",
+      "Unterschenkelschmerzen"
+    ]
+  },
+  {
+    "id": "GB34",
+    "nameChinese": "Yanglingquan",
+    "nameEnglish": "Yang Mound Spring",
+    "nameGerman": "Yang-Hügel-Quelle",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "In der Vertiefung vor und unter dem Fibulaköpfchen",
+    "depth": "1-1.5 cun",
+    "frequency": 433.2,
+    "harmonicFrequencies": [
+      866.4,
+      1299.6,
+      1732.8,
+      2166
+    ],
+    "pointTypes": [
+      "he_sea",
+      "hui_meeting"
+    ],
+    "functions": [
+      "Entspannt Sehnen",
+      "Reguliert Leber und Gallenblase",
+      "Zerstreut Feuchtigkeit"
+    ],
+    "indications": [
+      "Knieschmerzen",
+      "Rippenschmerzen",
+      "Beinlähmung",
+      "Gallenblasenerkrankungen"
+    ],
+    "chakraCorrespondence": "manipura"
+  },
+  {
+    "id": "GB35",
+    "nameChinese": "Yangjiao",
+    "nameEnglish": "Yang Intersection",
+    "nameGerman": "Yang-Kreuzung",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "7 cun über dem Außenknöchel, am Hinterrand der Fibula",
+    "depth": "0.5-1 cun",
+    "frequency": 437.6,
+    "harmonicFrequencies": [
+      875.2,
+      1312.8,
+      1750.4,
+      2188
+    ],
+    "pointTypes": [
+      "xi_cleft"
+    ],
+    "functions": [
+      "Beruhigt Geist",
+      "Aktiviert Kanal"
+    ],
+    "indications": [
+      "Knieschmerzen",
+      "Brustschmerzen",
+      "Angst",
+      "Manie"
+    ]
+  },
+  {
+    "id": "GB36",
+    "nameChinese": "Waiqiu",
+    "nameEnglish": "Outer Hill",
+    "nameGerman": "Äußerer Hügel",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "7 cun über dem Außenknöchel, am Vorderrand der Fibula",
+    "depth": "0.5-1 cun",
+    "frequency": 442,
+    "harmonicFrequencies": [
+      884,
+      1326,
+      1768,
+      2210
+    ],
+    "pointTypes": [
+      "xi_cleft"
+    ],
+    "functions": [
+      "Aktiviert Kanal",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Nackensteifigkeit",
+      "Brustschmerzen",
+      "Unterschenkelschmerzen"
+    ]
+  },
+  {
+    "id": "GB37",
+    "nameChinese": "Guangming",
+    "nameEnglish": "Bright Light",
+    "nameGerman": "Helles Licht",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "5 cun über dem Außenknöchel, am Vorderrand der Fibula",
+    "depth": "0.5-1 cun",
+    "frequency": 446.4,
+    "harmonicFrequencies": [
+      892.8,
+      1339.2,
+      1785.6,
+      2232
+    ],
+    "pointTypes": [
+      "luo_connecting"
+    ],
+    "functions": [
+      "Erhellt Augen",
+      "Zerstreut Wind-Hitze"
+    ],
+    "indications": [
+      "Augenerkrankungen",
+      "Nachtblindheit",
+      "Brustschmerzen",
+      "Unterschenkelschmerzen"
+    ],
+    "chakraCorrespondence": "ajna"
+  },
+  {
+    "id": "GB38",
+    "nameChinese": "Yangfu",
+    "nameEnglish": "Yang Assistance",
+    "nameGerman": "Yang-Hilfe",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "4 cun über dem Außenknöchel, am Vorderrand der Fibula",
+    "depth": "0.5-1 cun",
+    "frequency": 450.8,
+    "harmonicFrequencies": [
+      901.6,
+      1352.4,
+      1803.2,
+      2254
+    ],
+    "pointTypes": [
+      "jing_river"
+    ],
+    "functions": [
+      "Zerstreut Wind-Hitze",
+      "Aktiviert Kanal"
+    ],
+    "indications": [
+      "Migräne",
+      "Augenaußenwinkelschmerzen",
+      "Knöchelschmerzen"
+    ]
+  },
+  {
+    "id": "GB39",
+    "nameChinese": "Xuanzhong",
+    "nameEnglish": "Suspended Bell",
+    "nameGerman": "Aufgehängte Glocke",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "3 cun über dem Außenknöchel, am Hinterrand der Fibula",
+    "depth": "0.5-1 cun",
+    "frequency": 455.2,
+    "harmonicFrequencies": [
+      910.4,
+      1365.6,
+      1820.8,
+      2276
+    ],
+    "pointTypes": [
+      "hui_meeting"
+    ],
+    "functions": [
+      "Nährt Mark",
+      "Stärkt Knochen",
+      "Aktiviert Kanal"
+    ],
+    "indications": [
+      "Nackenschmerzen",
+      "Knöchelschmerzen",
+      "Knochenerkrankungen",
+      "Hemiplegie"
+    ]
+  },
+  {
+    "id": "GB40",
+    "nameChinese": "Qiuxu",
+    "nameEnglish": "Hill Ruins",
+    "nameGerman": "Hügelruinen",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "Vor und unter dem Außenknöchel, in der Vertiefung lateral der Sehne",
+    "depth": "0.5-1 cun",
+    "frequency": 459.6,
+    "harmonicFrequencies": [
+      919.2,
+      1378.8,
+      1838.4,
+      2298
+    ],
+    "pointTypes": [
+      "yuan_source"
+    ],
+    "functions": [
+      "Reguliert Leber und Gallenblase",
+      "Aktiviert Kanal"
+    ],
+    "indications": [
+      "Knöchelschmerzen",
+      "Rippenschmerzen",
+      "bitterer Mundgeschmack",
+      "Gallenblasenerkrankungen"
+    ]
+  },
+  {
+    "id": "GB41",
+    "nameChinese": "Foot Linqi",
+    "nameEnglish": "Foot Overlooking Tears",
+    "nameGerman": "Fußtränenübersicht",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "Auf dem Fußrücken, proximal des 4. und 5. Metatarsale",
+    "depth": "0.3-0.5 cun",
+    "frequency": 464,
+    "harmonicFrequencies": [
+      928,
+      1392,
+      1856,
+      2320
+    ],
+    "pointTypes": [
+      "shu_stream",
+      "confluent"
+    ],
+    "functions": [
+      "Öffnet Dai Mai",
+      "Reguliert Leber-Qi",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Augenrötung",
+      "Brustschmerzen",
+      "Menstruationsstörungen"
+    ],
+    "chakraCorrespondence": "svadhisthana"
+  },
+  {
+    "id": "GB42",
+    "nameChinese": "Diwuhui",
+    "nameEnglish": "Earth Fivefold Convergence",
+    "nameGerman": "Fünffache Erdenvereinigung",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "Zwischen 4. und 5. Metatarsale, distal von GB41",
+    "depth": "0.3-0.5 cun",
+    "frequency": 468.4,
+    "harmonicFrequencies": [
+      936.8,
+      1405.2,
+      1873.6,
+      2342
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Qi",
+      "Lindert Schwellung"
+    ],
+    "indications": [
+      "Mastitis",
+      "Augenrötung",
+      "Fußrückenschmerzen"
+    ]
+  },
+  {
+    "id": "GB43",
+    "nameChinese": "Xiaxi",
+    "nameEnglish": "Pinched Ravine",
+    "nameGerman": "Eingeklemmte Schlucht",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "Zwischen 4. und 5. Zehe, proximal des Schwimmhautrandes",
+    "depth": "0.3-0.5 cun",
+    "frequency": 472.8,
+    "harmonicFrequencies": [
+      945.6,
+      1418.4,
+      1891.2,
+      2364
+    ],
+    "pointTypes": [
+      "ying_spring"
+    ],
+    "functions": [
+      "Klärt Hitze",
+      "Zerstreut Wind"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Schwindel",
+      "Tinnitus",
+      "Brustschmerzen"
+    ]
+  },
+  {
+    "id": "GB44",
+    "nameChinese": "Foot Qiaoyin",
+    "nameEnglish": "Foot Yin Portals",
+    "nameGerman": "Fußyinportale",
+    "meridian": "GB",
+    "element": "wood",
+    "location": "Am 4. Zeh, 0.1 cun lateral des Nagelwinkels",
+    "depth": "0.1 cun oder Blutenlassen",
+    "frequency": 477.2,
+    "harmonicFrequencies": [
+      954.4,
+      1431.6,
+      1908.8,
+      2386
+    ],
+    "pointTypes": [
+      "jing_well"
+    ],
+    "functions": [
+      "Klärt Hitze",
+      "Unterdrückt Yang",
+      "Beruhigt Geist"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Tinnitus",
+      "Schlaflosigkeit",
+      "Rippenschmerzen"
+    ]
+  },
+  {
+    "id": "LR1",
+    "nameChinese": "Dadun",
+    "nameEnglish": "Large Pile",
+    "nameGerman": "Großer Haufen",
+    "meridian": "LR",
+    "element": "wood",
+    "location": "Am großen Zeh, 0.1 cun proximal des lateralen Nagelwinkels",
+    "depth": "0.1-0.2 cun oder Blutenlassen",
+    "frequency": 288,
+    "harmonicFrequencies": [
+      576,
+      864,
+      1152,
+      1440
+    ],
+    "pointTypes": [
+      "jing_well"
+    ],
+    "functions": [
+      "Reguliert Leber-Qi",
+      "Reguliert untere Körperöffnungen"
+    ],
+    "indications": [
+      "Hernie",
+      "Uterusblutung",
+      "Enuresis",
+      "Epilepsie"
+    ],
+    "chakraCorrespondence": "muladhara"
+  },
+  {
+    "id": "LR2",
+    "nameChinese": "Xingjian",
+    "nameEnglish": "Moving Between",
+    "nameGerman": "Dazwischen Bewegen",
+    "meridian": "LR",
+    "element": "wood",
+    "location": "Zwischen 1. und 2. Zehe, proximal des Schwimmhautrandes",
+    "depth": "0.5-1 cun",
+    "frequency": 295.4,
+    "harmonicFrequencies": [
+      590.8,
+      886.2,
+      1181.6,
+      1477
+    ],
+    "pointTypes": [
+      "ying_spring"
+    ],
+    "functions": [
+      "Klärt Leber-Feuer",
+      "Kühlt Blut",
+      "Beruhigt Leber-Yang"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Augenrötung",
+      "Schlaflosigkeit",
+      "Menstruationsstörungen"
+    ]
+  },
+  {
+    "id": "LR3",
+    "nameChinese": "Taichong",
+    "nameEnglish": "Supreme Rushing",
+    "nameGerman": "Höchstes Drängen",
+    "meridian": "LR",
+    "element": "wood",
+    "location": "Auf dem Fußrücken, zwischen 1. und 2. Metatarsale, in der Vertiefung distal ihrer Verbindung",
+    "depth": "0.5-1 cun",
+    "frequency": 302.8,
+    "harmonicFrequencies": [
+      605.6,
+      908.4,
+      1211.2,
+      1514
+    ],
+    "pointTypes": [
+      "shu_stream",
+      "yuan_source"
+    ],
+    "functions": [
+      "Reguliert Leber-Qi",
+      "Unterdrückt Leber-Yang",
+      "Nährt Leber-Blut"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Schwindel",
+      "Augenkrankheiten",
+      "Menstruationsstörungen",
+      "Reizbarkeit"
+    ],
+    "chakraCorrespondence": "manipura"
+  },
+  {
+    "id": "LR4",
+    "nameChinese": "Zhongfeng",
+    "nameEnglish": "Mound Center",
+    "nameGerman": "Hügelmitte",
+    "meridian": "LR",
+    "element": "wood",
+    "location": "Vor dem medialen Malleolus, medial der Sehne des M. tibialis anterior",
+    "depth": "0.5-1 cun",
+    "frequency": 310.2,
+    "harmonicFrequencies": [
+      620.4,
+      930.6,
+      1240.8,
+      1551
+    ],
+    "pointTypes": [
+      "jing_river"
+    ],
+    "functions": [
+      "Reguliert Leber-Qi",
+      "Zerstreut Stagnation"
+    ],
+    "indications": [
+      "Hernie",
+      "Lendenschmerzen",
+      "Harnverhalt",
+      "Knöchelschmerzen"
+    ]
+  },
+  {
+    "id": "LR5",
+    "nameChinese": "Ligou",
+    "nameEnglish": "Woodworm Canal",
+    "nameGerman": "Holzwurmkanal",
+    "meridian": "LR",
+    "element": "wood",
+    "location": "5 cun über dem medialen Malleolus, am Hinterrand der Tibia",
+    "depth": "0.5-1 cun",
+    "frequency": 317.6,
+    "harmonicFrequencies": [
+      635.2,
+      952.8,
+      1270.4,
+      1588
+    ],
+    "pointTypes": [
+      "luo_connecting"
+    ],
+    "functions": [
+      "Reguliert Leber-Qi",
+      "Reguliert Menstruation"
+    ],
+    "indications": [
+      "Menstruationsstörungen",
+      "Leukorr",
+      "Hernie",
+      "Harnprobleme"
+    ]
+  },
+  {
+    "id": "LR6",
+    "nameChinese": "Zhongdu",
+    "nameEnglish": "Central Metropolis",
+    "nameGerman": "Zentrale Metropole",
+    "meridian": "LR",
+    "element": "wood",
+    "location": "7 cun über dem medialen Malleolus, am Hinterrand der Tibia",
+    "depth": "0.5-1 cun",
+    "frequency": 325,
+    "harmonicFrequencies": [
+      650,
+      975,
+      1300,
+      1625
+    ],
+    "pointTypes": [
+      "xi_cleft"
+    ],
+    "functions": [
+      "Reguliert Leber-Qi",
+      "Stoppt Blutungen"
+    ],
+    "indications": [
+      "Menorrhagie",
+      "Hernie",
+      "Bauchschmerzen"
+    ]
+  },
+  {
+    "id": "LR7",
+    "nameChinese": "Xiguan",
+    "nameEnglish": "Knee Joint",
+    "nameGerman": "Kniegelenk",
+    "meridian": "LR",
+    "element": "wood",
+    "location": "1 cun posterior und inferior des medialen Tibiakondylus",
+    "depth": "0.5-1 cun",
+    "frequency": 332.4,
+    "harmonicFrequencies": [
+      664.8,
+      997.2,
+      1329.6,
+      1662
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind-Feuchtigkeit",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Knieschmerzen",
+      "Unterschenkelschmerzen"
+    ]
+  },
+  {
+    "id": "LR8",
+    "nameChinese": "Ququan",
+    "nameEnglish": "Spring at the Bend",
+    "nameGerman": "Quelle an der Beuge",
+    "meridian": "LR",
+    "element": "wood",
+    "location": "Am medialen Ende der Kniekehle, bei gebeugtem Knie, am Hinterrand des medialen Tibiakondylus",
+    "depth": "1-1.5 cun",
+    "frequency": 339.8,
+    "harmonicFrequencies": [
+      679.6,
+      1019.4,
+      1359.2,
+      1699
+    ],
+    "pointTypes": [
+      "he_sea"
+    ],
+    "functions": [
+      "Nährt Leber-Blut",
+      "Reguliert Menstruation",
+      "Löst Feuchtigkeit"
+    ],
+    "indications": [
+      "Menstruationsstörungen",
+      "Leukorr",
+      "Knieschmerzen",
+      "Impotenz"
+    ],
+    "chakraCorrespondence": "svadhisthana"
+  },
+  {
+    "id": "LR9",
+    "nameChinese": "Yinbao",
+    "nameEnglish": "Yin Wrapping",
+    "nameGerman": "Yin-Umhüllung",
+    "meridian": "LR",
+    "element": "wood",
+    "location": "4 cun über dem medialen Knie, zwischen M. sartorius und M. gracilis",
+    "depth": "0.5-1 cun",
+    "frequency": 347.2,
+    "harmonicFrequencies": [
+      694.4,
+      1041.6,
+      1388.8,
+      1736
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert untere Körperöffnungen"
+    ],
+    "indications": [
+      "Lendenschmerzen",
+      "Hernie",
+      "Menstruationsstörungen"
+    ]
+  },
+  {
+    "id": "LR10",
+    "nameChinese": "Foot Wuli",
+    "nameEnglish": "Foot Five Miles",
+    "nameGerman": "Fünf Meilen des Fußes",
+    "meridian": "LR",
+    "element": "wood",
+    "location": "3 cun unter ST30, am medialen Rand des M. adductor longus",
+    "depth": "0.5-1 cun",
+    "frequency": 354.6,
+    "harmonicFrequencies": [
+      709.2,
+      1063.8,
+      1418.4,
+      1773
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Leber-Qi"
+    ],
+    "indications": [
+      "Hernie",
+      "Lendenschmerzen",
+      "Harnverhalt"
+    ]
+  },
+  {
+    "id": "LR11",
+    "nameChinese": "Yinlian",
+    "nameEnglish": "Yin Corner",
+    "nameGerman": "Yin-Ecke",
+    "meridian": "LR",
+    "element": "wood",
+    "location": "2 cun unter ST30, am medialen Rand des M. adductor longus",
+    "depth": "0.5-1 cun",
+    "frequency": 362,
+    "harmonicFrequencies": [
+      724,
+      1086,
+      1448,
+      1810
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Menstruation"
+    ],
+    "indications": [
+      "Menstruationsstörungen",
+      "Leistenschmerzen"
+    ]
+  },
+  {
+    "id": "LR12",
+    "nameChinese": "Jimai",
+    "nameEnglish": "Urgent Pulse",
+    "nameGerman": "Dringender Puls",
+    "meridian": "LR",
+    "element": "wood",
+    "location": "2.5 cun lateral der Mittellinie, lateral der A. femoralis",
+    "depth": "0.5-1 cun",
+    "frequency": 369.4,
+    "harmonicFrequencies": [
+      738.8,
+      1108.2,
+      1477.6,
+      1847
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Reguliert Leber-Qi",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Hernie",
+      "Leistenschmerzen",
+      "Genitalbeschwerden"
+    ],
+    "precautions": [
+      "Vorsicht - A. femoralis"
+    ]
+  },
+  {
+    "id": "LR13",
+    "nameChinese": "Zhangmen",
+    "nameEnglish": "Camphorwood Gate",
+    "nameGerman": "Kampferholztor",
+    "meridian": "LR",
+    "element": "wood",
+    "location": "An der Spitze der 11. Rippe",
+    "depth": "0.5-1 cun",
+    "frequency": 376.8,
+    "harmonicFrequencies": [
+      753.6,
+      1130.4,
+      1507.2,
+      1884
+    ],
+    "pointTypes": [
+      "mu_front",
+      "hui_meeting"
+    ],
+    "functions": [
+      "Harmonisiert Leber und Milz",
+      "Stärkt Milz",
+      "Reguliert Qi"
+    ],
+    "indications": [
+      "Bauchschmerzen",
+      "Durchfall",
+      "Rippenschmerzen",
+      "Hepatosplenomegalie"
+    ],
+    "chakraCorrespondence": "manipura"
+  },
+  {
+    "id": "LR14",
+    "nameChinese": "Qimen",
+    "nameEnglish": "Cycle Gate",
+    "nameGerman": "Zyklustor",
+    "meridian": "LR",
+    "element": "wood",
+    "location": "Im 6. ICR, auf der Mamillarlinie",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 384.2,
+    "harmonicFrequencies": [
+      768.4,
+      1152.6,
+      1536.8,
+      1921
+    ],
+    "pointTypes": [
+      "mu_front"
+    ],
+    "functions": [
+      "Reguliert Leber-Qi",
+      "Belebt Blut",
+      "Harmonisiert Magen"
+    ],
+    "indications": [
+      "Rippenschmerzen",
+      "Brustschmerzen",
+      "Mastitis",
+      "Depression"
+    ],
+    "precautions": [
+      "Nicht tief stechen"
+    ],
+    "chakraCorrespondence": "anahata"
+  },
+  {
+    "id": "DU1",
+    "nameChinese": "Changqiang",
+    "nameEnglish": "Long Strong",
+    "nameGerman": "Lange Stärke",
+    "meridian": "DU",
+    "element": "water",
+    "location": "Auf der Mittellinie zwischen Steißbein und Anus",
+    "depth": "0.5-1 cun schräg nach oben",
+    "frequency": 136.1,
+    "harmonicFrequencies": [
+      272.2,
+      408.3,
+      544.4,
+      680.5
+    ],
+    "pointTypes": [
+      "luo_connecting"
+    ],
+    "functions": [
+      "Reguliert Du Mai und Ren Mai",
+      "Beruhigt Geist"
+    ],
+    "indications": [
+      "Hämorrhoiden",
+      "Prolaps",
+      "Epilepsie",
+      "Rückenschmerzen"
+    ],
+    "chakraCorrespondence": "muladhara"
+  },
+  {
+    "id": "DU4",
+    "nameChinese": "Mingmen",
+    "nameEnglish": "Gate of Life",
+    "nameGerman": "Lebenstor",
+    "meridian": "DU",
+    "element": "water",
+    "location": "Unter dem Dornfortsatz L2",
+    "depth": "0.5-1 cun",
+    "frequency": 147.85,
+    "harmonicFrequencies": [
+      295.7,
+      443.55,
+      591.4,
+      739.25
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Tonisiert Nieren-Yang",
+      "Stärkt Essenz",
+      "Wärmt das Tor des Lebens"
+    ],
+    "indications": [
+      "Lendenschmerzen",
+      "Impotenz",
+      "Unfruchtbarkeit",
+      "Erschöpfung"
+    ],
+    "chakraCorrespondence": "svadhisthana"
+  },
+  {
+    "id": "DU14",
+    "nameChinese": "Dazhui",
+    "nameEnglish": "Great Hammer",
+    "nameGerman": "Großer Wirbel",
+    "meridian": "DU",
+    "element": "fire",
+    "location": "Unter dem Dornfortsatz C7",
+    "depth": "0.5-1 cun",
+    "frequency": 183.58,
+    "harmonicFrequencies": [
+      367.16,
+      550.74,
+      734.32,
+      917.9
+    ],
+    "pointTypes": [
+      "hui_meeting"
+    ],
+    "functions": [
+      "Klärt Hitze",
+      "Zerstreut Wind",
+      "Reguliert Yang"
+    ],
+    "indications": [
+      "Fieber",
+      "Nackensteifigkeit",
+      "Malaria",
+      "Epilepsie"
+    ],
+    "chakraCorrespondence": "vishuddha"
+  },
+  {
+    "id": "DU20",
+    "nameChinese": "Baihui",
+    "nameEnglish": "Hundred Convergences",
+    "nameGerman": "Hundert Treffen",
+    "meridian": "DU",
+    "element": "fire",
+    "location": "Auf dem Scheitel, auf der Verbindung der Ohrspitzen",
+    "depth": "0.5-1 cun schräg",
+    "frequency": 221.23,
+    "harmonicFrequencies": [
+      442.46,
+      663.69,
+      884.92,
+      1106.15
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Hebt Yang",
+      "Beruhigt Geist",
+      "Erhellt Sinne"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Schwindel",
+      "Prolaps",
+      "Depression"
+    ],
+    "chakraCorrespondence": "sahasrara"
+  },
+  {
+    "id": "DU26",
+    "nameChinese": "Shuigou",
+    "nameEnglish": "Water Trough",
+    "nameGerman": "Wassertrog",
+    "meridian": "DU",
+    "element": "water",
+    "location": "Im Philtrum, am Übergang des oberen zum mittleren Drittel",
+    "depth": "0.3-0.5 cun schräg nach oben",
+    "frequency": 194.18,
+    "harmonicFrequencies": [
+      388.36,
+      582.54,
+      776.72,
+      970.9
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Belebt Bewusstsein",
+      "Zerstreut Hitze",
+      "Lindert akute Schmerzen"
+    ],
+    "indications": [
+      "Bewusstlosigkeit",
+      "Schock",
+      "Epilepsie",
+      "Hexenschuss"
+    ],
+    "chakraCorrespondence": "ajna"
+  },
+  {
+    "id": "REN1",
+    "nameChinese": "Huiyin",
+    "nameEnglish": "Meeting of Yin",
+    "nameGerman": "Treffen des Yin",
+    "meridian": "REN",
+    "element": "water",
+    "location": "In der Mitte des Perineums",
+    "depth": "0.5-1 cun",
+    "frequency": 141.27,
+    "harmonicFrequencies": [
+      282.54,
+      423.81,
+      565.08,
+      706.35
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Nährt Yin",
+      "Belebt Bewusstsein",
+      "Reguliert untere Öffnungen"
+    ],
+    "indications": [
+      "Harnverhalt",
+      "Prolaps",
+      "Impotenz",
+      "Bewusstlosigkeit"
+    ],
+    "chakraCorrespondence": "muladhara"
+  },
+  {
+    "id": "REN4",
+    "nameChinese": "Guanyuan",
+    "nameEnglish": "Origin Pass",
+    "nameGerman": "Grenztor des Ursprungs",
+    "meridian": "REN",
+    "element": "water",
+    "location": "3 cun unter dem Nabel",
+    "depth": "1-2 cun",
+    "frequency": 152.8,
+    "harmonicFrequencies": [
+      305.6,
+      458.4,
+      611.2,
+      764
+    ],
+    "pointTypes": [
+      "mu_front"
+    ],
+    "functions": [
+      "Stärkt Yuan-Qi",
+      "Tonisiert Nieren",
+      "Nährt Blut"
+    ],
+    "indications": [
+      "Unfruchtbarkeit",
+      "Impotenz",
+      "Dysmenorrhoe",
+      "Erschöpfung"
+    ],
+    "chakraCorrespondence": "svadhisthana"
+  },
+  {
+    "id": "REN6",
+    "nameChinese": "Qihai",
+    "nameEnglish": "Sea of Qi",
+    "nameGerman": "Meer des Qi",
+    "meridian": "REN",
+    "element": "water",
+    "location": "1.5 cun unter dem Nabel",
+    "depth": "1-2 cun",
+    "frequency": 158.4,
+    "harmonicFrequencies": [
+      316.8,
+      475.2,
+      633.6,
+      792
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Tonisiert Qi",
+      "Reguliert Qi-Bewegung"
+    ],
+    "indications": [
+      "Erschöpfung",
+      "Depression",
+      "Bauchschmerzen",
+      "Hernie"
+    ],
+    "chakraCorrespondence": "svadhisthana"
+  },
+  {
+    "id": "REN12",
+    "nameChinese": "Zhongwan",
+    "nameEnglish": "Central Venter",
+    "nameGerman": "Mittlerer Bauch",
+    "meridian": "REN",
+    "element": "earth",
+    "location": "4 cun über dem Nabel",
+    "depth": "1-2 cun",
+    "frequency": 170.6,
+    "harmonicFrequencies": [
+      341.2,
+      511.8,
+      682.4,
+      853
+    ],
+    "pointTypes": [
+      "mu_front",
+      "hui_meeting"
+    ],
+    "functions": [
+      "Harmonisiert Magen",
+      "Stärkt Milz",
+      "Reguliert Qi"
+    ],
+    "indications": [
+      "Magenschmerzen",
+      "Übelkeit",
+      "Erbrechen",
+      "Appetitlosigkeit"
+    ],
+    "chakraCorrespondence": "manipura"
+  },
+  {
+    "id": "REN17",
+    "nameChinese": "Tanzhong",
+    "nameEnglish": "Chest Center",
+    "nameGerman": "Brustmitte",
+    "meridian": "REN",
+    "element": "fire",
+    "location": "Auf dem Sternum, auf Höhe des 4. ICR",
+    "depth": "0.3-0.5 cun schräg",
+    "frequency": 183.58,
+    "harmonicFrequencies": [
+      367.16,
+      550.74,
+      734.32,
+      917.9
+    ],
+    "pointTypes": [
+      "mu_front",
+      "hui_meeting"
+    ],
+    "functions": [
+      "Reguliert Qi",
+      "Unblockt Brust",
+      "Fördert Laktation"
+    ],
+    "indications": [
+      "Brustschmerzen",
+      "Asthma",
+      "Mastitis",
+      "Herzbeschwerden"
+    ],
+    "chakraCorrespondence": "anahata"
+  },
+  {
+    "id": "REN22",
+    "nameChinese": "Tiantu",
+    "nameEnglish": "Celestial Chimney",
+    "nameGerman": "Himmelskamin",
+    "meridian": "REN",
+    "element": "metal",
+    "location": "In der Mitte der suprasternalen Fossa",
+    "depth": "0.3-0.5 cun nach hinten und unten",
+    "frequency": 194.71,
+    "harmonicFrequencies": [
+      389.42,
+      584.13,
+      778.84,
+      973.55
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Unblockt Kehle",
+      "Senkt rebellierendes Qi"
+    ],
+    "indications": [
+      "Husten",
+      "Asthma",
+      "Heiserkeit",
+      "Globusgefühl"
+    ],
+    "precautions": [
+      "Vorsicht - Trachea"
+    ],
+    "chakraCorrespondence": "vishuddha"
+  },
+  {
+    "id": "REN24",
+    "nameChinese": "Chengjiang",
+    "nameEnglish": "Container of Fluids",
+    "nameGerman": "Flüssigkeitsbehälter",
+    "meridian": "REN",
+    "element": "water",
+    "location": "In der Mitte der mentolabial Furche",
+    "depth": "0.2-0.3 cun",
+    "frequency": 205.88,
+    "harmonicFrequencies": [
+      411.76,
+      617.64,
+      823.52,
+      1029.4
+    ],
+    "pointTypes": [
+      "regular"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Aktiviert Kollateralen"
+    ],
+    "indications": [
+      "Gesichtslähmung",
+      "Speichelfluss",
+      "Zahnfleischschwellung"
+    ]
+  },
+  {
+    "id": "EX-HN1",
+    "nameChinese": "Sishencong",
+    "nameEnglish": "Four Spirit Cleverness",
+    "nameGerman": "Vier Geister der Klugheit",
+    "meridian": "EXTRA",
+    "element": "fire",
+    "location": "4 Punkte, je 1 cun vor, hinter und seitlich von DU20",
+    "depth": "0.5-0.8 cun schräg",
+    "frequency": 432,
+    "harmonicFrequencies": [
+      864,
+      1296,
+      1728,
+      2160
+    ],
+    "pointTypes": [
+      "extra"
+    ],
+    "functions": [
+      "Beruhigt Geist",
+      "Klärt Kopf"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Schwindel",
+      "Schlaflosigkeit",
+      "Gedächtnisprobleme"
+    ],
+    "chakraCorrespondence": "sahasrara"
+  },
+  {
+    "id": "EX-HN3",
+    "nameChinese": "Yintang",
+    "nameEnglish": "Hall of Impression",
+    "nameGerman": "Halle des Eindrucks",
+    "meridian": "EXTRA",
+    "element": "fire",
+    "location": "Auf der Mittellinie zwischen den Augenbrauen",
+    "depth": "0.3-0.5 cun schräg nach unten",
+    "frequency": 432,
+    "harmonicFrequencies": [
+      864,
+      1296,
+      1728,
+      2160
+    ],
+    "pointTypes": [
+      "extra"
+    ],
+    "functions": [
+      "Beruhigt Geist",
+      "Zerstreut Wind",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Rhinitis",
+      "Schlaflosigkeit",
+      "Angst"
+    ],
+    "chakraCorrespondence": "ajna"
+  },
+  {
+    "id": "EX-HN5",
+    "nameChinese": "Taiyang",
+    "nameEnglish": "Supreme Yang",
+    "nameGerman": "Höchstes Yang",
+    "meridian": "EXTRA",
+    "element": "fire",
+    "location": "In der Vertiefung etwa 1 cun lateral des äußeren Augenwinkels",
+    "depth": "0.3-0.5 cun oder Blutenlassen",
+    "frequency": 384,
+    "harmonicFrequencies": [
+      768,
+      1152,
+      1536,
+      1920
+    ],
+    "pointTypes": [
+      "extra"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Klärt Hitze",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Kopfschmerzen",
+      "Migräne",
+      "Augenerkrankungen",
+      "Trigeminusneuralgie"
+    ]
+  },
+  {
+    "id": "EX-B1",
+    "nameChinese": "Dingchuan",
+    "nameEnglish": "Stop Asthma",
+    "nameGerman": "Asthma stoppen",
+    "meridian": "EXTRA",
+    "element": "metal",
+    "location": "0.5 cun lateral von DU14",
+    "depth": "0.5-1 cun",
+    "frequency": 384,
+    "harmonicFrequencies": [
+      768,
+      1152,
+      1536,
+      1920
+    ],
+    "pointTypes": [
+      "extra"
+    ],
+    "functions": [
+      "Lindert Asthma",
+      "Senkt rebellierendes Qi"
+    ],
+    "indications": [
+      "Asthma",
+      "Husten",
+      "Nackensteifigkeit"
+    ]
+  },
+  {
+    "id": "EX-B2",
+    "nameChinese": "Jiaji",
+    "nameEnglish": "Huatuojiaji",
+    "nameGerman": "Huatuo-Paravertebral-Punkte",
+    "meridian": "EXTRA",
+    "element": "water",
+    "location": "0.5 cun lateral der Dornfortsätze C1-L5 (34 Punkte)",
+    "depth": "0.5-1 cun",
+    "frequency": 256,
+    "harmonicFrequencies": [
+      512,
+      768,
+      1024,
+      1280
+    ],
+    "pointTypes": [
+      "extra"
+    ],
+    "functions": [
+      "Reguliert Organe",
+      "Entspannt Sehnen"
+    ],
+    "indications": [
+      "Rückenschmerzen",
+      "Organerkrankungen",
+      "Paralyse"
+    ]
+  },
+  {
+    "id": "EX-UE7",
+    "nameChinese": "Yaotongxue",
+    "nameEnglish": "Lumbar Pain Point",
+    "nameGerman": "Lendenschmerzpunkt",
+    "meridian": "EXTRA",
+    "element": "water",
+    "location": "2 Punkte auf dem Handrücken zwischen 2./3. und 4./5. Metakarpale",
+    "depth": "0.5-0.8 cun",
+    "frequency": 192,
+    "harmonicFrequencies": [
+      384,
+      576,
+      768,
+      960
+    ],
+    "pointTypes": [
+      "extra"
+    ],
+    "functions": [
+      "Belebt Blut",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Akute Lendenschmerzen",
+      "Hexenschuss"
+    ]
+  },
+  {
+    "id": "EX-UE9",
+    "nameChinese": "Baxie",
+    "nameEnglish": "Eight Evils",
+    "nameGerman": "Acht Übel",
+    "meridian": "EXTRA",
+    "element": "metal",
+    "location": "8 Punkte auf dem Handrücken zwischen den Fingern",
+    "depth": "0.5-0.8 cun",
+    "frequency": 341.3,
+    "harmonicFrequencies": [
+      682.6,
+      1023.9,
+      1365.2,
+      1706.5
+    ],
+    "pointTypes": [
+      "extra"
+    ],
+    "functions": [
+      "Zerstreut Hitze",
+      "Lindert Schwellung"
+    ],
+    "indications": [
+      "Fingerschmerzen",
+      "Taubheitsgefühl",
+      "Fieber"
+    ]
+  },
+  {
+    "id": "EX-UE10",
+    "nameChinese": "Sifeng",
+    "nameEnglish": "Four Seams",
+    "nameGerman": "Vier Nähte",
+    "meridian": "EXTRA",
+    "element": "earth",
+    "location": "4 Punkte auf der palmaren Seite der Finger 2-5",
+    "depth": "Stich mit Blutenlassen",
+    "frequency": 256,
+    "harmonicFrequencies": [
+      512,
+      768,
+      1024,
+      1280
+    ],
+    "pointTypes": [
+      "extra"
+    ],
+    "functions": [
+      "Löst Stagnation",
+      "Fördert Verdauung"
+    ],
+    "indications": [
+      "Kindliche Unterernährung",
+      "Verdauungsstörungen",
+      "Keuchhusten"
+    ]
+  },
+  {
+    "id": "EX-UE11",
+    "nameChinese": "Shixuan",
+    "nameEnglish": "Ten Dispersions",
+    "nameGerman": "Zehn Zerstreuungen",
+    "meridian": "EXTRA",
+    "element": "fire",
+    "location": "10 Punkte an den Fingerspitzen",
+    "depth": "0.1 cun oder Blutenlassen",
+    "frequency": 341.3,
+    "harmonicFrequencies": [
+      682.6,
+      1023.9,
+      1365.2,
+      1706.5
+    ],
+    "pointTypes": [
+      "extra"
+    ],
+    "functions": [
+      "Klärt Hitze",
+      "Belebt Bewusstsein"
+    ],
+    "indications": [
+      "Hohes Fieber",
+      "Bewusstlosigkeit",
+      "Schock",
+      "Epilepsie"
+    ]
+  },
+  {
+    "id": "EX-LE4",
+    "nameChinese": "Neixiyan",
+    "nameEnglish": "Inner Knee Eye",
+    "nameGerman": "Inneres Knieauge",
+    "meridian": "EXTRA",
+    "element": "earth",
+    "location": "Mediale Vertiefung des Kniegelenks bei gebeugtem Knie",
+    "depth": "0.5-1 cun",
+    "frequency": 288,
+    "harmonicFrequencies": [
+      576,
+      864,
+      1152,
+      1440
+    ],
+    "pointTypes": [
+      "extra"
+    ],
+    "functions": [
+      "Aktiviert Kollateralen",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Knieschmerzen",
+      "Gonarthrose"
+    ]
+  },
+  {
+    "id": "EX-LE5",
+    "nameChinese": "Xiyan",
+    "nameEnglish": "Knee Eyes",
+    "nameGerman": "Knieaugen",
+    "meridian": "EXTRA",
+    "element": "earth",
+    "location": "Laterale Vertiefung des Kniegelenks bei gebeugtem Knie",
+    "depth": "0.5-1 cun",
+    "frequency": 288,
+    "harmonicFrequencies": [
+      576,
+      864,
+      1152,
+      1440
+    ],
+    "pointTypes": [
+      "extra"
+    ],
+    "functions": [
+      "Aktiviert Kollateralen",
+      "Lindert Schmerzen"
+    ],
+    "indications": [
+      "Knieschmerzen",
+      "Gonarthrose",
+      "Kniegelenkerguss"
+    ]
+  },
+  {
+    "id": "EX-LE10",
+    "nameChinese": "Bafeng",
+    "nameEnglish": "Eight Winds",
+    "nameGerman": "Acht Winde",
+    "meridian": "EXTRA",
+    "element": "metal",
+    "location": "8 Punkte auf dem Fußrücken zwischen den Zehen",
+    "depth": "0.5-0.8 cun",
+    "frequency": 384,
+    "harmonicFrequencies": [
+      768,
+      1152,
+      1536,
+      1920
+    ],
+    "pointTypes": [
+      "extra"
+    ],
+    "functions": [
+      "Zerstreut Wind",
+      "Aktiviert Kollateralen"
+    ],
+    "indications": [
+      "Fußschmerzen",
+      "Taubheitsgefühl",
+      "Schwellung"
+    ]
+  }
+]
