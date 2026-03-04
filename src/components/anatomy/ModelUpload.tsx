@@ -13,6 +13,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import * as tus from 'tus-js-client';
 
 interface ModelUploadProps {
   onUploadComplete?: () => void;
