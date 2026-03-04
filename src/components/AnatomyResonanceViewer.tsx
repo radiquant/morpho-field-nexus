@@ -43,6 +43,8 @@ import type { VectorAnalysis } from '@/services/feldengine';
 interface AnatomyResonanceViewerProps {
   vectorAnalysis?: VectorAnalysis | null;
   onFrequencySelect?: (frequency: number) => void;
+  onScanConfigChange?: (config: NLSScanConfig | null) => void;
+  onNLSDysregulationScores?: (scores: Map<string, number>) => void;
 }
 
 // Anatomie-Modell Typen
