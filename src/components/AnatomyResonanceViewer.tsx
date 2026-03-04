@@ -1324,6 +1324,58 @@ const AnatomyResonanceViewer = ({
     return scores;
   }, [vectorAnalysis]);
 
+  // NLS organ scan dysregulation scores
+  const nlsDysregulationScores = useMemo(() => {
+    const scores = new Map<string, number>();
+    if (!vectorAnalysis) return scores;
+
+    const dimensions = vectorAnalysis.clientVector.dimensions;
+    const physical = dimensions[0] || 0;
+    const emotional = dimensions[1] || 0;
+    const energy = dimensions[3] || 0;
+    const stress = dimensions[4] || 0;
+
+    // Organ-specific dysregulation mapping
+    const organWeights: Record<string, { physical: number; emotional: number; energy: number; stress: number }> = {
+      heart: { physical: 0.3, emotional: 0.4, energy: 0.2, stress: 0.1 },
+      liver: { physical: 0.2, emotional: 0.4, energy: 0.2, stress: 0.2 },
+      kidney: { physical: 0.3, emotional: 0.1, energy: 0.4, stress: 0.2 },
+      lung: { physical: 0.4, emotional: 0.2, energy: 0.2, stress: 0.2 },
+      spleen: { physical: 0.3, emotional: 0.2, energy: 0.3, stress: 0.2 },
+      stomach: { physical: 0.4, emotional: 0.2, energy: 0.2, stress: 0.2 },
+      pancreas: { physical: 0.3, emotional: 0.1, energy: 0.3, stress: 0.3 },
+      brain: { physical: 0.1, emotional: 0.3, energy: 0.2, stress: 0.4 },
+      thyroid: { physical: 0.2, emotional: 0.2, energy: 0.4, stress: 0.2 },
+      intestine: { physical: 0.4, emotional: 0.2, energy: 0.2, stress: 0.2 },
+    };
+
+    modelFilteredOrganScanPoints.forEach(point => {
+      const w = organWeights[point.organSystem] || { physical: 0.25, emotional: 0.25, energy: 0.25, stress: 0.25 };
+      let dysScore = Math.abs(physical) * w.physical + Math.abs(emotional) * w.emotional + Math.abs(energy) * w.energy + Math.abs(stress) * w.stress;
+      
+      // Focus boost: higher dysregulation visibility for focused organs
+      if (activeScanConfig?.focusList.some(f => f.relatedOrgans?.includes(point.organSystem))) {
+        dysScore *= 1.3;
+      }
+
+      dysScore *= (1 - vectorAnalysis.attractorState.stability) + 0.3;
+      scores.set(point.id, Math.min(1, Math.max(0, dysScore)));
+    });
+
+    return scores;
+  }, [vectorAnalysis, modelFilteredOrganScanPoints, activeScanConfig]);
+
+  // Notify parent about NLS dysregulation scores
+  useEffect(() => {
+    if (nlsDysregulationScores.size > 0) {
+      onNLSDysregulationScores?.(nlsDysregulationScores);
+    }
+  }, [nlsDysregulationScores, onNLSDysregulationScores]);
+
+  // Notify parent about scan config changes
+  useEffect(() => {
+    onScanConfigChange?.(activeScanConfig);
+  }, [activeScanConfig, onScanConfigChange]);
   // Modell wechseln
   const currentModelIndex = MODEL_CONFIGS.findIndex(m => m.id === activeModel);
   const prevModel = () => {
