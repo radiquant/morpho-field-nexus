@@ -1542,6 +1542,9 @@ const AnatomyResonanceViewer = ({
                 categories={modelCategories}
                 isLoading={modelsLoading}
               />
+              <div className="mt-3 pt-3 border-t border-border">
+                <ModelUpload onUploadComplete={() => loadModels()} />
+              </div>
             </div>
 
             {/* Meridian-Liste (bei Meridian-Ansicht) */}
