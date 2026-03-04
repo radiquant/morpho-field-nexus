@@ -129,11 +129,14 @@ function ChakraSphere({
     }
   });
 
+  const innerRadius = 0.015 * sizeFactor;
+  const glowRadius = 0.04 * sizeFactor;
+
   return (
     <group position={[0, chakra.yPosition, 0.06]}>
       {/* Äußerer Glow */}
       <mesh ref={glowRef}>
-        <sphereGeometry args={[0.06, 16, 16]} />
+        <sphereGeometry args={[glowRadius, 16, 16]} />
         <meshBasicMaterial
           color={chakra.color}
           transparent
@@ -156,7 +159,7 @@ function ChakraSphere({
           setIsHovered(false);
         }}
       >
-        <sphereGeometry args={[0.025, 24, 24]} />
+        <sphereGeometry args={[innerRadius, 24, 24]} />
         <meshStandardMaterial
           color={chakra.color}
           emissive={chakra.color}
