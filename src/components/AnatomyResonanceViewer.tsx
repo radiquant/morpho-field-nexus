@@ -1225,6 +1225,7 @@ const AnatomyResonanceViewer = ({
                   onAcupointClick={handleAcupointClick}
                   activeAcupointId={activeAcupoint?.point.id || null}
                   dysregulationScores={dysregulationScores}
+                  useGLBModel={useGLBModel}
                 />
               </Canvas>
             </Suspense>
