@@ -1377,6 +1377,11 @@ const AnatomyResonanceViewer = ({
                   bodyHalfWidth={glbModelInfo ? Math.min(glbModelInfo.halfWidth, 0.15) : 0.12}
                   showResonancePoints={showResonancePoints}
                   selectedModelUrl={selectedAnatomyModel?.resolvedUrl || AVAILABLE_MODELS.fullBody}
+                  showOrganScan={showOrganScan}
+                  organScanPoints={organScanPoints}
+                  activeOrganScanPointId={activeOrganScanPoint?.id || null}
+                  onOrganScanPointClick={(p) => { setActiveOrganScanPoint(p); setActivePoint(null); setActiveAcupoint(null); setActiveChakra(null); }}
+                  selectedOrganFilter={selectedOrganFilter}
                 />
               </Canvas>
             </Suspense>
