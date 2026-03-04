@@ -971,6 +971,7 @@ function AnatomyScene({
                 onAcupointClick={onAcupointClick}
                 activeAcupointId={activeAcupointId}
                 dysregulationScores={dysregulationScores}
+                showBodySilhouette={false}
               />
             )}
           </>
