@@ -219,9 +219,10 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSel
       photoPreview: client.photoUrl || null,
     });
     setSavedClient(client);
+    onClientSelected?.(client.id);
     setShowClientList(false);
     toast.success(`Klient ${client.firstName} ${client.lastName} geladen`);
-  }, []);
+  }, [onClientSelected]);
 
   // Vektor-Analyse durchführen
   const analyzeVector = useCallback(async () => {
