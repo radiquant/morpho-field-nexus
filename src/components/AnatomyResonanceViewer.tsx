@@ -1488,7 +1488,7 @@ const AnatomyResonanceViewer = ({
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_440px] gap-6">
           {/* 3D Viewer */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
