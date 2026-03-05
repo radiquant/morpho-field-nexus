@@ -1257,11 +1257,12 @@ const AnatomyResonanceViewer = ({
     } else {
       setSelectedOrganFilter(null);
     }
-    // Auto-start the scan sequence
+    // Auto-start the scan sequence (scores will be updated live via updateScores)
     const scanPoints = organScanPoints.filter(p => config.selectedPointIds.includes(p.id));
     if (scanPoints.length > 0) {
-      startScan(scanPoints, config, nlsDysregulationScores, (point) => {
+      startScan(scanPoints, config, new Map(), (point) => {
         setActiveOrganScanPoint(point);
+      });
       });
     }
   }, [setSelectedOrganFilter, organScanPoints, startScan, nlsDysregulationScores, setActiveOrganScanPoint]);
