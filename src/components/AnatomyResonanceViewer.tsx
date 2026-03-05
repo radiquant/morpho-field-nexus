@@ -1897,6 +1897,7 @@ const AnatomyResonanceViewer = ({
                 models={anatomyModels}
                 selectedModel={selectedAnatomyModel}
                 onSelect={(model) => {
+                  if (!model.isAvailable) return;
                   setSelectedAnatomyModel(model);
                 }}
                 onDelete={() => reloadAnatomyModels()}
