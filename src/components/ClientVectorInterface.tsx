@@ -61,6 +61,7 @@ interface StateDimensions {
 interface ClientVectorInterfaceProps {
   onVectorCreated?: (analysis: VectorAnalysis) => void;
   onFrequencySelect?: (frequency: RecommendedFrequency) => void;
+  onClientSelected?: (clientId: string | null) => void;
 }
 
 const defaultBiometric: BiometricData = {
@@ -109,7 +110,7 @@ const convertHardwareToStateDimensions = (
   };
 };
 
-const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect }: ClientVectorInterfaceProps) => {
+const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSelected }: ClientVectorInterfaceProps) => {
   // State
   const [biometric, setBiometric] = useState<BiometricData>(defaultBiometric);
   const [dimensions, setDimensions] = useState<StateDimensions>(defaultDimensions);
