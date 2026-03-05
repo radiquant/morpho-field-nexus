@@ -1553,7 +1553,14 @@ const AnatomyResonanceViewer = ({
               <DysregulationLegend className="absolute top-16 left-4" />
             )}
 
-            {/* Controls */}
+            {/* NLS Auto-Scan Overlay */}
+            <NLSAutoScanOverlay
+              scanState={scanState}
+              onPause={pauseScan}
+              onResume={resumeScan}
+              onStop={stopScan}
+            />
+
             <div className="absolute bottom-4 left-4 flex gap-2">
               <Button
                 variant="outline"
