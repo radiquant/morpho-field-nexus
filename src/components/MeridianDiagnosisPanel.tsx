@@ -334,11 +334,8 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
   const handleStartRetestNow = useCallback(() => {
     setIsRetestPending(false);
     setRetestCountdown(0);
-    if (vectorAnalysis) {
-      analyzeMeridians(vectorAnalysis);
-      toast.info('Nachtestung gestartet');
-    }
-  }, [vectorAnalysis, analyzeMeridians]);
+    handleRetestAnalysis();
+  }, [handleRetestAnalysis]);
 
   if (!vectorAnalysis) {
     return (
