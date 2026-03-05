@@ -15,6 +15,8 @@ import { projectMeridianPoints, projectMeridianPath, collectMeshes, isMeshSuffic
 import { OrganScanLayer } from '@/components/anatomy/OrganScanLayer';
 import { useOrganScanPoints, type OrganScanPoint, getOrganColor, getTissueIcon } from '@/hooks/useOrganScanPoints';
 import { NLSScanConfigPanel, type NLSScanConfig } from '@/components/NLSScanConfigPanel';
+import { useNLSAutoScan } from '@/hooks/useNLSAutoScan';
+import { NLSAutoScanOverlay } from '@/components/NLSAutoScanOverlay';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -1373,6 +1375,11 @@ const AnatomyResonanceViewer = ({
       brain: { physical: 0.1, emotional: 0.3, energy: 0.2, stress: 0.4 },
       thyroid: { physical: 0.2, emotional: 0.2, energy: 0.4, stress: 0.2 },
       intestine: { physical: 0.4, emotional: 0.2, energy: 0.2, stress: 0.2 },
+      spine: { physical: 0.5, emotional: 0.1, energy: 0.2, stress: 0.2 },
+      lymph: { physical: 0.3, emotional: 0.1, energy: 0.3, stress: 0.3 },
+      urogenital: { physical: 0.35, emotional: 0.2, energy: 0.25, stress: 0.2 },
+      adrenal: { physical: 0.2, emotional: 0.2, energy: 0.2, stress: 0.4 },
+      sensory: { physical: 0.25, emotional: 0.25, energy: 0.25, stress: 0.25 },
     };
 
     modelFilteredOrganScanPoints.forEach(point => {
