@@ -1257,7 +1257,14 @@ const AnatomyResonanceViewer = ({
     } else {
       setSelectedOrganFilter(null);
     }
-  }, [setSelectedOrganFilter]);
+    // Auto-start the scan sequence
+    const scanPoints = organScanPoints.filter(p => config.selectedPointIds.includes(p.id));
+    if (scanPoints.length > 0) {
+      startScan(scanPoints, config, nlsDysregulationScores, (point) => {
+        setActiveOrganScanPoint(point);
+      });
+    }
+  }, [setSelectedOrganFilter, organScanPoints, startScan, nlsDysregulationScores, setActiveOrganScanPoint]);
 
   // Akupunktur-Punkt auswählen
   const handleAcupointClick = (point: AcupuncturePoint, meridian: MeridianPath) => {
