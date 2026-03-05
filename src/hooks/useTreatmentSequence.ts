@@ -274,8 +274,8 @@ export function useTreatmentSequence() {
     const options = treatmentOptionsRef.current;
     const continuousEndTime = options.continuousEndTime;
 
-    // Prüfen ob Endzeit noch nicht erreicht
-    if (continuousEndTime && new Date() < continuousEndTime) {
+    // Prüfen ob Endzeit noch nicht erreicht (Continuous-Mode)
+    if (options.continuousMode && continuousEndTime && new Date() < continuousEndTime) {
       toast.info('Retest abgeschlossen - Starte nächsten Behandlungszyklus');
       
       // Neue Behandlung starten
@@ -517,6 +517,10 @@ export function useTreatmentSequence() {
 
   const pauseSequence = useCallback(() => {
     stopOscillator();
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
     setProgress((prev) => ({ ...prev, isPaused: true, isPlaying: false }));
     toast.info('Behandlung pausiert');
   }, [stopOscillator]);
@@ -524,8 +528,11 @@ export function useTreatmentSequence() {
   const resumeSequence = useCallback(() => {
     if (progress.currentPoint) startOscillator(progress.currentPoint.frequency);
     setProgress((prev) => ({ ...prev, isPaused: false, isPlaying: true }));
+    // Restart the tick interval
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = window.setInterval(tick, 1000);
     toast.info('Behandlung fortgesetzt');
-  }, [progress.currentPoint, startOscillator]);
+  }, [progress.currentPoint, startOscillator, tick]);
 
   const stopSequence = useCallback(() => {
     stopOscillator();
