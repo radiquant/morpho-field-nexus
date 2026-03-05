@@ -347,7 +347,8 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSel
     setNotes('');
     setCurrentAnalysis(null);
     setSavedClient(null);
-  }, []);
+    onClientSelected?.(null);
+  }, [onClientSelected]);
 
   // Dimensions-Konfiguration
   const dimensionConfigs = [
