@@ -193,7 +193,7 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
         duration: treatmentDuration,
         element: 'earth',
         isExtraordinaryVessel: false,
-        dysregulationScore: (scores.get(p.id) || 0) / 6,
+        dysregulationScore: (scores.get(p.id) || 0) / 6, // normalize to 0-1 for treatment display
         explanation: `NLS-Dysregulation ${(scores.get(p.id) || 0).toFixed(1)}/6 – ${p.pointName} (${p.organNameDe})`,
       }));
   }, [nlsDysregulationData, includeNLSPoints, treatmentDuration]);
