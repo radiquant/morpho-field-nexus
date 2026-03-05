@@ -721,7 +721,7 @@ function BrainModel({ opacity = 0.5 }: { opacity?: number }) {
 // ============= MERIDIAN 3D COMPONENTS =============
 
 // Einzelner Meridian-Pfad mit optionaler Surface-Projection
-function MeridianLine({
+const MeridianLine = React.memo(function MeridianLine({
   meridian,
   isActive,
   showLabels,
@@ -788,10 +788,10 @@ function MeridianLine({
       })}
     </group>
   );
-}
+});
 
-// Akupunkturpunkt-Mesh mit Dysregulations-Farbe
-function AcupuncturePointMesh({
+// Akupunkturpunkt-Mesh mit Dysregulations-Farbe (memoized for performance)
+const AcupuncturePointMesh = React.memo(function AcupuncturePointMesh({
   point,
   meridian,
   isActive,
@@ -809,24 +809,23 @@ function AcupuncturePointMesh({
   const meshRef = useRef<THREE.Mesh>(null);
   const [isHovered, setIsHovered] = useState(false);
   
-  // Farbe basierend auf Dysregulation (5-Stufen-Skala) oder Standard-Meridian-Farbe
+  // Farbe basierend auf Dysregulation oder Standard-Meridian-Farbe
   const pointColor = dysregulationScore > 0 
     ? getDysregulationColor(dysregulationScore)
     : meridian.color;
-  
-  const dysLevel = getDysregulationLevel(dysregulationScore);
 
+  // Only run useFrame for active/hovered points to reduce overhead
+  const needsAnimation = isActive || isHovered;
   useFrame((state) => {
-    if (meshRef.current) {
-      // Stärkeres Pulsieren bei höherer Dysregulation
-      const pulseSpeed = 4 + dysregulationScore * 4;
-      const pulseIntensity = 0.002 + dysregulationScore * 0.003;
-      const pulse = Math.sin(state.clock.elapsedTime * pulseSpeed) * 0.15 + 1;
-      
-      const scaleFactor = isActive ? 1.4 : isHovered ? 1.2 : 1;
-      meshRef.current.scale.setScalar(pulse * scaleFactor);
-    }
+    if (!needsAnimation || !meshRef.current) return;
+    const pulseSpeed = 4 + dysregulationScore * 4;
+    const pulse = Math.sin(state.clock.elapsedTime * pulseSpeed) * 0.15 + 1;
+    const scaleFactor = isActive ? 1.4 : 1.2;
+    meshRef.current.scale.setScalar(pulse * scaleFactor);
   });
+
+  // Shared geometry args - minimal segments for performance
+  const geoArgs: [number, number, number] = [0.005, 4, 4];
 
   return (
     <>
@@ -845,11 +844,9 @@ function AcupuncturePointMesh({
             setIsHovered(false);
           }}
         >
-          <sphereGeometry args={[0.006, 6, 6]} />
-          <meshStandardMaterial
+          <sphereGeometry args={geoArgs} />
+          <meshBasicMaterial
             color={pointColor}
-            emissive={pointColor}
-            emissiveIntensity={isActive ? 1.2 : isHovered ? 0.8 : 0.3 + dysregulationScore * 0.5}
             depthWrite={false}
           />
         </mesh>
@@ -866,25 +863,14 @@ function AcupuncturePointMesh({
         )}
       </group>
 
-      {/* Rechte Seite (gespiegelt) */}
-      <group position={[-point.position.x, point.position.y, point.position.z]}>
-        <mesh
-          onClick={(e) => { e.stopPropagation(); onClick(); }}
-          onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
-          onPointerOut={() => { document.body.style.cursor = 'default'; }}
-        >
-          <sphereGeometry args={[0.006, 6, 6]} />
-          <meshStandardMaterial
-            color={pointColor}
-            emissive={pointColor}
-            emissiveIntensity={isActive ? 1 : 0.3 + dysregulationScore * 0.4}
-            depthWrite={false}
-          />
-        </mesh>
-      </group>
+      {/* Rechte Seite (gespiegelt) - simplified, no interaction */}
+      <mesh position={[-point.position.x, point.position.y, point.position.z]}>
+        <sphereGeometry args={geoArgs} />
+        <meshBasicMaterial color={pointColor} depthWrite={false} />
+      </mesh>
     </>
   );
-}
+});
 
 // Meridian-System-Modell mit Surface-Projection
 function MeridianSystemModel({
@@ -1370,41 +1356,62 @@ const AnatomyResonanceViewer = ({
     const dimensions = vectorAnalysis.clientVector.dimensions;
     const physical = dimensions[0] || 0;
     const emotional = dimensions[1] || 0;
+    const mental = dimensions[2] || 0;
     const energy = dimensions[3] || 0;
     const stress = dimensions[4] || 0;
 
     // Organ-specific dysregulation mapping
-    const organWeights: Record<string, { physical: number; emotional: number; energy: number; stress: number }> = {
-      heart: { physical: 0.3, emotional: 0.4, energy: 0.2, stress: 0.1 },
-      liver: { physical: 0.2, emotional: 0.4, energy: 0.2, stress: 0.2 },
-      kidney: { physical: 0.3, emotional: 0.1, energy: 0.4, stress: 0.2 },
-      lung: { physical: 0.4, emotional: 0.2, energy: 0.2, stress: 0.2 },
-      spleen: { physical: 0.3, emotional: 0.2, energy: 0.3, stress: 0.2 },
-      stomach: { physical: 0.4, emotional: 0.2, energy: 0.2, stress: 0.2 },
-      pancreas: { physical: 0.3, emotional: 0.1, energy: 0.3, stress: 0.3 },
-      brain: { physical: 0.1, emotional: 0.3, energy: 0.2, stress: 0.4 },
-      thyroid: { physical: 0.2, emotional: 0.2, energy: 0.4, stress: 0.2 },
-      intestine: { physical: 0.4, emotional: 0.2, energy: 0.2, stress: 0.2 },
-      spine: { physical: 0.5, emotional: 0.1, energy: 0.2, stress: 0.2 },
-      lymph: { physical: 0.3, emotional: 0.1, energy: 0.3, stress: 0.3 },
-      urogenital: { physical: 0.35, emotional: 0.2, energy: 0.25, stress: 0.2 },
-      adrenal: { physical: 0.2, emotional: 0.2, energy: 0.2, stress: 0.4 },
-      sensory: { physical: 0.25, emotional: 0.25, energy: 0.25, stress: 0.25 },
+    const organWeights: Record<string, { physical: number; emotional: number; mental: number; energy: number; stress: number }> = {
+      heart: { physical: 0.3, emotional: 0.4, mental: 0.05, energy: 0.2, stress: 0.05 },
+      liver: { physical: 0.2, emotional: 0.4, mental: 0.1, energy: 0.2, stress: 0.1 },
+      kidney: { physical: 0.3, emotional: 0.1, mental: 0.05, energy: 0.4, stress: 0.15 },
+      lung: { physical: 0.4, emotional: 0.2, mental: 0.05, energy: 0.2, stress: 0.15 },
+      spleen: { physical: 0.3, emotional: 0.2, mental: 0.1, energy: 0.3, stress: 0.1 },
+      stomach: { physical: 0.4, emotional: 0.2, mental: 0.1, energy: 0.2, stress: 0.1 },
+      pancreas: { physical: 0.3, emotional: 0.1, mental: 0.1, energy: 0.3, stress: 0.2 },
+      brain: { physical: 0.1, emotional: 0.3, mental: 0.3, energy: 0.1, stress: 0.2 },
+      thyroid: { physical: 0.2, emotional: 0.2, mental: 0.1, energy: 0.4, stress: 0.1 },
+      intestine: { physical: 0.4, emotional: 0.2, mental: 0.05, energy: 0.2, stress: 0.15 },
+      spine: { physical: 0.5, emotional: 0.1, mental: 0.05, energy: 0.2, stress: 0.15 },
+      lymph: { physical: 0.3, emotional: 0.1, mental: 0.05, energy: 0.3, stress: 0.25 },
+      urogenital: { physical: 0.35, emotional: 0.2, mental: 0.05, energy: 0.25, stress: 0.15 },
+      adrenal: { physical: 0.2, emotional: 0.2, mental: 0.1, energy: 0.1, stress: 0.4 },
+      sensory: { physical: 0.25, emotional: 0.25, mental: 0.15, energy: 0.2, stress: 0.15 },
     };
 
-    modelFilteredOrganScanPoints.forEach(point => {
-      const w = organWeights[point.organSystem] || { physical: 0.25, emotional: 0.25, energy: 0.25, stress: 0.25 };
-      let dysScore = Math.abs(physical) * w.physical + Math.abs(emotional) * w.emotional + Math.abs(energy) * w.energy + Math.abs(stress) * w.stress;
+    // Deterministic per-point variation using scan frequency as seed
+    const hashVariation = (freq: number, index: number): number => {
+      const x = Math.sin(freq * 12.9898 + index * 78.233) * 43758.5453;
+      return (x - Math.floor(x)) * 0.4 + 0.8; // range 0.8 - 1.2
+    };
+
+    modelFilteredOrganScanPoints.forEach((point, idx) => {
+      const w = organWeights[point.organSystem] || { physical: 0.25, emotional: 0.25, mental: 0.15, energy: 0.2, stress: 0.15 };
+      
+      // Use all 5 dimensions for richer scoring
+      let rawScore = Math.abs(physical) * w.physical 
+        + Math.abs(emotional) * w.emotional 
+        + Math.abs(mental) * w.mental
+        + Math.abs(energy) * w.energy 
+        + Math.abs(stress) * w.stress;
+      
+      // Non-linear amplification: moderate deviations produce meaningful scores
+      // power < 1 amplifies small-to-moderate values (e.g. 0.3 → 0.3^0.55 ≈ 0.52)
+      rawScore = Math.pow(Math.min(1, rawScore), 0.55);
+
+      // Per-point variation for realistic diversity
+      rawScore *= hashVariation(point.scanFrequency, idx);
       
       // Focus boost: higher dysregulation visibility for focused organs
       if (activeScanConfig?.focusList.some(f => f.relatedOrgans?.includes(point.organSystem))) {
-        dysScore *= 1.3;
+        rawScore *= 1.3;
       }
 
-      dysScore *= (1 - vectorAnalysis.attractorState.stability) + 0.3;
+      // Stability modifier (lower stability → higher dysregulation)
+      rawScore *= (1 - vectorAnalysis.attractorState.stability) + 0.5;
       
       // Scale to 0-6 range (Metatron-style 6-level scale)
-      const scaledScore = Math.min(6, Math.max(0, dysScore * 6));
+      const scaledScore = Math.min(6, Math.max(0, rawScore * 6));
       scores.set(point.id, scaledScore);
     });
 
@@ -1481,7 +1488,7 @@ const AnatomyResonanceViewer = ({
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_440px] gap-6">
           {/* 3D Viewer */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
