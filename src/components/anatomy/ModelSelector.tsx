@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Box, Check, Lock, Layers, GitBranch, Bone, Heart, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -88,38 +88,45 @@ export function ModelSelector({
         <h3 className="text-sm font-semibold text-foreground">3D-Modell Bibliothek</h3>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="w-full grid grid-cols-4 h-8">
+      {/* Category Dropdown */}
+      <Select value={activeTab} onValueChange={setActiveTab}>
+        <SelectTrigger className="h-9 text-xs">
+          <SelectValue placeholder="Kategorie wählen" />
+        </SelectTrigger>
+        <SelectContent>
           {categories.map(cat => {
             const Icon = CATEGORY_ICONS[cat] || Box;
+            const count = models.filter(m => m.category === cat).length;
             return (
-              <TabsTrigger key={cat} value={cat} className="text-[10px] px-1 gap-1">
-                <Icon className="w-3 h-3" />
-                {getCategoryLabel(cat).split(' ')[0]}
-              </TabsTrigger>
+              <SelectItem key={cat} value={cat} className="text-xs">
+                <span className="flex items-center gap-2">
+                  <Icon className="w-3.5 h-3.5" />
+                  {getCategoryLabel(cat)}
+                  <span className="text-muted-foreground">({count})</span>
+                </span>
+              </SelectItem>
             );
           })}
-        </TabsList>
+        </SelectContent>
+      </Select>
 
-        {categories.map(cat => (
-          <TabsContent key={cat} value={cat} className="mt-2 space-y-2">
-            <AnimatePresence mode="popLayout">
-              {models
-                .filter(m => m.category === cat)
-                .map(model => (
-                  <ModelCard
-                    key={model.id}
-                    model={model}
-                    isSelected={selectedModel?.id === model.id}
-                    isDeleting={deletingId === model.id}
-                    onSelect={() => onSelect(model)}
-                    onDelete={() => handleDelete(model)}
-                  />
-                ))}
-            </AnimatePresence>
-          </TabsContent>
-        ))}
-      </Tabs>
+      {/* Models for selected category */}
+      <div className="space-y-2">
+        <AnimatePresence mode="popLayout">
+          {models
+            .filter(m => m.category === activeTab)
+            .map(model => (
+              <ModelCard
+                key={model.id}
+                model={model}
+                isSelected={selectedModel?.id === model.id}
+                isDeleting={deletingId === model.id}
+                onSelect={() => onSelect(model)}
+                onDelete={() => handleDelete(model)}
+              />
+            ))}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

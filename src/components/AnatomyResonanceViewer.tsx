@@ -486,6 +486,28 @@ function ResonancePoint({
     </group>
   );
 }
+// Error Boundary für 3D-Modelle
+import React from 'react';
+
+class ErrorBoundary3D extends React.Component<
+  { children: React.ReactNode; fallback: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode; fallback: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error: Error) {
+    console.warn('3D Model load error (falling back to procedural):', error.message);
+  }
+  render() {
+    if (this.state.hasError) return this.props.fallback;
+    return this.props.children;
+  }
+}
 
 // Stilisiertes Körper-Modell (Prozedural)
 function HumanBodyModel({ opacity = 0.3 }: { opacity?: number }) {
@@ -821,7 +843,7 @@ function AcupuncturePointMesh({
             setIsHovered(false);
           }}
         >
-          <sphereGeometry args={[0.012, 12, 12]} />
+          <sphereGeometry args={[0.006, 6, 6]} />
           <meshStandardMaterial
             color={pointColor}
             emissive={pointColor}
@@ -849,7 +871,7 @@ function AcupuncturePointMesh({
           onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
           onPointerOut={() => { document.body.style.cursor = 'default'; }}
         >
-          <sphereGeometry args={[0.012, 12, 12]} />
+          <sphereGeometry args={[0.006, 6, 6]} />
           <meshStandardMaterial
             color={pointColor}
             emissive={pointColor}
@@ -1038,13 +1060,15 @@ function AnatomyScene({
         {(modelType === 'full_body' || modelType === 'heart' || modelType === 'brain') && (
           <>
             {useGLBModel ? (
-              <GLBModelLoader
-                key={selectedModelUrl}
-                modelPath={selectedModelUrl}
-                opacity={showMeridians || showChakras ? 0.2 : 0.35}
-                onLoaded={onGLBLoaded}
-                onMeshesReady={handleMeshesReady}
-              />
+              <ErrorBoundary3D fallback={<HumanBodyModel opacity={showMeridians ? 0.25 : 0.3} />}>
+                <GLBModelLoader
+                  key={selectedModelUrl}
+                  modelPath={selectedModelUrl}
+                  opacity={showMeridians || showChakras ? 0.2 : 0.35}
+                  onLoaded={onGLBLoaded}
+                  onMeshesReady={handleMeshesReady}
+                />
+              </ErrorBoundary3D>
             ) : (
               <HumanBodyModel opacity={showMeridians ? 0.25 : 0.3} />
             )}
@@ -1324,7 +1348,7 @@ const AnatomyResonanceViewer = ({
     return scores;
   }, [vectorAnalysis]);
 
-  // NLS organ scan dysregulation scores
+  // NLS organ scan dysregulation scores (0-6 scale matching Metatron)
   const nlsDysregulationScores = useMemo(() => {
     const scores = new Map<string, number>();
     if (!vectorAnalysis) return scores;
@@ -1359,7 +1383,10 @@ const AnatomyResonanceViewer = ({
       }
 
       dysScore *= (1 - vectorAnalysis.attractorState.stability) + 0.3;
-      scores.set(point.id, Math.min(1, Math.max(0, dysScore)));
+      
+      // Scale to 0-6 range (Metatron-style 6-level scale)
+      const scaledScore = Math.min(6, Math.max(0, dysScore * 6));
+      scores.set(point.id, scaledScore);
     });
 
     return scores;
@@ -1429,13 +1456,13 @@ const AnatomyResonanceViewer = ({
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
           {/* 3D Viewer */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="lg:col-span-3 h-[900px] bg-card rounded-lg border border-border overflow-hidden relative"
+            className="h-[900px] bg-card rounded-lg border border-border overflow-hidden relative"
           >
             {/* Model Selector */}
             <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-3 bg-background/80 backdrop-blur-sm px-4 py-2 rounded-full border border-border">
@@ -1615,8 +1642,40 @@ const AnatomyResonanceViewer = ({
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="space-y-4"
+            className="space-y-4 max-h-[900px] overflow-y-auto"
           >
+            {/* NLS Scan Configuration – oben im Side Panel */}
+            {canShowNLS && (
+              <NLSScanConfigPanel
+                organGroups={organGroups}
+                organSystems={organSystems}
+                allPoints={organScanPoints}
+                models={anatomyModels}
+                selectedModel={selectedAnatomyModel}
+                onConfigConfirm={handleScanConfigConfirm}
+                onCancel={() => setShowScanConfig(false)}
+                isOpen={showScanConfig}
+              />
+            )}
+
+            {canShowNLS && !showScanConfig && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowScanConfig(true)}
+                className="w-full gap-2"
+              >
+                <Settings2 className="w-4 h-4" />
+                NLS-Scan konfigurieren
+                {activeScanConfig && (
+                  <Badge variant="secondary" className="ml-auto text-[10px]">
+                    {activeScanConfig.selectedPointIds.length} Punkte
+                    {activeScanConfig.focusList.length > 0 && ` • ${activeScanConfig.focusList.length} Fokus`}
+                  </Badge>
+                )}
+              </Button>
+            )}
+
             {/* Aktiver Punkt / Akupunkturpunkt Details */}
             <div className="bg-card rounded-lg border border-border p-4">
               <div className="flex items-center gap-2 mb-3">
@@ -1896,38 +1955,7 @@ const AnatomyResonanceViewer = ({
               </div>
             )}
 
-            {/* NLS Scan Configuration */}
-            {canShowNLS && (
-              <NLSScanConfigPanel
-                organGroups={organGroups}
-                organSystems={organSystems}
-                allPoints={organScanPoints}
-                models={anatomyModels}
-                selectedModel={selectedAnatomyModel}
-                onConfigConfirm={handleScanConfigConfirm}
-                onCancel={() => setShowScanConfig(false)}
-                isOpen={showScanConfig}
-              />
-            )}
-
-            {/* NLS Scan Config Button */}
-            {canShowNLS && !showScanConfig && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowScanConfig(true)}
-                className="w-full gap-2"
-              >
-                <Settings2 className="w-4 h-4" />
-                NLS-Scan konfigurieren
-                {activeScanConfig && (
-                  <Badge variant="secondary" className="ml-auto text-[10px]">
-                    {activeScanConfig.selectedPointIds.length} Punkte
-                    {activeScanConfig.focusList.length > 0 && ` • ${activeScanConfig.focusList.length} Fokus`}
-                  </Badge>
-                )}
-              </Button>
-            )}
+            {/* NLS Scan Configuration – moved to bottom of panel */}
 
             {/* NLS Organ-Scan-Punkte (bei aktivem NLS-Scan) */}
             {showOrganScan && (
