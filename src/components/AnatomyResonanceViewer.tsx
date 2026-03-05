@@ -15,6 +15,8 @@ import { projectMeridianPoints, projectMeridianPath, collectMeshes, isMeshSuffic
 import { OrganScanLayer } from '@/components/anatomy/OrganScanLayer';
 import { useOrganScanPoints, type OrganScanPoint, getOrganColor, getTissueIcon } from '@/hooks/useOrganScanPoints';
 import { NLSScanConfigPanel, type NLSScanConfig } from '@/components/NLSScanConfigPanel';
+import { useNLSAutoScan } from '@/hooks/useNLSAutoScan';
+import { NLSAutoScanOverlay } from '@/components/NLSAutoScanOverlay';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -1168,6 +1170,9 @@ const AnatomyResonanceViewer = ({
   const [showScanConfig, setShowScanConfig] = useState(false);
   const [activeScanConfig, setActiveScanConfig] = useState<NLSScanConfig | null>(null);
 
+  // Auto-scan hook
+  const { scanState, startScan, pauseScan, resumeScan, stopScan, updateScores } = useNLSAutoScan();
+
   const {
     points: organScanPoints,
     filteredPoints: filteredOrganScanPoints,
@@ -1252,7 +1257,14 @@ const AnatomyResonanceViewer = ({
     } else {
       setSelectedOrganFilter(null);
     }
-  }, [setSelectedOrganFilter]);
+    // Auto-start the scan sequence (scores will be updated live via updateScores)
+    const scanPoints = organScanPoints.filter(p => config.selectedPointIds.includes(p.id));
+    if (scanPoints.length > 0) {
+      startScan(scanPoints, config, new Map(), (point) => {
+        setActiveOrganScanPoint(point);
+      });
+    }
+  }, [setSelectedOrganFilter, organScanPoints, startScan, setActiveOrganScanPoint]);
 
   // Akupunktur-Punkt auswählen
   const handleAcupointClick = (point: AcupuncturePoint, meridian: MeridianPath) => {
@@ -1373,6 +1385,11 @@ const AnatomyResonanceViewer = ({
       brain: { physical: 0.1, emotional: 0.3, energy: 0.2, stress: 0.4 },
       thyroid: { physical: 0.2, emotional: 0.2, energy: 0.4, stress: 0.2 },
       intestine: { physical: 0.4, emotional: 0.2, energy: 0.2, stress: 0.2 },
+      spine: { physical: 0.5, emotional: 0.1, energy: 0.2, stress: 0.2 },
+      lymph: { physical: 0.3, emotional: 0.1, energy: 0.3, stress: 0.3 },
+      urogenital: { physical: 0.35, emotional: 0.2, energy: 0.25, stress: 0.2 },
+      adrenal: { physical: 0.2, emotional: 0.2, energy: 0.2, stress: 0.4 },
+      sensory: { physical: 0.25, emotional: 0.25, energy: 0.25, stress: 0.25 },
     };
 
     modelFilteredOrganScanPoints.forEach(point => {
@@ -1394,7 +1411,13 @@ const AnatomyResonanceViewer = ({
     return scores;
   }, [vectorAnalysis, modelFilteredOrganScanPoints, activeScanConfig]);
 
-  // Notify parent about NLS dysregulation data (scores + points)
+  // Keep auto-scan scores updated with live dysregulation data
+  useEffect(() => {
+    if (scanState.isScanning) {
+      updateScores(nlsDysregulationScores);
+    }
+  }, [nlsDysregulationScores, scanState.isScanning, updateScores]);
+
   useEffect(() => {
     if (nlsDysregulationScores.size > 0 && organScanPoints.length > 0) {
       onNLSDysregulationData?.({
@@ -1530,7 +1553,14 @@ const AnatomyResonanceViewer = ({
               <DysregulationLegend className="absolute top-16 left-4" />
             )}
 
-            {/* Controls */}
+            {/* NLS Auto-Scan Overlay */}
+            <NLSAutoScanOverlay
+              scanState={scanState}
+              onPause={pauseScan}
+              onResume={resumeScan}
+              onStop={stopScan}
+            />
+
             <div className="absolute bottom-4 left-4 flex gap-2">
               <Button
                 variant="outline"

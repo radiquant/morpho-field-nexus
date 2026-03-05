@@ -53,12 +53,14 @@ export interface NLSScanConfig {
 const FOCUS_TEMPLATES: ScanFocus[] = [
   { id: 'digestion', label: 'Verdauung', description: 'Magen, Darm, Leber, Bauchspeicheldrüse', type: 'symptom', relatedOrgans: ['stomach', 'intestine', 'liver', 'pancreas'], priority: 1 },
   { id: 'cardiac', label: 'Herz-Kreislauf', description: 'Herz, Gefäße, Blutdruck', type: 'organ', relatedOrgans: ['heart'], priority: 1 },
-  { id: 'nervous', label: 'Nervensystem', description: 'Gehirn, Neurologie, Stress', type: 'organ', relatedOrgans: ['brain'], priority: 1 },
+  { id: 'nervous', label: 'Nervensystem', description: 'Gehirn, Neurologie, Stress', type: 'organ', relatedOrgans: ['brain', 'sensory'], priority: 1 },
   { id: 'respiratory', label: 'Atemwege', description: 'Lunge, Bronchien, Schilddrüse', type: 'organ', relatedOrgans: ['lung', 'thyroid'], priority: 2 },
-  { id: 'urogenital', label: 'Urogenital', description: 'Nieren, Blase, Nebennieren', type: 'organ', relatedOrgans: ['kidney'], priority: 2 },
-  { id: 'immune', label: 'Immunsystem', description: 'Milz, Lymphe, Thymus', type: 'organ', relatedOrgans: ['spleen'], priority: 2 },
-  { id: 'metabolic', label: 'Stoffwechsel', description: 'Leber, Pankreas, Schilddrüse', type: 'symptom', relatedOrgans: ['liver', 'pancreas', 'thyroid'], priority: 3 },
-  { id: 'stress', label: 'Stress & Burnout', description: 'Nebennieren, Gehirn, Herz', type: 'symptom', relatedOrgans: ['brain', 'heart', 'kidney'], priority: 1 },
+  { id: 'urogenital', label: 'Urogenital', description: 'Nieren, Blase, Nebennieren, Becken', type: 'organ', relatedOrgans: ['kidney', 'urogenital', 'adrenal'], priority: 2 },
+  { id: 'immune', label: 'Immunsystem', description: 'Milz, Lymphe, Thymus', type: 'organ', relatedOrgans: ['spleen', 'lymph'], priority: 2 },
+  { id: 'metabolic', label: 'Stoffwechsel', description: 'Leber, Pankreas, Schilddrüse, Nebennieren', type: 'symptom', relatedOrgans: ['liver', 'pancreas', 'thyroid', 'adrenal'], priority: 3 },
+  { id: 'stress', label: 'Stress & Burnout', description: 'Nebennieren, Gehirn, Herz', type: 'symptom', relatedOrgans: ['brain', 'heart', 'adrenal'], priority: 1 },
+  { id: 'musculoskeletal', label: 'Bewegungsapparat', description: 'Wirbelsäule (HWS/BWS/LWS)', type: 'organ', relatedOrgans: ['spine'], priority: 2 },
+  { id: 'sensory', label: 'Sinnesorgane', description: 'Augen, Ohren, Geruch, Geschmack', type: 'organ', relatedOrgans: ['sensory'], priority: 3 },
 ];
 
 interface NLSScanConfigPanelProps {

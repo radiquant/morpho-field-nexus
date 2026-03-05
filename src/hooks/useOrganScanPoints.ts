@@ -43,6 +43,11 @@ const ORGAN_COLORS: Record<string, string> = {
   brain: '#ec4899',
   thyroid: '#06b6d4',
   intestine: '#f97316',
+  spine: '#78716c',
+  lymph: '#34d399',
+  urogenital: '#fb923c',
+  adrenal: '#e879f9',
+  sensory: '#38bdf8',
 };
 
 const TISSUE_ICONS: Record<string, string> = {
