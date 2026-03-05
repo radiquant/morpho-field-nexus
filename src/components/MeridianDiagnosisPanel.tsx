@@ -212,6 +212,27 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
     }
   }, [clientId, loadTreatments]);
 
+  // Nachtestungs-Ergebnis verarbeiten: Re-Analyse mit leicht veränderten Dimensionen
+  const handleRetestAnalysis = useCallback(() => {
+    if (!vectorAnalysis) return;
+    // Simuliere Post-Behandlungs-Shift: Werte tendieren Richtung Mitte (50)
+    const shiftedAnalysis = {
+      ...vectorAnalysis,
+      clientVector: {
+        ...vectorAnalysis.clientVector,
+        dimensions: vectorAnalysis.clientVector.dimensions.map(d => {
+          const shift = (50 - d) * (0.15 + Math.random() * 0.1); // 15-25% Richtung Mitte
+          return Math.max(0, Math.min(100, d + shift));
+        }),
+      },
+    };
+    analyzeMeridians(shiftedAnalysis);
+    toast.info('Nachtestung gestartet', {
+      description: 'Meridiane werden mit Post-Behandlungs-Werten analysiert...'
+    });
+    setActiveTab('retest');
+  }, [vectorAnalysis, analyzeMeridians]);
+
   // Nachtestungs-Countdown
   useEffect(() => {
     if (!isRetestPending) return;
@@ -221,13 +242,7 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
         if (prev <= 1) {
           clearInterval(interval);
           setIsRetestPending(false);
-          // Starte Nachtestung
-          if (vectorAnalysis) {
-            analyzeMeridians(vectorAnalysis);
-            toast.info('Nachtestung gestartet', {
-              description: 'Die Meridiane werden erneut analysiert...'
-            });
-          }
+          handleRetestAnalysis();
           return 0;
         }
         return prev - 1;
@@ -235,50 +250,54 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isRetestPending, vectorAnalysis, analyzeMeridians]);
+  }, [isRetestPending, handleRetestAnalysis]);
+
+  // Guard: Track ob isComplete bereits verarbeitet wurde
+  const [completionHandled, setCompletionHandled] = useState(false);
 
   // Bei Behandlungsabschluss
   useEffect(() => {
-    if (progress.isComplete && treatmentPoints.length > 0) {
-      // Speichere Behandlung im Archiv
-      if (clientId && diagnosisResult) {
-        saveTreatment(clientId, treatmentPoints, diagnosisResult, vectorAnalysis?.attractorState.stability || 0);
-      }
-      
-      // Rufe onTreatmentComplete Callback auf
-      if (onTreatmentComplete && vectorAnalysis) {
-        // dimensions Array: [physical, emotional, mental, energy, stress]
-        const currentDimensions = vectorAnalysis.clientVector.dimensions;
-        const afterDimensions = currentDimensions.length >= 5 
-          ? currentDimensions.slice(0, 5) 
-          : [50, 50, 50, 50, 50];
-        
-        onTreatmentComplete({
-          beforeDimensions: beforeDimensions.length > 0 ? beforeDimensions : afterDimensions,
-          afterDimensions,
-          treatmentDuration: progress.elapsedTotalTime,
-          cyclesCompleted: progress.currentCycle,
-          pointsProcessed: treatmentPoints.length,
-        });
-      }
-      
-      // Starte Nachtestungs-Countdown wenn aktiviert
-      if (retestEnabled) {
-        setPreHarmonizationPoints(treatmentPoints);
-        setRetestCountdown(retestPauseMinutes * 60);
-        setIsRetestPending(true);
-        
-        toast.success('Behandlung abgeschlossen', {
-          description: `Nachtestung in ${retestPauseMinutes} Minuten...`
-        });
-      } else {
-        toast.success('Behandlung abgeschlossen');
-      }
+    if (!progress.isComplete || treatmentPoints.length === 0 || completionHandled) return;
+    setCompletionHandled(true);
+
+    // Speichere Behandlung im Archiv
+    if (clientId && diagnosisResult) {
+      saveTreatment(clientId, treatmentPoints, diagnosisResult, vectorAnalysis?.attractorState.stability || 0);
     }
-  }, [progress.isComplete, retestEnabled, treatmentPoints, clientId, diagnosisResult, vectorAnalysis, retestPauseMinutes, saveTreatment, onTreatmentComplete, beforeDimensions, progress.elapsedTotalTime, progress.currentCycle]);
+    
+    // Rufe onTreatmentComplete Callback auf
+    if (onTreatmentComplete && vectorAnalysis) {
+      const currentDimensions = vectorAnalysis.clientVector.dimensions;
+      const afterDimensions = currentDimensions.length >= 5 
+        ? currentDimensions.slice(0, 5) 
+        : [50, 50, 50, 50, 50];
+      
+      onTreatmentComplete({
+        beforeDimensions: beforeDimensions.length > 0 ? beforeDimensions : afterDimensions,
+        afterDimensions,
+        treatmentDuration: progress.elapsedTotalTime,
+        cyclesCompleted: progress.currentCycle,
+        pointsProcessed: treatmentPoints.length,
+      });
+    }
+    
+    // Starte Nachtestungs-Countdown wenn aktiviert
+    if (retestEnabled) {
+      setPreHarmonizationPoints(treatmentPoints);
+      setRetestCountdown(retestPauseMinutes * 60);
+      setIsRetestPending(true);
+      
+      toast.success('Behandlung abgeschlossen', {
+        description: `Nachtestung in ${retestPauseMinutes} Minuten...`
+      });
+    } else {
+      toast.success('Behandlung abgeschlossen');
+    }
+  }, [progress.isComplete, completionHandled, retestEnabled, treatmentPoints, clientId, diagnosisResult, vectorAnalysis, retestPauseMinutes, saveTreatment, onTreatmentComplete, beforeDimensions, progress.elapsedTotalTime, progress.currentCycle]);
 
   const handleStartTreatment = useCallback(() => {
     if (diagnosisResult?.imbalances && vectorAnalysis) {
+      setCompletionHandled(false); // Reset guard for new treatment
       const currentDimensions = vectorAnalysis.clientVector.dimensions;
       setBeforeDimensions(currentDimensions.length >= 5 ? currentDimensions.slice(0, 5) : [50, 50, 50, 50, 50]);
       
@@ -315,11 +334,8 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
   const handleStartRetestNow = useCallback(() => {
     setIsRetestPending(false);
     setRetestCountdown(0);
-    if (vectorAnalysis) {
-      analyzeMeridians(vectorAnalysis);
-      toast.info('Nachtestung gestartet');
-    }
-  }, [vectorAnalysis, analyzeMeridians]);
+    handleRetestAnalysis();
+  }, [handleRetestAnalysis]);
 
   if (!vectorAnalysis) {
     return (
