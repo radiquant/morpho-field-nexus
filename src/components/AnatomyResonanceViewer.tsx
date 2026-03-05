@@ -1411,7 +1411,13 @@ const AnatomyResonanceViewer = ({
     return scores;
   }, [vectorAnalysis, modelFilteredOrganScanPoints, activeScanConfig]);
 
-  // Notify parent about NLS dysregulation data (scores + points)
+  // Keep auto-scan scores updated with live dysregulation data
+  useEffect(() => {
+    if (scanState.isScanning) {
+      updateScores(nlsDysregulationScores);
+    }
+  }, [nlsDysregulationScores, scanState.isScanning, updateScores]);
+
   useEffect(() => {
     if (nlsDysregulationScores.size > 0 && organScanPoints.length > 0) {
       onNLSDysregulationData?.({
