@@ -131,8 +131,8 @@ export function useSessionManagement() {
             meridianId: i.meridianId,
             meridianName: i.meridianName,
             element: i.element,
-            type: i.type,
-            severity: i.severity,
+            imbalanceType: i.imbalanceType,
+            imbalanceScore: i.imbalanceScore,
           })),
         };
       }
