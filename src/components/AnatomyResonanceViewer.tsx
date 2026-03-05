@@ -1091,6 +1091,7 @@ function AnatomyScene({
                 activeChakraId={activeChakraId}
                 onChakraClick={onChakraClick}
                 bodyHalfWidth={bodyHalfWidth}
+                surfaceMeshes={useGLBModel ? surfaceMeshes : undefined}
               />
             )}
           </>
@@ -1124,6 +1125,7 @@ function AnatomyScene({
           activePointId={activeOrganScanPointId}
           onPointClick={onOrganScanPointClick}
           selectedOrgan={selectedOrganFilter}
+          surfaceMeshes={useGLBModel ? surfaceMeshes : undefined}
         />
       )}
 
