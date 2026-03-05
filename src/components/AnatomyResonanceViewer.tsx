@@ -721,7 +721,7 @@ function BrainModel({ opacity = 0.5 }: { opacity?: number }) {
 // ============= MERIDIAN 3D COMPONENTS =============
 
 // Einzelner Meridian-Pfad mit optionaler Surface-Projection
-function MeridianLine({
+const MeridianLine = React.memo(function MeridianLine({
   meridian,
   isActive,
   showLabels,
@@ -788,7 +788,7 @@ function MeridianLine({
       })}
     </group>
   );
-}
+});
 
 // Akupunkturpunkt-Mesh mit Dysregulations-Farbe (memoized for performance)
 const AcupuncturePointMesh = React.memo(function AcupuncturePointMesh({
