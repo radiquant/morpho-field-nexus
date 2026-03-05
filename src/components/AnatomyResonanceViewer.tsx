@@ -1170,6 +1170,9 @@ const AnatomyResonanceViewer = ({
   const [showScanConfig, setShowScanConfig] = useState(false);
   const [activeScanConfig, setActiveScanConfig] = useState<NLSScanConfig | null>(null);
 
+  // Auto-scan hook
+  const { scanState, startScan, pauseScan, resumeScan, stopScan, updateScores } = useNLSAutoScan();
+
   const {
     points: organScanPoints,
     filteredPoints: filteredOrganScanPoints,
