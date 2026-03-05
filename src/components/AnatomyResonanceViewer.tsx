@@ -790,8 +790,8 @@ function MeridianLine({
   );
 }
 
-// Akupunkturpunkt-Mesh mit Dysregulations-Farbe
-function AcupuncturePointMesh({
+// Akupunkturpunkt-Mesh mit Dysregulations-Farbe (memoized for performance)
+const AcupuncturePointMesh = React.memo(function AcupuncturePointMesh({
   point,
   meridian,
   isActive,
@@ -809,24 +809,23 @@ function AcupuncturePointMesh({
   const meshRef = useRef<THREE.Mesh>(null);
   const [isHovered, setIsHovered] = useState(false);
   
-  // Farbe basierend auf Dysregulation (5-Stufen-Skala) oder Standard-Meridian-Farbe
+  // Farbe basierend auf Dysregulation oder Standard-Meridian-Farbe
   const pointColor = dysregulationScore > 0 
     ? getDysregulationColor(dysregulationScore)
     : meridian.color;
-  
-  const dysLevel = getDysregulationLevel(dysregulationScore);
 
+  // Only run useFrame for active/hovered points to reduce overhead
+  const needsAnimation = isActive || isHovered;
   useFrame((state) => {
-    if (meshRef.current) {
-      // Stärkeres Pulsieren bei höherer Dysregulation
-      const pulseSpeed = 4 + dysregulationScore * 4;
-      const pulseIntensity = 0.002 + dysregulationScore * 0.003;
-      const pulse = Math.sin(state.clock.elapsedTime * pulseSpeed) * 0.15 + 1;
-      
-      const scaleFactor = isActive ? 1.4 : isHovered ? 1.2 : 1;
-      meshRef.current.scale.setScalar(pulse * scaleFactor);
-    }
+    if (!needsAnimation || !meshRef.current) return;
+    const pulseSpeed = 4 + dysregulationScore * 4;
+    const pulse = Math.sin(state.clock.elapsedTime * pulseSpeed) * 0.15 + 1;
+    const scaleFactor = isActive ? 1.4 : 1.2;
+    meshRef.current.scale.setScalar(pulse * scaleFactor);
   });
+
+  // Shared geometry args - minimal segments for performance
+  const geoArgs: [number, number, number] = [0.005, 4, 4];
 
   return (
     <>
@@ -845,11 +844,9 @@ function AcupuncturePointMesh({
             setIsHovered(false);
           }}
         >
-          <sphereGeometry args={[0.006, 6, 6]} />
-          <meshStandardMaterial
+          <sphereGeometry args={geoArgs} />
+          <meshBasicMaterial
             color={pointColor}
-            emissive={pointColor}
-            emissiveIntensity={isActive ? 1.2 : isHovered ? 0.8 : 0.3 + dysregulationScore * 0.5}
             depthWrite={false}
           />
         </mesh>
@@ -866,25 +863,14 @@ function AcupuncturePointMesh({
         )}
       </group>
 
-      {/* Rechte Seite (gespiegelt) */}
-      <group position={[-point.position.x, point.position.y, point.position.z]}>
-        <mesh
-          onClick={(e) => { e.stopPropagation(); onClick(); }}
-          onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
-          onPointerOut={() => { document.body.style.cursor = 'default'; }}
-        >
-          <sphereGeometry args={[0.006, 6, 6]} />
-          <meshStandardMaterial
-            color={pointColor}
-            emissive={pointColor}
-            emissiveIntensity={isActive ? 1 : 0.3 + dysregulationScore * 0.4}
-            depthWrite={false}
-          />
-        </mesh>
-      </group>
+      {/* Rechte Seite (gespiegelt) - simplified, no interaction */}
+      <mesh position={[-point.position.x, point.position.y, point.position.z]}>
+        <sphereGeometry args={geoArgs} />
+        <meshBasicMaterial color={pointColor} depthWrite={false} />
+      </mesh>
     </>
   );
-}
+});
 
 // Meridian-System-Modell mit Surface-Projection
 function MeridianSystemModel({
