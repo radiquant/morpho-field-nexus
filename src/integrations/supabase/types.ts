@@ -482,6 +482,59 @@ export type Database = {
         }
         Relationships: []
       }
+      treatment_sessions: {
+        Row: {
+          client_id: string
+          created_at: string
+          diagnosis_snapshot: Json | null
+          duration_seconds: number | null
+          id: string
+          notes: string | null
+          session_date: string
+          session_number: number
+          status: string
+          treatment_summary: Json | null
+          updated_at: string
+          vector_snapshot: Json | null
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          diagnosis_snapshot?: Json | null
+          duration_seconds?: number | null
+          id?: string
+          notes?: string | null
+          session_date?: string
+          session_number?: number
+          status?: string
+          treatment_summary?: Json | null
+          updated_at?: string
+          vector_snapshot?: Json | null
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          diagnosis_snapshot?: Json | null
+          duration_seconds?: number | null
+          id?: string
+          notes?: string | null
+          session_date?: string
+          session_number?: number
+          status?: string
+          treatment_summary?: Json | null
+          updated_at?: string
+          vector_snapshot?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "treatment_sessions_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       word_energies: {
         Row: {
           amplitude: number | null

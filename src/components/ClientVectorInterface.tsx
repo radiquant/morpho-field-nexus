@@ -61,6 +61,7 @@ interface StateDimensions {
 interface ClientVectorInterfaceProps {
   onVectorCreated?: (analysis: VectorAnalysis) => void;
   onFrequencySelect?: (frequency: RecommendedFrequency) => void;
+  onClientSelected?: (clientId: string | null) => void;
 }
 
 const defaultBiometric: BiometricData = {
@@ -109,7 +110,7 @@ const convertHardwareToStateDimensions = (
   };
 };
 
-const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect }: ClientVectorInterfaceProps) => {
+const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSelected }: ClientVectorInterfaceProps) => {
   // State
   const [biometric, setBiometric] = useState<BiometricData>(defaultBiometric);
   const [dimensions, setDimensions] = useState<StateDimensions>(defaultDimensions);
@@ -218,9 +219,10 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect }: ClientVec
       photoPreview: client.photoUrl || null,
     });
     setSavedClient(client);
+    onClientSelected?.(client.id);
     setShowClientList(false);
     toast.success(`Klient ${client.firstName} ${client.lastName} geladen`);
-  }, []);
+  }, [onClientSelected]);
 
   // Vektor-Analyse durchführen
   const analyzeVector = useCallback(async () => {
@@ -304,6 +306,7 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect }: ClientVec
         if (!newClient) throw new Error('Client creation failed');
         clientId = newClient.id;
         setSavedClient(newClient);
+        onClientSelected?.(newClient.id);
 
         // Foto hochladen falls vorhanden
         if (biometric.photo) {
@@ -344,7 +347,8 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect }: ClientVec
     setNotes('');
     setCurrentAnalysis(null);
     setSavedClient(null);
-  }, []);
+    onClientSelected?.(null);
+  }, [onClientSelected]);
 
   // Dimensions-Konfiguration
   const dimensionConfigs = [
