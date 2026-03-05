@@ -55,7 +55,7 @@ function ScanPointMesh({
 
       {/* Outer Glow */}
       <mesh>
-        <sphereGeometry args={[0.025, 12, 12]} />
+        <sphereGeometry args={[0.018, 8, 8]} />
         <meshBasicMaterial
           color={color}
           transparent
@@ -66,7 +66,7 @@ function ScanPointMesh({
 
       {/* Inner Glow */}
       <mesh>
-        <sphereGeometry args={[0.016, 10, 10]} />
+        <sphereGeometry args={[0.012, 8, 8]} />
         <meshBasicMaterial
           color={color}
           transparent
@@ -95,7 +95,7 @@ function ScanPointMesh({
         ) : point.tissueType === 'node' || point.tissueType === 'conduction' ? (
           <dodecahedronGeometry args={[0.01]} />
         ) : (
-          <sphereGeometry args={[0.01, 12, 12]} />
+          <sphereGeometry args={[0.008, 8, 8]} />
         )}
         <meshStandardMaterial
           color={color}
