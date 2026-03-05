@@ -306,6 +306,7 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSel
         if (!newClient) throw new Error('Client creation failed');
         clientId = newClient.id;
         setSavedClient(newClient);
+        onClientSelected?.(newClient.id);
 
         // Foto hochladen falls vorhanden
         if (biometric.photo) {
