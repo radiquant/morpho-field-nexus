@@ -82,12 +82,17 @@ export function useAnatomyModels() {
       const { data, error } = await query;
       if (error) throw error;
 
+      // Check which files actually exist in cloud storage
+      const { data: storageFiles } = await supabase.storage.from('3d-models').list('', { limit: 500 });
+      const existingFiles = new Set((storageFiles || []).map(f => f.name));
+
       const mapped: AnatomyModel[] = (data || []).map((m: any) => {
         const storageType = m.storage_type || 'local';
         const filePath = m.file_path || '';
         const resolvedUrl = resolveModelUrl(filePath, storageType);
-        // Lokale Modelle sind immer verfügbar, Cloud-Modelle sind verfügbar wenn file_path existiert
-        const isAvailable = storageType === 'local' || !!filePath;
+        // Local models always available; cloud models only if file actually exists in bucket
+        const cloudFileName = filePath.replace('3d-models/', '');
+        const isAvailable = storageType === 'local' || existingFiles.has(cloudFileName);
 
         return {
           id: m.id,
