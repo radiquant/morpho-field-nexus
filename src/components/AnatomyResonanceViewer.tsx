@@ -1370,41 +1370,62 @@ const AnatomyResonanceViewer = ({
     const dimensions = vectorAnalysis.clientVector.dimensions;
     const physical = dimensions[0] || 0;
     const emotional = dimensions[1] || 0;
+    const mental = dimensions[2] || 0;
     const energy = dimensions[3] || 0;
     const stress = dimensions[4] || 0;
 
     // Organ-specific dysregulation mapping
-    const organWeights: Record<string, { physical: number; emotional: number; energy: number; stress: number }> = {
-      heart: { physical: 0.3, emotional: 0.4, energy: 0.2, stress: 0.1 },
-      liver: { physical: 0.2, emotional: 0.4, energy: 0.2, stress: 0.2 },
-      kidney: { physical: 0.3, emotional: 0.1, energy: 0.4, stress: 0.2 },
-      lung: { physical: 0.4, emotional: 0.2, energy: 0.2, stress: 0.2 },
-      spleen: { physical: 0.3, emotional: 0.2, energy: 0.3, stress: 0.2 },
-      stomach: { physical: 0.4, emotional: 0.2, energy: 0.2, stress: 0.2 },
-      pancreas: { physical: 0.3, emotional: 0.1, energy: 0.3, stress: 0.3 },
-      brain: { physical: 0.1, emotional: 0.3, energy: 0.2, stress: 0.4 },
-      thyroid: { physical: 0.2, emotional: 0.2, energy: 0.4, stress: 0.2 },
-      intestine: { physical: 0.4, emotional: 0.2, energy: 0.2, stress: 0.2 },
-      spine: { physical: 0.5, emotional: 0.1, energy: 0.2, stress: 0.2 },
-      lymph: { physical: 0.3, emotional: 0.1, energy: 0.3, stress: 0.3 },
-      urogenital: { physical: 0.35, emotional: 0.2, energy: 0.25, stress: 0.2 },
-      adrenal: { physical: 0.2, emotional: 0.2, energy: 0.2, stress: 0.4 },
-      sensory: { physical: 0.25, emotional: 0.25, energy: 0.25, stress: 0.25 },
+    const organWeights: Record<string, { physical: number; emotional: number; mental: number; energy: number; stress: number }> = {
+      heart: { physical: 0.3, emotional: 0.4, mental: 0.05, energy: 0.2, stress: 0.05 },
+      liver: { physical: 0.2, emotional: 0.4, mental: 0.1, energy: 0.2, stress: 0.1 },
+      kidney: { physical: 0.3, emotional: 0.1, mental: 0.05, energy: 0.4, stress: 0.15 },
+      lung: { physical: 0.4, emotional: 0.2, mental: 0.05, energy: 0.2, stress: 0.15 },
+      spleen: { physical: 0.3, emotional: 0.2, mental: 0.1, energy: 0.3, stress: 0.1 },
+      stomach: { physical: 0.4, emotional: 0.2, mental: 0.1, energy: 0.2, stress: 0.1 },
+      pancreas: { physical: 0.3, emotional: 0.1, mental: 0.1, energy: 0.3, stress: 0.2 },
+      brain: { physical: 0.1, emotional: 0.3, mental: 0.3, energy: 0.1, stress: 0.2 },
+      thyroid: { physical: 0.2, emotional: 0.2, mental: 0.1, energy: 0.4, stress: 0.1 },
+      intestine: { physical: 0.4, emotional: 0.2, mental: 0.05, energy: 0.2, stress: 0.15 },
+      spine: { physical: 0.5, emotional: 0.1, mental: 0.05, energy: 0.2, stress: 0.15 },
+      lymph: { physical: 0.3, emotional: 0.1, mental: 0.05, energy: 0.3, stress: 0.25 },
+      urogenital: { physical: 0.35, emotional: 0.2, mental: 0.05, energy: 0.25, stress: 0.15 },
+      adrenal: { physical: 0.2, emotional: 0.2, mental: 0.1, energy: 0.1, stress: 0.4 },
+      sensory: { physical: 0.25, emotional: 0.25, mental: 0.15, energy: 0.2, stress: 0.15 },
     };
 
-    modelFilteredOrganScanPoints.forEach(point => {
-      const w = organWeights[point.organSystem] || { physical: 0.25, emotional: 0.25, energy: 0.25, stress: 0.25 };
-      let dysScore = Math.abs(physical) * w.physical + Math.abs(emotional) * w.emotional + Math.abs(energy) * w.energy + Math.abs(stress) * w.stress;
+    // Deterministic per-point variation using scan frequency as seed
+    const hashVariation = (freq: number, index: number): number => {
+      const x = Math.sin(freq * 12.9898 + index * 78.233) * 43758.5453;
+      return (x - Math.floor(x)) * 0.4 + 0.8; // range 0.8 - 1.2
+    };
+
+    modelFilteredOrganScanPoints.forEach((point, idx) => {
+      const w = organWeights[point.organSystem] || { physical: 0.25, emotional: 0.25, mental: 0.15, energy: 0.2, stress: 0.15 };
+      
+      // Use all 5 dimensions for richer scoring
+      let rawScore = Math.abs(physical) * w.physical 
+        + Math.abs(emotional) * w.emotional 
+        + Math.abs(mental) * w.mental
+        + Math.abs(energy) * w.energy 
+        + Math.abs(stress) * w.stress;
+      
+      // Non-linear amplification: moderate deviations produce meaningful scores
+      // power < 1 amplifies small-to-moderate values (e.g. 0.3 → 0.3^0.55 ≈ 0.52)
+      rawScore = Math.pow(Math.min(1, rawScore), 0.55);
+
+      // Per-point variation for realistic diversity
+      rawScore *= hashVariation(point.scanFrequency, idx);
       
       // Focus boost: higher dysregulation visibility for focused organs
       if (activeScanConfig?.focusList.some(f => f.relatedOrgans?.includes(point.organSystem))) {
-        dysScore *= 1.3;
+        rawScore *= 1.3;
       }
 
-      dysScore *= (1 - vectorAnalysis.attractorState.stability) + 0.3;
+      // Stability modifier (lower stability → higher dysregulation)
+      rawScore *= (1 - vectorAnalysis.attractorState.stability) + 0.5;
       
       // Scale to 0-6 range (Metatron-style 6-level scale)
-      const scaledScore = Math.min(6, Math.max(0, dysScore * 6));
+      const scaledScore = Math.min(6, Math.max(0, rawScore * 6));
       scores.set(point.id, scaledScore);
     });
 
