@@ -486,6 +486,28 @@ function ResonancePoint({
     </group>
   );
 }
+// Error Boundary für 3D-Modelle
+import React from 'react';
+
+class ErrorBoundary3D extends React.Component<
+  { children: React.ReactNode; fallback: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode; fallback: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error: Error) {
+    console.warn('3D Model load error (falling back to procedural):', error.message);
+  }
+  render() {
+    if (this.state.hasError) return this.props.fallback;
+    return this.props.children;
+  }
+}
 
 // Stilisiertes Körper-Modell (Prozedural)
 function HumanBodyModel({ opacity = 0.3 }: { opacity?: number }) {
