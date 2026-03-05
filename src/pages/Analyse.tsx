@@ -31,6 +31,7 @@ export interface TreatmentResult {
 
 const Analyse = () => {
   const [currentVectorAnalysis, setCurrentVectorAnalysis] = useState<VectorAnalysis | null>(null);
+  const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const [selectedFrequency, setSelectedFrequency] = useState<number | null>(null);
   const [treatmentResult, setTreatmentResult] = useState<TreatmentResult | null>(null);
   const [scanConfig, setScanConfig] = useState<NLSScanConfig | null>(null);
@@ -125,7 +126,7 @@ const Analyse = () => {
         </AnimatePresence>
 
         {/* Analyse-Komponenten */}
-        <ClientVectorInterface onVectorCreated={handleVectorCreated} />
+        <ClientVectorInterface onVectorCreated={handleVectorCreated} onClientSelected={setSelectedClientId} />
         <ClientVectorTrajectory3D vectorAnalysis={currentVectorAnalysis} />
         <AnatomyResonanceViewer 
           vectorAnalysis={currentVectorAnalysis} 
@@ -135,6 +136,7 @@ const Analyse = () => {
         />
         <MeridianDiagnosisPanel
           vectorAnalysis={currentVectorAnalysis}
+          clientId={selectedClientId || undefined}
           onFrequencySelect={handleFrequencySelect}
           onTreatmentComplete={handleTreatmentComplete}
           nlsDysregulationData={nlsDysregulationData}
