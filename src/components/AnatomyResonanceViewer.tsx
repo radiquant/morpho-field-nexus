@@ -1263,9 +1263,8 @@ const AnatomyResonanceViewer = ({
       startScan(scanPoints, config, new Map(), (point) => {
         setActiveOrganScanPoint(point);
       });
-      });
     }
-  }, [setSelectedOrganFilter, organScanPoints, startScan, nlsDysregulationScores, setActiveOrganScanPoint]);
+  }, [setSelectedOrganFilter, organScanPoints, startScan, setActiveOrganScanPoint]);
 
   // Akupunktur-Punkt auswählen
   const handleAcupointClick = (point: AcupuncturePoint, meridian: MeridianPath) => {
