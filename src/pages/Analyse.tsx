@@ -18,9 +18,13 @@ import FrequencyOutputModule from '@/components/FrequencyOutputModule';
 import RealtimeStatusWidget from '@/components/RealtimeStatusWidget';
 import TreatmentTrendAnalysis from '@/components/TreatmentTrendAnalysis';
 import BifurcationWarningWidget from '@/components/BifurcationWarningWidget';
+import RemedyDatabasePanel from '@/components/RemedyDatabasePanel';
+import TCMTrendAnalytics from '@/components/TCMTrendAnalytics';
+import SessionReportGenerator from '@/components/SessionReportGenerator';
 import SessionManagementPanel from '@/components/SessionManagementPanel';
 import Footer from '@/components/Footer';
 import { useSessionManagement } from '@/hooks/useSessionManagement';
+import { useChreodeTracking } from '@/hooks/useChreodeTracking';
 import type { VectorAnalysis } from '@/services/feldengine';
 import type { NLSScanConfig } from '@/components/NLSScanConfigPanel';
 
@@ -219,7 +223,10 @@ const Analyse = () => {
           nlsDysregulationData={nlsDysregulationData}
         />
         <FrequencyOutputModule />
-        
+        <RemedyDatabasePanel onSelectFrequency={handleFrequencySelect} />
+        <TCMTrendAnalytics clientId={selectedClientId} />
+        <SessionReportGenerator clientId={selectedClientId} />
+
         <Footer />
         <RealtimeStatusWidget />
       </main>
