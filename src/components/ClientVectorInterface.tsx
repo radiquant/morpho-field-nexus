@@ -1,9 +1,6 @@
 /**
  * Erweitertes Klienten-Vektor-Interface mit biometrischer Identifikation
  * Basierend auf René Thoms Feldengine-Theorie
- * 
- * Die State-Dimensionen werden primär durch Hardware-Entropie-Messungen bestimmt.
- * Manuelle Slider dienen nur als optionale Feinabstimmung.
  */
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -25,7 +22,11 @@ import {
   TrendingUp,
   Users,
   Cpu,
-  Radio
+  Radio,
+  Trash2,
+  Edit3,
+  Check,
+  X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -38,6 +39,7 @@ import { cn } from '@/lib/utils';
 import { ThomVectorEngine, type VectorAnalysis, type RecommendedFrequency } from '@/services/feldengine';
 import { useClientDatabase, type ClientRecord } from '@/hooks/useClientDatabase';
 import { useRealtimeHarmonization } from '@/hooks/useRealtimeHarmonization';
+import WordEnergyDBManager from '@/components/WordEnergyDBManager';
 
 // Biometrische Klienten-Daten
 interface BiometricData {
