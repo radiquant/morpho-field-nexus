@@ -1,10 +1,11 @@
-import { useRef, useMemo, useState, useCallback } from "react";
+import { useRef, useMemo, useState, useCallback, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Text, Grid, Line, Sphere } from "@react-three/drei";
+import { OrbitControls, Text, Grid, Line, Sphere, Html } from "@react-three/drei";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Info, Layers, Play, Pause, RotateCcw, Route } from "lucide-react";
+import { Info, Layers, Play, Pause, RotateCcw, Route, User } from "lucide-react";
 import * as THREE from "three";
+import type { VectorAnalysis } from '@/services/feldengine';
 
 // Find equilibrium x for given (a, b)
 const findStableX = (a: number, b: number): number => {
