@@ -360,19 +360,29 @@ export function useTreatmentSequence() {
   }, []);
 
   const stopOscillator = useCallback(() => {
+    // Stop AM modulator nodes
+    if (modulatorOscRef.current) {
+      try { modulatorOscRef.current.stop(); modulatorOscRef.current.disconnect(); } catch {}
+      modulatorOscRef.current = null;
+    }
+    if (modulatorGainRef.current) {
+      try { modulatorGainRef.current.disconnect(); } catch {}
+      modulatorGainRef.current = null;
+    }
+    if (carrierOscRef.current && carrierOscRef.current !== oscillatorRef.current) {
+      try { carrierOscRef.current.stop(); carrierOscRef.current.disconnect(); } catch {}
+    }
+    carrierOscRef.current = null;
+
     if (oscillatorRef.current) {
-      try {
-        oscillatorRef.current.stop();
-        oscillatorRef.current.disconnect();
-      } catch {}
+      try { oscillatorRef.current.stop(); oscillatorRef.current.disconnect(); } catch {}
       oscillatorRef.current = null;
     }
     if (gainNodeRef.current) {
-      try {
-        gainNodeRef.current.disconnect();
-      } catch {}
+      try { gainNodeRef.current.disconnect(); } catch {}
       gainNodeRef.current = null;
     }
+    isAMMode.current = false;
   }, []);
 
   // NEU: Retest und Continuous-Mode Handler
