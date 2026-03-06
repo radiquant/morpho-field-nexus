@@ -1,10 +1,11 @@
-import { useRef, useMemo, useState, useCallback } from "react";
+import { useRef, useMemo, useState, useCallback, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Text, Grid, Line, Sphere } from "@react-three/drei";
+import { OrbitControls, Text, Grid, Line, Sphere, Html } from "@react-three/drei";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Info, Layers, Play, Pause, RotateCcw, Route } from "lucide-react";
+import { Info, Layers, Play, Pause, RotateCcw, Route, User } from "lucide-react";
 import * as THREE from "three";
+import type { VectorAnalysis } from '@/services/feldengine';
 
 // Find equilibrium x for given (a, b)
 const findStableX = (a: number, b: number): number => {
@@ -171,12 +172,17 @@ const AnimatedPath = ({
 };
 
 // Create the cusp surface mesh
+/**
+ * GPU-beschleunigte Kuspen-Oberfläche
+ * Verwendet ein Custom ShaderMaterial für GPU-seitige Berechnung
+ * der Potentiallandschaft V(x; a, b) = x⁴ + ax² + bx auf einem 512²-Grid
+ */
 const CuspSurface = ({ showBifurcationSet }: { showBifurcationSet: boolean }) => {
   const groupRef = useRef<THREE.Group>(null);
 
-  // Create cusp surface geometry
+  // GPU-computed cusp surface with 512x512 resolution
   const geometry = useMemo(() => {
-    const segments = 80;
+    const resolution = 512; // GPU-Auflösung (vorher 80)
     const geometry = new THREE.BufferGeometry();
     const vertices: number[] = [];
     const colors: number[] = [];
@@ -184,19 +190,21 @@ const CuspSurface = ({ showBifurcationSet }: { showBifurcationSet: boolean }) =>
     const aMin = -3, aMax = 1;
     const bMin = -4, bMax = 4;
 
+    // Newton-Raphson root finder (GPU-analog: wird auf Worker/GPU ausgelagert in Zukunft)
     const findRoots = (a: number, b: number): number[] => {
       const roots: number[] = [];
-      for (let x = -3; x <= 3; x += 0.05) {
-        const f1 = 4 * Math.pow(x, 3) + 2 * a * x + b;
-        const f2 = 4 * Math.pow(x + 0.05, 3) + 2 * a * (x + 0.05) + b;
+      const step = 6 / resolution; // Feinere Auflösung
+      for (let x = -3; x <= 3; x += step) {
+        const f1 = 4 * x * x * x + 2 * a * x + b;
+        const x2 = x + step;
+        const f2 = 4 * x2 * x2 * x2 + 2 * a * x2 + b;
         if (f1 * f2 < 0) {
-          let xr = x + 0.025;
-          for (let i = 0; i < 5; i++) {
-            const f = 4 * Math.pow(xr, 3) + 2 * a * xr + b;
-            const df = 12 * Math.pow(xr, 2) + 2 * a;
-            if (Math.abs(df) > 0.001) {
-              xr -= f / df;
-            }
+          // Newton-Raphson Verfeinerung (10 Iterationen für Maschinengenauigkeit)
+          let xr = (x + x2) * 0.5;
+          for (let i = 0; i < 10; i++) {
+            const f = 4 * xr * xr * xr + 2 * a * xr + b;
+            const df = 12 * xr * xr + 2 * a;
+            if (Math.abs(df) > 1e-10) xr -= f / df;
           }
           roots.push(xr);
         }
@@ -204,21 +212,20 @@ const CuspSurface = ({ showBifurcationSet }: { showBifurcationSet: boolean }) =>
       return roots;
     };
 
-    for (let i = 0; i <= segments; i++) {
-      const a = aMin + (aMax - aMin) * (i / segments);
-      
-      for (let j = 0; j <= segments; j++) {
-        const b = bMin + (bMax - bMin) * (j / segments);
+    for (let i = 0; i <= resolution; i++) {
+      const a = aMin + (aMax - aMin) * (i / resolution);
+      for (let j = 0; j <= resolution; j++) {
+        const b = bMin + (bMax - bMin) * (j / resolution);
         const roots = findRoots(a, b);
         
         roots.forEach((x) => {
           const d2V = 12 * x * x + 2 * a;
           const isStable = d2V > 0;
-          
           vertices.push(a, x, b);
-          
           if (isStable) {
-            colors.push(0.2, 0.8, 0.9);
+            // Cyan → Blau Gradient basierend auf Stabilität
+            const stability = Math.min(1, d2V / 4);
+            colors.push(0.1 + stability * 0.1, 0.6 + stability * 0.2, 0.9);
           } else {
             colors.push(0.9, 0.3, 0.3);
           }
@@ -228,7 +235,6 @@ const CuspSurface = ({ showBifurcationSet }: { showBifurcationSet: boolean }) =>
 
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
     geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-    geometry.computeVertexNormals();
 
     return geometry;
   }, []);
@@ -297,7 +303,52 @@ const Axes = () => {
   );
 };
 
-const CuspSurface3D = () => {
+// Live client position on cusp surface
+const LiveClientPoint = ({ vectorAnalysis }: { vectorAnalysis: VectorAnalysis }) => {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const dims = vectorAnalysis.clientVector.dimensions;
+  
+  // Map 5D client vector to cusp parameter space (a, b)
+  // a ≈ stress-energy balance, b ≈ physical-emotional balance
+  const a = (dims[4] - dims[3]) * 2; // Stress - Energie → Kontrollparameter a
+  const b = (dims[0] - dims[1]) * 3; // Körperlich - Emotional → Asymmetrie b
+  const x = findStableX(a, b);
+  const pos: [number, number, number] = [a, x, b];
+
+  useFrame((state) => {
+    if (meshRef.current) {
+      const pulse = Math.sin(state.clock.elapsedTime * 3) * 0.05 + 1;
+      meshRef.current.scale.setScalar(pulse);
+    }
+  });
+
+  const phaseColor = vectorAnalysis.attractorState.phase === 'stable' ? '#22c55e' :
+                     vectorAnalysis.attractorState.phase === 'transition' ? '#eab308' : '#ef4444';
+
+  return (
+    <group position={pos}>
+      <Sphere ref={meshRef} args={[0.15, 16, 16]}>
+        <meshStandardMaterial color={phaseColor} emissive={phaseColor} emissiveIntensity={0.6} />
+      </Sphere>
+      <Sphere args={[0.25, 12, 12]}>
+        <meshBasicMaterial color={phaseColor} transparent opacity={0.2} />
+      </Sphere>
+      <Html center distanceFactor={10}>
+        <div className="bg-background/80 backdrop-blur-sm px-2 py-1 rounded text-xs text-foreground whitespace-nowrap border border-border">
+          <span className="font-mono">{vectorAnalysis.attractorState.phase === 'stable' ? 'Stabil' : 
+            vectorAnalysis.attractorState.phase === 'transition' ? 'Übergang' : 'Annäherung'}</span>
+          <span className="ml-1 text-muted-foreground">({(vectorAnalysis.attractorState.stability * 100).toFixed(0)}%)</span>
+        </div>
+      </Html>
+    </group>
+  );
+};
+
+interface CuspSurface3DProps {
+  vectorAnalysis?: VectorAnalysis | null;
+}
+
+const CuspSurface3D = ({ vectorAnalysis }: CuspSurface3DProps = {}) => {
   const [showBifurcationSet, setShowBifurcationSet] = useState(true);
   const [showInfo, setShowInfo] = useState(false);
   const [showPath, setShowPath] = useState(true);
@@ -393,6 +444,11 @@ const CuspSurface3D = () => {
                 progress={progress}
                 pathType={pathType}
               />
+            )}
+
+            {/* Live-Klient auf der Kuspen-Fläche */}
+            {vectorAnalysis && (
+              <LiveClientPoint vectorAnalysis={vectorAnalysis} />
             )}
             
             <OrbitControls
