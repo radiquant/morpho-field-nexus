@@ -616,13 +616,21 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSel
 
               {/* Feld-Signatur Anzeige */}
               {currentAnalysis && (
-                <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
-                  <p className="text-xs text-muted-foreground mb-1">Feld-Signatur</p>
-                  <p className="font-mono text-sm text-primary">
+                <div className="p-2 bg-primary/5 border border-primary/20 rounded-lg">
+                  <p className="text-[10px] text-muted-foreground">Feld-Signatur</p>
+                  <p className="font-mono text-xs text-primary truncate">
                     {currentAnalysis.fieldSignature.hash}
                   </p>
                 </div>
               )}
+
+              {/* Wort-Energie DB Manager */}
+              <div className="pt-3 border-t border-border">
+                <WordEnergyDBManager
+                  vectorAnalysis={currentAnalysis}
+                  onMultiFociSelected={handleMultiFociSelected}
+                />
+              </div>
             </div>
           </motion.div>
 
