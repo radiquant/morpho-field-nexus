@@ -38,18 +38,72 @@ const Analyse = () => {
   const [treatmentResult, setTreatmentResult] = useState<TreatmentResult | null>(null);
   const [scanConfig, setScanConfig] = useState<NLSScanConfig | null>(null);
   const [nlsDysregulationData, setNlsDysregulationData] = useState<NLSDysregulationData | null>(null);
+  const [sessionElapsed, setSessionElapsed] = useState(0);
+  const sessionTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const handleVectorCreated = useCallback((analysis: VectorAnalysis) => {
+  // Session-Management
+  const {
+    sessions,
+    activeSession,
+    isLoading: sessionsLoading,
+    loadSessions,
+    startSession,
+    completeSession,
+  } = useSessionManagement();
+
+  // Session-Timer
+  useEffect(() => {
+    if (activeSession) {
+      const startTime = activeSession.createdAt.getTime();
+      sessionTimerRef.current = setInterval(() => {
+        setSessionElapsed(Math.floor((Date.now() - startTime) / 1000));
+      }, 1000);
+    } else {
+      setSessionElapsed(0);
+    }
+    return () => {
+      if (sessionTimerRef.current) clearInterval(sessionTimerRef.current);
+    };
+  }, [activeSession]);
+
+  // Bei Klientenwahl: Sessions laden und neue Session starten
+  const handleClientSelected = useCallback(async (clientId: string | null) => {
+    setSelectedClientId(clientId);
+    if (clientId) {
+      await loadSessions(clientId);
+    }
+  }, [loadSessions]);
+
+  // Auto-Start Session bei Vektor-Erstellung
+  const handleVectorCreated = useCallback(async (analysis: VectorAnalysis) => {
     setCurrentVectorAnalysis(analysis);
-  }, []);
+    if (selectedClientId && !activeSession) {
+      await startSession(selectedClientId, analysis);
+    }
+  }, [selectedClientId, activeSession, startSession]);
 
   const handleFrequencySelect = useCallback((frequency: number) => {
     setSelectedFrequency(frequency);
   }, []);
 
-  const handleTreatmentComplete = useCallback((result: TreatmentResult) => {
+  const handleTreatmentComplete = useCallback(async (result: TreatmentResult) => {
     setTreatmentResult(result);
-  }, []);
+    // Session automatisch abschließen
+    if (activeSession) {
+      await completeSession(activeSession.id, undefined, {
+        beforeDimensions: result.beforeDimensions,
+        afterDimensions: result.afterDimensions,
+        cyclesCompleted: result.cyclesCompleted,
+        pointsProcessed: result.pointsProcessed,
+      }, result.treatmentDuration);
+    }
+  }, [activeSession, completeSession]);
+
+  const handleCompleteSession = useCallback(async () => {
+    if (activeSession) {
+      await completeSession(activeSession.id, undefined, undefined, sessionElapsed);
+    }
+  }, [activeSession, completeSession, sessionElapsed]);
 
   const dismissTrendAnalysis = useCallback(() => {
     setTreatmentResult(null);
