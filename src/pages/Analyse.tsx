@@ -17,6 +17,7 @@ import MeridianDiagnosisPanel from '@/components/MeridianDiagnosisPanel';
 import FrequencyOutputModule from '@/components/FrequencyOutputModule';
 import RealtimeStatusWidget from '@/components/RealtimeStatusWidget';
 import TreatmentTrendAnalysis from '@/components/TreatmentTrendAnalysis';
+import BifurcationWarningWidget from '@/components/BifurcationWarningWidget';
 import SessionManagementPanel from '@/components/SessionManagementPanel';
 import Footer from '@/components/Footer';
 import { useSessionManagement } from '@/hooks/useSessionManagement';

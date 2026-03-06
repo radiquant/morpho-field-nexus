@@ -4,7 +4,8 @@ export type {
   FieldSignature, 
   StateDimensions, 
   VectorAnalysis,
-  RecommendedFrequency 
+  RecommendedFrequency,
+  HardwareEntropyInput,
 } from './ThomVectorEngine';
 
 export { BifurcationDetector } from './BifurcationDetector';
