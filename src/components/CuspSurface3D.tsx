@@ -303,7 +303,52 @@ const Axes = () => {
   );
 };
 
-const CuspSurface3D = () => {
+// Live client position on cusp surface
+const LiveClientPoint = ({ vectorAnalysis }: { vectorAnalysis: VectorAnalysis }) => {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const dims = vectorAnalysis.clientVector.dimensions;
+  
+  // Map 5D client vector to cusp parameter space (a, b)
+  // a ≈ stress-energy balance, b ≈ physical-emotional balance
+  const a = (dims[4] - dims[3]) * 2; // Stress - Energie → Kontrollparameter a
+  const b = (dims[0] - dims[1]) * 3; // Körperlich - Emotional → Asymmetrie b
+  const x = findStableX(a, b);
+  const pos: [number, number, number] = [a, x, b];
+
+  useFrame((state) => {
+    if (meshRef.current) {
+      const pulse = Math.sin(state.clock.elapsedTime * 3) * 0.05 + 1;
+      meshRef.current.scale.setScalar(pulse);
+    }
+  });
+
+  const phaseColor = vectorAnalysis.attractorState.phase === 'stable' ? '#22c55e' :
+                     vectorAnalysis.attractorState.phase === 'transition' ? '#eab308' : '#ef4444';
+
+  return (
+    <group position={pos}>
+      <Sphere ref={meshRef} args={[0.15, 16, 16]}>
+        <meshStandardMaterial color={phaseColor} emissive={phaseColor} emissiveIntensity={0.6} />
+      </Sphere>
+      <Sphere args={[0.25, 12, 12]}>
+        <meshBasicMaterial color={phaseColor} transparent opacity={0.2} />
+      </Sphere>
+      <Html center distanceFactor={10}>
+        <div className="bg-background/80 backdrop-blur-sm px-2 py-1 rounded text-xs text-foreground whitespace-nowrap border border-border">
+          <span className="font-mono">{vectorAnalysis.attractorState.phase === 'stable' ? 'Stabil' : 
+            vectorAnalysis.attractorState.phase === 'transition' ? 'Übergang' : 'Annäherung'}</span>
+          <span className="ml-1 text-muted-foreground">({(vectorAnalysis.attractorState.stability * 100).toFixed(0)}%)</span>
+        </div>
+      </Html>
+    </group>
+  );
+};
+
+interface CuspSurface3DProps {
+  vectorAnalysis?: VectorAnalysis | null;
+}
+
+const CuspSurface3D = ({ vectorAnalysis }: CuspSurface3DProps = {}) => {
   const [showBifurcationSet, setShowBifurcationSet] = useState(true);
   const [showInfo, setShowInfo] = useState(false);
   const [showPath, setShowPath] = useState(true);
