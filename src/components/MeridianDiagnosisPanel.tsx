@@ -905,7 +905,7 @@ function TreatmentInProgress({
           </div>
           <div className="text-right">
             <p className="text-2xl font-mono text-primary">
-              {progress.currentPoint?.frequency} Hz
+              {progress.currentPoint?.frequency != null ? `${Number(progress.currentPoint.frequency).toFixed(2)} Hz` : '— Hz'}
             </p>
             <p className="text-xs text-muted-foreground">
               {formatTime(progress.remainingTime)} verbleibend
@@ -985,8 +985,8 @@ function TreatmentInProgress({
               <span className={isDone ? 'line-through' : ''}>
                 {point.meridianName} - {point.pointName}
               </span>
-              <span className={`ml-auto text-xs ${elementColor.text}`}>
-                {point.frequency} Hz
+              <span className={`ml-auto text-xs font-mono ${elementColor.text}`}>
+                {point.frequency != null ? `${Number(point.frequency).toFixed(2)} Hz` : ''}
               </span>
             </button>
           );
