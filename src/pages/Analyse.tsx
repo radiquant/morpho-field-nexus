@@ -181,8 +181,21 @@ const Analyse = () => {
           )}
         </AnimatePresence>
 
+        {/* Session-Management */}
+        {selectedClientId && (
+          <div className="container mx-auto px-4 pt-4">
+            <SessionManagementPanel
+              activeSession={activeSession}
+              sessions={sessions}
+              isLoading={sessionsLoading}
+              onCompleteSession={activeSession ? handleCompleteSession : undefined}
+              sessionElapsed={sessionElapsed}
+            />
+          </div>
+        )}
+
         {/* Analyse-Komponenten */}
-        <ClientVectorInterface onVectorCreated={handleVectorCreated} onClientSelected={setSelectedClientId} />
+        <ClientVectorInterface onVectorCreated={handleVectorCreated} onClientSelected={handleClientSelected} />
         <ClientVectorTrajectory3D vectorAnalysis={currentVectorAnalysis} />
         <AnatomyResonanceViewer 
           vectorAnalysis={currentVectorAnalysis} 

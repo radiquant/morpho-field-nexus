@@ -33,8 +33,8 @@
 
 | Phase | Aufgabe | Status |
 |-------|---------|--------|
-| **Phase 3** | Session-Management & Persistenz | 🔄 In Arbeit |
-| **Phase 4** | Resonanz-Ergebnis-DB | ⬜ Offen |
+| **Phase 3** | Session-Management & Persistenz | ✅ Abgeschlossen |
+| **Phase 4** | Resonanz-Ergebnis-DB | ✅ Abgeschlossen |
 | **Phase 4b** | Remedy-Datenbank | ⬜ Offen |
 | **Phase 5** | Harmonisierungsmanager (Verfeinerung) | 🔄 In Arbeit |
 | **Phase 6** | TCM/Wu-Xing Trendanalytik | ⬜ Offen |
