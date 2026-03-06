@@ -6,3 +6,12 @@ export type {
   VectorAnalysis,
   RecommendedFrequency 
 } from './ThomVectorEngine';
+
+export { BifurcationDetector } from './BifurcationDetector';
+export type {
+  BifurcationEvent,
+  BifurcationType,
+  RecommendedAction,
+  BifurcationConfig,
+  DetectorStatistics,
+} from './BifurcationDetector';
