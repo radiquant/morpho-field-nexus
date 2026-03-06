@@ -64,10 +64,10 @@ export interface TreatmentSnapshot {
   phase: 'before' | 'after_cycle' | 'after_retest' | 'final';
 }
 
-const DEFAULT_IMPULSE_SECONDS = 30;
-const DEFAULT_PAUSE_SECONDS = 5;
-const DEFAULT_TOTAL_TREATMENT_MINUTES = 15;
-const DEFAULT_RETEST_PAUSE_MINUTES = 2;
+const DEFAULT_IMPULSE_SECONDS = 21;
+const DEFAULT_PAUSE_SECONDS = 0;
+const DEFAULT_TOTAL_TREATMENT_MINUTES = 60;
+const DEFAULT_RETEST_PAUSE_MINUTES = 21;
 
 const VESSEL_INDICATIONS: Record<string, string[]> = {
   DU: ['stress', 'mental', 'spine', 'yang_deficiency'],
@@ -241,21 +241,30 @@ export function useTreatmentSequence() {
   const startOscillator = useCallback(async (frequency: number) => {
     try {
       if (!audioContextRef.current) {
-        audioContextRef.current = new AudioContext();
+        audioContextRef.current = new AudioContext({
+          sampleRate: 48000,
+          latencyHint: 'playback', // Prioritize smooth audio over low latency
+        });
       }
       // Auto-resume suspended AudioContext (happens during heavy 3D rendering)
       if (audioContextRef.current.state === 'suspended') {
         await audioContextRef.current.resume();
       }
+      // Reuse existing oscillator if possible - just change frequency
+      if (oscillatorRef.current && gainNodeRef.current) {
+        oscillatorRef.current.frequency.setValueAtTime(frequency, audioContextRef.current.currentTime);
+        gainNodeRef.current.gain.setValueAtTime(0.8, audioContextRef.current.currentTime);
+        return;
+      }
       stopOscillator();
       const ctx = audioContextRef.current;
-      if (ctx.state !== 'running') return; // Don't create oscillator if context not ready
+      if (ctx.state !== 'running') return;
       const oscillator = ctx.createOscillator();
       oscillator.type = 'sine';
       oscillator.frequency.setValueAtTime(frequency, ctx.currentTime);
       const gainNode = ctx.createGain();
-      gainNode.gain.setValueAtTime(0, ctx.currentTime);
-      gainNode.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.5);
+      // Constant full amplitude - no fade, no ramp
+      gainNode.gain.setValueAtTime(0.8, ctx.currentTime);
       oscillator.connect(gainNode);
       gainNode.connect(ctx.destination);
       oscillator.start();
@@ -263,28 +272,24 @@ export function useTreatmentSequence() {
       gainNodeRef.current = gainNode;
     } catch (error) {
       console.warn('[Treatment] Oscillator error (auto-recovering):', error);
-      // Reset references to allow recovery
       oscillatorRef.current = null;
       gainNodeRef.current = null;
     }
   }, []);
 
   const stopOscillator = useCallback(() => {
-    if (gainNodeRef.current && audioContextRef.current) {
-      try {
-        gainNodeRef.current.gain.linearRampToValueAtTime(0, audioContextRef.current.currentTime + 0.3);
-      } catch {}
-    }
     if (oscillatorRef.current) {
       try {
-        setTimeout(() => {
-          oscillatorRef.current?.stop();
-          oscillatorRef.current?.disconnect();
-          oscillatorRef.current = null;
-        }, 300);
-      } catch {
-        oscillatorRef.current = null;
-      }
+        oscillatorRef.current.stop();
+        oscillatorRef.current.disconnect();
+      } catch {}
+      oscillatorRef.current = null;
+    }
+    if (gainNodeRef.current) {
+      try {
+        gainNodeRef.current.disconnect();
+      } catch {}
+      gainNodeRef.current = null;
     }
   }, []);
 
@@ -427,11 +432,11 @@ export function useTreatmentSequence() {
       const newTotalElapsed = prev.elapsedTotalTime + 1;
       const isImpulsePhase = newElapsed <= impulseSeconds;
 
-      // Audio-Steuerung
+      // Audio-Steuerung: Konstante Amplitude, kein Fading
       if (!isImpulsePhase && prev.isImpulsePhase && gainNodeRef.current && audioContextRef.current) {
-        gainNodeRef.current.gain.linearRampToValueAtTime(0.05, audioContextRef.current.currentTime + 0.2);
+        gainNodeRef.current.gain.setValueAtTime(0, audioContextRef.current.currentTime);
       } else if (isImpulsePhase && !prev.isImpulsePhase && gainNodeRef.current && audioContextRef.current) {
-        gainNodeRef.current.gain.linearRampToValueAtTime(0.3, audioContextRef.current.currentTime + 0.2);
+        gainNodeRef.current.gain.setValueAtTime(0.8, audioContextRef.current.currentTime);
       }
 
       if (newElapsed >= pointDuration) {
@@ -468,7 +473,7 @@ export function useTreatmentSequence() {
     extraPoints?: TreatmentPoint[]
   ) => {
     const effectiveOptions: TreatmentOptions = {
-      pointsPerMeridian: options?.pointsPerMeridian ?? 3,
+      pointsPerMeridian: options?.pointsPerMeridian ?? 7,
       durationPerPoint: (options?.impulseSeconds || DEFAULT_IMPULSE_SECONDS) + (options?.pauseSeconds || DEFAULT_PAUSE_SECONDS),
       totalTreatmentMinutes: options?.totalTreatmentMinutes ?? DEFAULT_TOTAL_TREATMENT_MINUTES,
       impulseSeconds: options?.impulseSeconds ?? DEFAULT_IMPULSE_SECONDS,

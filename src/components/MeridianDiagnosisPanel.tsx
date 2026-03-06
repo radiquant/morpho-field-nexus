@@ -126,8 +126,8 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
   
   // Zeiteinstellung: Sekunden oder Minuten
   const [timeUnit, setTimeUnit] = useState<TimeUnit>('seconds');
-  const [durationValue, setDurationValue] = useState(60); // 60 Sekunden oder 1 Minute
-  const [pointsPerMeridian, setPointsPerMeridian] = useState(3);
+  const [durationValue, setDurationValue] = useState(21); // 21 Sekunden Standard
+  const [pointsPerMeridian, setPointsPerMeridian] = useState(7);
   
   // Hardware-Methoden Auswahl
   const [selectedMethods, setSelectedMethods] = useState<string[]>(['webaudio']);
@@ -141,7 +141,7 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
 
   // Nachtestungs-Einstellungen
   const [retestEnabled, setRetestEnabled] = useState(true);
-  const [retestPauseMinutes, setRetestPauseMinutes] = useState(5);
+  const [retestPauseMinutes, setRetestPauseMinutes] = useState(21);
   const [isRetestPending, setIsRetestPending] = useState(false);
   const [retestCountdown, setRetestCountdown] = useState(0);
   const [preHarmonizationPoints, setPreHarmonizationPoints] = useState<TreatmentPoint[]>([]);
@@ -905,7 +905,7 @@ function TreatmentInProgress({
           </div>
           <div className="text-right">
             <p className="text-2xl font-mono text-primary">
-              {progress.currentPoint?.frequency} Hz
+              {progress.currentPoint?.frequency != null ? `${Number(progress.currentPoint.frequency).toFixed(2)} Hz` : '— Hz'}
             </p>
             <p className="text-xs text-muted-foreground">
               {formatTime(progress.remainingTime)} verbleibend
@@ -985,8 +985,8 @@ function TreatmentInProgress({
               <span className={isDone ? 'line-through' : ''}>
                 {point.meridianName} - {point.pointName}
               </span>
-              <span className={`ml-auto text-xs ${elementColor.text}`}>
-                {point.frequency} Hz
+              <span className={`ml-auto text-xs font-mono ${elementColor.text}`}>
+                {point.frequency != null ? `${Number(point.frequency).toFixed(2)} Hz` : ''}
               </span>
             </button>
           );
