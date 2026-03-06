@@ -377,10 +377,13 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSel
         clientId = newClient.id;
         setSavedClient(newClient);
         onClientSelected?.(newClient.id);
+      }
 
-        // Foto hochladen falls vorhanden
-        if (biometric.photo) {
-          await uploadClientPhoto(clientId, biometric.photo);
+      // Foto hochladen falls vorhanden (für neue UND bestehende Klienten)
+      if (biometric.photo && clientId) {
+        const photoUrl = await uploadClientPhoto(clientId, biometric.photo);
+        if (photoUrl) {
+          setBiometric(prev => ({ ...prev, photoPreview: photoUrl, photo: null }));
         }
       }
 
