@@ -36,7 +36,9 @@
 | **Phase 3** | Session-Management & Persistenz | ✅ Abgeschlossen |
 | **Phase 4** | Resonanz-Ergebnis-DB | ✅ Abgeschlossen |
 | **Phase 4b** | Remedy-Datenbank | ⬜ Offen |
-| **Phase 5** | Harmonisierungsmanager (Verfeinerung) | 🔄 In Arbeit |
+| **Phase 4c** | Wort-Energie DB Manager & Multifokusse | ✅ Abgeschlossen |
+| **Phase 5** | Harmonisierungsmanager (Verfeinerung) | ✅ Abgeschlossen |
+| **Phase 5b** | Harmonisierungs-Stabilität (3D-View) | ✅ Abgeschlossen |
 | **Phase 6** | TCM/Wu-Xing Trendanalytik | ⬜ Offen |
 | **Phase 7** | Berichtswesen (PDF/HTML) | ⬜ Offen |
 | **Phase 8** | NLS-Workflows (Erweiterung) | ✅ Abgeschlossen |
