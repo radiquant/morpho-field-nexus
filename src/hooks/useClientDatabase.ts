@@ -295,10 +295,70 @@ export function useClientDatabase() {
     }
   }, []);
 
+  // Klient aktualisieren
+  const updateClient = useCallback(async (
+    clientId: string,
+    updates: Partial<{
+      firstName: string;
+      lastName: string;
+      birthDate: Date;
+      birthPlace: string;
+      notes: string;
+    }>
+  ): Promise<boolean> => {
+    setIsLoading(true);
+    try {
+      const dbUpdates: Record<string, unknown> = {};
+      if (updates.firstName !== undefined) dbUpdates.first_name = updates.firstName;
+      if (updates.lastName !== undefined) dbUpdates.last_name = updates.lastName;
+      if (updates.birthDate !== undefined) dbUpdates.birth_date = updates.birthDate.toISOString().split('T')[0];
+      if (updates.birthPlace !== undefined) dbUpdates.birth_place = updates.birthPlace;
+      if (updates.notes !== undefined) dbUpdates.notes = updates.notes;
+
+      const { error } = await supabase
+        .from('clients')
+        .update(dbUpdates)
+        .eq('id', clientId);
+
+      if (error) throw error;
+      toast.success('Klient aktualisiert');
+      return true;
+    } catch (error) {
+      console.error('Error updating client:', error);
+      toast.error('Fehler beim Aktualisieren');
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // Klient löschen
+  const deleteClient = useCallback(async (clientId: string): Promise<boolean> => {
+    setIsLoading(true);
+    try {
+      const { error } = await supabase
+        .from('clients')
+        .delete()
+        .eq('id', clientId);
+
+      if (error) throw error;
+      toast.success('Klient gelöscht');
+      return true;
+    } catch (error) {
+      console.error('Error deleting client:', error);
+      toast.error('Fehler beim Löschen');
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   return {
     isLoading,
     clients,
     createClient,
+    updateClient,
+    deleteClient,
     loadClients,
     getClient,
     saveClientVector,
