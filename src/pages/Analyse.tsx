@@ -195,6 +195,13 @@ const Analyse = () => {
           </div>
         )}
 
+        {/* Bifurkations-Warnung */}
+        {currentVectorAnalysis && (
+          <div className="container mx-auto px-4 pt-4">
+            <BifurcationWarningWidget vectorAnalysis={currentVectorAnalysis} />
+          </div>
+        )}
+
         {/* Analyse-Komponenten */}
         <ClientVectorInterface onVectorCreated={handleVectorCreated} onClientSelected={handleClientSelected} />
         <ClientVectorTrajectory3D vectorAnalysis={currentVectorAnalysis} />
