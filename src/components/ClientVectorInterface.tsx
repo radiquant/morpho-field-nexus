@@ -536,12 +536,12 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSel
               )}
             </AnimatePresence>
 
-            <div className="space-y-4">
-              {/* Foto-Upload */}
-              <div className="flex flex-col items-center gap-4 mb-6">
+            <div className="space-y-3">
+              {/* Foto-Upload (kompakt) */}
+              <div className="flex items-center gap-3">
                 <div 
                   className={cn(
-                    "w-24 h-24 rounded-full border-2 border-dashed border-border",
+                    "w-14 h-14 rounded-full border-2 border-dashed border-border shrink-0",
                     "flex items-center justify-center overflow-hidden cursor-pointer",
                     "hover:border-primary/50 transition-colors",
                     biometric.photoPreview && "border-solid border-primary/30"
@@ -549,30 +549,14 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSel
                   onClick={() => fileInputRef.current?.click()}
                 >
                   {biometric.photoPreview ? (
-                    <img 
-                      src={biometric.photoPreview} 
-                      alt="Klient" 
-                      className="w-full h-full object-cover"
-                    />
+                    <img src={biometric.photoPreview} alt="Klient" className="w-full h-full object-cover" />
                   ) : (
-                    <Camera className="w-8 h-8 text-muted-foreground" />
+                    <Camera className="w-5 h-5 text-muted-foreground" />
                   )}
                 </div>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handlePhotoUpload}
-                  className="hidden"
-                />
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="gap-2"
-                >
-                  <Upload className="w-4 h-4" />
-                  Foto hochladen
+                <input ref={fileInputRef} type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+                <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()} className="gap-2 h-8 text-xs">
+                  <Upload className="w-3 h-3" /> Foto
                 </Button>
               </div>
 
