@@ -256,12 +256,46 @@ export class ThomVectorEngine {
   }
 
   /**
+   * Hardware-Entropie-Modulation (±10%)
+   * Nutzt nicht-deterministische Hardware-Fluktuationen als Proxy
+   * für morphogenetische Feld-Fluktuationen nach Thom.
+   * 
+   * Quellen: CPU-Thermal-Noise, GPU-Shader-Jitter, RAM-Timing-Varianz
+   */
+  static applyHardwareEntropyModulation(
+    dimensions: number[],
+    entropyData?: HardwareEntropyInput | null
+  ): number[] {
+    if (!entropyData) return dimensions;
+
+    const { cpuEntropy = 0, gpuEntropy = 0, ramEntropy = 0, latencyEntropy = 0 } = entropyData;
+    const combinedEntropy = (cpuEntropy + gpuEntropy + ramEntropy + latencyEntropy) / 4;
+
+    // Maximale Modulation: ±10% pro Dimension
+    const MAX_MODULATION = 0.10;
+
+    return dimensions.map((d, i) => {
+      // Jede Dimension bekommt einen leicht unterschiedlichen Entropie-Offset
+      // basierend auf verschiedenen Entropie-Quellen
+      const sources = [cpuEntropy, gpuEntropy, ramEntropy, latencyEntropy, combinedEntropy];
+      const entropyForDim = sources[i % sources.length];
+
+      // Sinus-basierte Streuung für natürliche Variation
+      const phase = (i * 1.618033988749895) % 1; // Goldener Schnitt für Gleichverteilung
+      const modulation = Math.sin(entropyForDim * Math.PI * 2 + phase * Math.PI) * MAX_MODULATION;
+
+      return Math.max(-1, Math.min(1, d + modulation * combinedEntropy));
+    });
+  }
+
+  /**
    * Berechnet den vollständigen Klienten-Vektor mit Feld-Signatur
    */
   static calculateClientVector(
     biometricData: BiometricClientData,
     stateDimensions: StateDimensions,
-    sessionId: string
+    sessionId: string,
+    entropyData?: HardwareEntropyInput | null
   ): VectorAnalysis {
     const fieldSignature = this.calculateFieldSignature(biometricData);
     
@@ -275,11 +309,14 @@ export class ThomVectorEngine {
     ];
 
     // Kombinierter Vektor: Feld-Signatur + Zustand
-    const combinedDimensions = stateVector.map((s, i) => {
+    let combinedDimensions = stateVector.map((s, i) => {
       const fieldComponent = fieldSignature.combinedVector[i] || 0;
       // Gewichtete Kombination: 30% Feld-Signatur, 70% aktueller Zustand
       return 0.3 * fieldComponent + 0.7 * s;
     });
+
+    // Hardware-Entropie-Modulation (±10%)
+    combinedDimensions = this.applyHardwareEntropyModulation(combinedDimensions, entropyData);
 
     // Attraktor-Berechnung
     const attractorState = this.calculateAttractorState(combinedDimensions, fieldSignature);
