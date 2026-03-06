@@ -1,9 +1,6 @@
 /**
  * Erweitertes Klienten-Vektor-Interface mit biometrischer Identifikation
  * Basierend auf René Thoms Feldengine-Theorie
- * 
- * Die State-Dimensionen werden primär durch Hardware-Entropie-Messungen bestimmt.
- * Manuelle Slider dienen nur als optionale Feinabstimmung.
  */
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -25,7 +22,11 @@ import {
   TrendingUp,
   Users,
   Cpu,
-  Radio
+  Radio,
+  Trash2,
+  Edit3,
+  Check,
+  X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -38,6 +39,7 @@ import { cn } from '@/lib/utils';
 import { ThomVectorEngine, type VectorAnalysis, type RecommendedFrequency } from '@/services/feldengine';
 import { useClientDatabase, type ClientRecord } from '@/hooks/useClientDatabase';
 import { useRealtimeHarmonization } from '@/hooks/useRealtimeHarmonization';
+import WordEnergyDBManager from '@/components/WordEnergyDBManager';
 
 // Biometrische Klienten-Daten
 interface BiometricData {
@@ -125,8 +127,12 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSel
   const [showClientList, setShowClientList] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { createClient, loadClients, saveClientVector, uploadClientPhoto, isLoading } = useClientDatabase();
+  const { createClient, updateClient, deleteClient, loadClients, saveClientVector, uploadClientPhoto, isLoading } = useClientDatabase();
   const { state: hardwareState, initialize: initializeHardware } = useRealtimeHarmonization();
+  
+  // Client edit state
+  const [editingClient, setEditingClient] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({ firstName: '', lastName: '', birthPlace: '', notes: '' });
 
   // Hardware initialisieren beim Mount
   useEffect(() => {
@@ -221,8 +227,72 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSel
     setSavedClient(client);
     onClientSelected?.(client.id);
     setShowClientList(false);
+    setEditingClient(null);
     toast.success(`Klient ${client.firstName} ${client.lastName} geladen`);
   }, [onClientSelected]);
+
+  // Klient bearbeiten
+  const handleEditClient = useCallback((client: ClientRecord, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingClient(client.id);
+    setEditForm({
+      firstName: client.firstName,
+      lastName: client.lastName,
+      birthPlace: client.birthPlace,
+      notes: client.notes || '',
+    });
+  }, []);
+
+  const handleSaveEdit = useCallback(async (clientId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const success = await updateClient(clientId, editForm);
+    if (success) {
+      setEditingClient(null);
+      const updated = await loadClients();
+      setExistingClients(updated);
+      // Update current if editing active client
+      if (savedClient?.id === clientId) {
+        const updatedClient = updated.find(c => c.id === clientId);
+        if (updatedClient) {
+          setSavedClient(updatedClient);
+          setBiometric(prev => ({
+            ...prev,
+            firstName: updatedClient.firstName,
+            lastName: updatedClient.lastName,
+            birthPlace: updatedClient.birthPlace,
+          }));
+        }
+      }
+    }
+  }, [editForm, updateClient, loadClients, savedClient]);
+
+  const handleDeleteClient = useCallback(async (clientId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!confirm('Klient wirklich löschen? Alle zugehörigen Daten werden entfernt.')) return;
+    const success = await deleteClient(clientId);
+    if (success) {
+      if (savedClient?.id === clientId) {
+        setBiometric(defaultBiometric);
+        setDimensions(defaultDimensions);
+        setPrimaryConcern('');
+        setNotes('');
+        setCurrentAnalysis(null);
+        setSavedClient(null);
+        onClientSelected?.(null);
+      }
+      const updated = await loadClients();
+      setExistingClients(updated);
+    }
+  }, [deleteClient, loadClients, savedClient, onClientSelected]);
+
+  // Multi-Foci handler from WordEnergyDBManager
+  const handleMultiFociSelected = useCallback((foci: string[]) => {
+    setPrimaryConcern(prev => {
+      const existing = prev.trim();
+      const fociStr = `[Multifokusse: ${foci.join(', ')}]`;
+      return existing ? `${fociStr}\n${existing}` : fociStr;
+    });
+  }, []);
 
   // Vektor-Analyse durchführen
   const analyzeVector = useCallback(async () => {
@@ -307,10 +377,13 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSel
         clientId = newClient.id;
         setSavedClient(newClient);
         onClientSelected?.(newClient.id);
+      }
 
-        // Foto hochladen falls vorhanden
-        if (biometric.photo) {
-          await uploadClientPhoto(clientId, biometric.photo);
+      // Foto hochladen falls vorhanden (für neue UND bestehende Klienten)
+      if (biometric.photo && clientId) {
+        const photoUrl = await uploadClientPhoto(clientId, biometric.photo);
+        if (photoUrl) {
+          setBiometric(prev => ({ ...prev, photoPreview: photoUrl, photo: null }));
         }
       }
 
@@ -408,47 +481,70 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSel
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="mb-6 max-h-48 overflow-y-auto space-y-2"
+                  className="mb-4 max-h-48 overflow-y-auto space-y-1"
                 >
                   {existingClients.map((client) => (
-                    <button
+                    <div
                       key={client.id}
-                      onClick={() => selectExistingClient(client)}
                       className={cn(
-                        "w-full p-3 rounded-lg text-left transition-colors",
+                        "w-full p-2 rounded-lg text-left transition-colors",
                         "bg-muted/30 hover:bg-primary/10 border border-transparent",
                         savedClient?.id === client.id && "border-primary/50 bg-primary/10"
                       )}
                     >
-                      <div className="flex items-center gap-3">
-                        {client.photoUrl ? (
-                          <img src={client.photoUrl} alt="" className="w-8 h-8 rounded-full object-cover" />
-                        ) : (
-                          <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                            <User className="w-4 h-4 text-muted-foreground" />
+                      {editingClient === client.id ? (
+                        <div className="space-y-2" onClick={(e) => e.stopPropagation()}>
+                          <div className="grid grid-cols-2 gap-1">
+                            <Input className="h-7 text-xs" value={editForm.firstName} onChange={(e) => setEditForm(f => ({...f, firstName: e.target.value}))} />
+                            <Input className="h-7 text-xs" value={editForm.lastName} onChange={(e) => setEditForm(f => ({...f, lastName: e.target.value}))} />
                           </div>
-                        )}
-                        <div>
-                          <p className="text-sm font-medium text-foreground">
-                            {client.firstName} {client.lastName}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {client.birthPlace}
-                          </p>
+                          <Input className="h-7 text-xs" value={editForm.birthPlace} onChange={(e) => setEditForm(f => ({...f, birthPlace: e.target.value}))} placeholder="Geburtsort" />
+                          <div className="flex gap-1">
+                            <Button size="sm" variant="default" className="h-6 text-xs px-2" onClick={(e) => handleSaveEdit(client.id, e)}>
+                              <Check className="w-3 h-3 mr-1" /> Speichern
+                            </Button>
+                            <Button size="sm" variant="ghost" className="h-6 text-xs px-2" onClick={(e) => { e.stopPropagation(); setEditingClient(null); }}>
+                              <X className="w-3 h-3" />
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                    </button>
+                      ) : (
+                        <div className="flex items-center gap-2 cursor-pointer" onClick={() => selectExistingClient(client)}>
+                          {client.photoUrl ? (
+                            <img src={client.photoUrl} alt="" className="w-7 h-7 rounded-full object-cover shrink-0" />
+                          ) : (
+                            <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center shrink-0">
+                              <User className="w-3 h-3 text-muted-foreground" />
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-medium text-foreground truncate">
+                              {client.firstName} {client.lastName}
+                            </p>
+                            <p className="text-[10px] text-muted-foreground truncate">{client.birthPlace}</p>
+                          </div>
+                          <div className="flex gap-0.5 shrink-0">
+                            <button onClick={(e) => handleEditClient(client, e)} className="p-1 hover:bg-muted rounded text-muted-foreground hover:text-foreground">
+                              <Edit3 className="w-3 h-3" />
+                            </button>
+                            <button onClick={(e) => handleDeleteClient(client.id, e)} className="p-1 hover:bg-destructive/20 rounded text-muted-foreground hover:text-destructive">
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </motion.div>
               )}
             </AnimatePresence>
 
-            <div className="space-y-4">
-              {/* Foto-Upload */}
-              <div className="flex flex-col items-center gap-4 mb-6">
+            <div className="space-y-3">
+              {/* Foto-Upload (kompakt) */}
+              <div className="flex items-center gap-3">
                 <div 
                   className={cn(
-                    "w-24 h-24 rounded-full border-2 border-dashed border-border",
+                    "w-14 h-14 rounded-full border-2 border-dashed border-border shrink-0",
                     "flex items-center justify-center overflow-hidden cursor-pointer",
                     "hover:border-primary/50 transition-colors",
                     biometric.photoPreview && "border-solid border-primary/30"
@@ -456,30 +552,14 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSel
                   onClick={() => fileInputRef.current?.click()}
                 >
                   {biometric.photoPreview ? (
-                    <img 
-                      src={biometric.photoPreview} 
-                      alt="Klient" 
-                      className="w-full h-full object-cover"
-                    />
+                    <img src={biometric.photoPreview} alt="Klient" className="w-full h-full object-cover" />
                   ) : (
-                    <Camera className="w-8 h-8 text-muted-foreground" />
+                    <Camera className="w-5 h-5 text-muted-foreground" />
                   )}
                 </div>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handlePhotoUpload}
-                  className="hidden"
-                />
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="gap-2"
-                >
-                  <Upload className="w-4 h-4" />
-                  Foto hochladen
+                <input ref={fileInputRef} type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+                <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()} className="gap-2 h-8 text-xs">
+                  <Upload className="w-3 h-3" /> Foto
                 </Button>
               </div>
 
@@ -539,13 +619,21 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSel
 
               {/* Feld-Signatur Anzeige */}
               {currentAnalysis && (
-                <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
-                  <p className="text-xs text-muted-foreground mb-1">Feld-Signatur</p>
-                  <p className="font-mono text-sm text-primary">
+                <div className="p-2 bg-primary/5 border border-primary/20 rounded-lg">
+                  <p className="text-[10px] text-muted-foreground">Feld-Signatur</p>
+                  <p className="font-mono text-xs text-primary truncate">
                     {currentAnalysis.fieldSignature.hash}
                   </p>
                 </div>
               )}
+
+              {/* Wort-Energie DB Manager */}
+              <div className="pt-3 border-t border-border">
+                <WordEnergyDBManager
+                  vectorAnalysis={currentAnalysis}
+                  onMultiFociSelected={handleMultiFociSelected}
+                />
+              </div>
             </div>
           </motion.div>
 

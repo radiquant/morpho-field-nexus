@@ -653,6 +653,36 @@ export type Database = {
         }
         Relationships: []
       }
+      word_energy_collections: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+          user_id: string
+          words: string[]
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+          user_id: string
+          words?: string[]
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+          words?: string[]
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

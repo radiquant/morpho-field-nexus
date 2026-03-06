@@ -115,9 +115,26 @@ export function useTreatmentSequence() {
   const imbalancesRef = useRef<MeridianImbalance[]>([]);
 
   useEffect(() => {
+    // Auto-resume AudioContext when tab regains focus (prevents 3D view interaction breakage)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && audioContextRef.current?.state === 'suspended') {
+        audioContextRef.current.resume().catch(() => {});
+      }
+    };
+    // Protect against AudioContext suspension during heavy rendering
+    const handleFocus = () => {
+      if (audioContextRef.current?.state === 'suspended') {
+        audioContextRef.current.resume().catch(() => {});
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+
     return () => {
       stopOscillator();
       if (intervalRef.current) clearInterval(intervalRef.current);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
     };
   }, []);
 
@@ -221,13 +238,18 @@ export function useTreatmentSequence() {
     return points;
   }, [selectExtraordinaryVessels, generatePointExplanation]);
 
-  const startOscillator = useCallback((frequency: number) => {
+  const startOscillator = useCallback(async (frequency: number) => {
     try {
       if (!audioContextRef.current) {
         audioContextRef.current = new AudioContext();
       }
+      // Auto-resume suspended AudioContext (happens during heavy 3D rendering)
+      if (audioContextRef.current.state === 'suspended') {
+        await audioContextRef.current.resume();
+      }
       stopOscillator();
       const ctx = audioContextRef.current;
+      if (ctx.state !== 'running') return; // Don't create oscillator if context not ready
       const oscillator = ctx.createOscillator();
       oscillator.type = 'sine';
       oscillator.frequency.setValueAtTime(frequency, ctx.currentTime);
@@ -240,7 +262,10 @@ export function useTreatmentSequence() {
       oscillatorRef.current = oscillator;
       gainNodeRef.current = gainNode;
     } catch (error) {
-      console.error('Oscillator error:', error);
+      console.warn('[Treatment] Oscillator error (auto-recovering):', error);
+      // Reset references to allow recovery
+      oscillatorRef.current = null;
+      gainNodeRef.current = null;
     }
   }, []);
 
