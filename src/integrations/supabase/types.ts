@@ -155,6 +155,66 @@ export type Database = {
         }
         Relationships: []
       }
+      chreode_trajectories: {
+        Row: {
+          attractor_distance: number | null
+          bifurcation_risk: number | null
+          chreode_alignment: number | null
+          client_id: string
+          created_at: string
+          dimensions: number[]
+          entropy_modulation: number[] | null
+          id: string
+          phase: string | null
+          session_id: string
+          stability: number | null
+          timestamp: string
+        }
+        Insert: {
+          attractor_distance?: number | null
+          bifurcation_risk?: number | null
+          chreode_alignment?: number | null
+          client_id: string
+          created_at?: string
+          dimensions: number[]
+          entropy_modulation?: number[] | null
+          id?: string
+          phase?: string | null
+          session_id: string
+          stability?: number | null
+          timestamp?: string
+        }
+        Update: {
+          attractor_distance?: number | null
+          bifurcation_risk?: number | null
+          chreode_alignment?: number | null
+          client_id?: string
+          created_at?: string
+          dimensions?: number[]
+          entropy_modulation?: number[] | null
+          id?: string
+          phase?: string | null
+          session_id?: string
+          stability?: number | null
+          timestamp?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chreode_trajectories_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chreode_trajectories_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "treatment_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_vectors: {
         Row: {
           attractor_distance: number | null
@@ -479,6 +539,57 @@ export type Database = {
           x_position?: number
           y_position?: number
           z_position?: number
+        }
+        Relationships: []
+      }
+      remedies: {
+        Row: {
+          category: string
+          contraindications: string | null
+          created_at: string
+          description: string | null
+          element: string | null
+          emotional_pattern: string | null
+          frequency: number | null
+          id: string
+          meridian_associations: string[] | null
+          name: string
+          name_latin: string | null
+          organ_associations: string[] | null
+          potency: string | null
+          source: string | null
+        }
+        Insert: {
+          category?: string
+          contraindications?: string | null
+          created_at?: string
+          description?: string | null
+          element?: string | null
+          emotional_pattern?: string | null
+          frequency?: number | null
+          id?: string
+          meridian_associations?: string[] | null
+          name: string
+          name_latin?: string | null
+          organ_associations?: string[] | null
+          potency?: string | null
+          source?: string | null
+        }
+        Update: {
+          category?: string
+          contraindications?: string | null
+          created_at?: string
+          description?: string | null
+          element?: string | null
+          emotional_pattern?: string | null
+          frequency?: number | null
+          id?: string
+          meridian_associations?: string[] | null
+          name?: string
+          name_latin?: string | null
+          organ_associations?: string[] | null
+          potency?: string | null
+          source?: string | null
         }
         Relationships: []
       }

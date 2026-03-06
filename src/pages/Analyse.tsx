@@ -17,9 +17,14 @@ import MeridianDiagnosisPanel from '@/components/MeridianDiagnosisPanel';
 import FrequencyOutputModule from '@/components/FrequencyOutputModule';
 import RealtimeStatusWidget from '@/components/RealtimeStatusWidget';
 import TreatmentTrendAnalysis from '@/components/TreatmentTrendAnalysis';
+import BifurcationWarningWidget from '@/components/BifurcationWarningWidget';
+import RemedyDatabasePanel from '@/components/RemedyDatabasePanel';
+import TCMTrendAnalytics from '@/components/TCMTrendAnalytics';
+import SessionReportGenerator from '@/components/SessionReportGenerator';
 import SessionManagementPanel from '@/components/SessionManagementPanel';
 import Footer from '@/components/Footer';
 import { useSessionManagement } from '@/hooks/useSessionManagement';
+import { useChreodeTracking } from '@/hooks/useChreodeTracking';
 import type { VectorAnalysis } from '@/services/feldengine';
 import type { NLSScanConfig } from '@/components/NLSScanConfigPanel';
 
@@ -51,6 +56,9 @@ const Analyse = () => {
     completeSession,
   } = useSessionManagement();
 
+  // Chreode-Tracking
+  const { recordPoint: recordChreodePoint } = useChreodeTracking();
+
   // Session-Timer
   useEffect(() => {
     if (activeSession) {
@@ -78,9 +86,15 @@ const Analyse = () => {
   const handleVectorCreated = useCallback(async (analysis: VectorAnalysis) => {
     setCurrentVectorAnalysis(analysis);
     if (selectedClientId && !activeSession) {
-      await startSession(selectedClientId, analysis);
+      const session = await startSession(selectedClientId, analysis);
+      // Chreode-Punkt aufzeichnen
+      if (session) {
+        recordChreodePoint(selectedClientId, session.id, analysis);
+      }
+    } else if (selectedClientId && activeSession) {
+      recordChreodePoint(selectedClientId, activeSession.id, analysis);
     }
-  }, [selectedClientId, activeSession, startSession]);
+  }, [selectedClientId, activeSession, startSession, recordChreodePoint]);
 
   const handleFrequencySelect = useCallback((frequency: number) => {
     setSelectedFrequency(frequency);
@@ -194,6 +208,13 @@ const Analyse = () => {
           </div>
         )}
 
+        {/* Bifurkations-Warnung */}
+        {currentVectorAnalysis && (
+          <div className="container mx-auto px-4 pt-4">
+            <BifurcationWarningWidget vectorAnalysis={currentVectorAnalysis} />
+          </div>
+        )}
+
         {/* Analyse-Komponenten */}
         <ClientVectorInterface onVectorCreated={handleVectorCreated} onClientSelected={handleClientSelected} />
         <ClientVectorTrajectory3D vectorAnalysis={currentVectorAnalysis} />
@@ -211,7 +232,10 @@ const Analyse = () => {
           nlsDysregulationData={nlsDysregulationData}
         />
         <FrequencyOutputModule />
-        
+        <RemedyDatabasePanel onSelectFrequency={handleFrequencySelect} />
+        <TCMTrendAnalytics clientId={selectedClientId} />
+        <SessionReportGenerator clientId={selectedClientId} />
+
         <Footer />
         <RealtimeStatusWidget />
       </main>
