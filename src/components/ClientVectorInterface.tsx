@@ -133,7 +133,6 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSel
   // Client edit state
   const [editingClient, setEditingClient] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({ firstName: '', lastName: '', birthPlace: '', notes: '' });
-  const { state: hardwareState, initialize: initializeHardware } = useRealtimeHarmonization();
 
   // Hardware initialisieren beim Mount
   useEffect(() => {
