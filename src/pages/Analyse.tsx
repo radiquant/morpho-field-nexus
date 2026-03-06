@@ -3,7 +3,7 @@
  * Enthält die Klienten-Feldanalyse, Meridian-Diagnose und Frequenz-Output
  * Ausgelagert von der Hauptseite für bessere Performance
  */
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import type { NLSDysregulationData } from '@/components/MeridianDiagnosisPanel';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -17,7 +17,9 @@ import MeridianDiagnosisPanel from '@/components/MeridianDiagnosisPanel';
 import FrequencyOutputModule from '@/components/FrequencyOutputModule';
 import RealtimeStatusWidget from '@/components/RealtimeStatusWidget';
 import TreatmentTrendAnalysis from '@/components/TreatmentTrendAnalysis';
+import SessionManagementPanel from '@/components/SessionManagementPanel';
 import Footer from '@/components/Footer';
+import { useSessionManagement } from '@/hooks/useSessionManagement';
 import type { VectorAnalysis } from '@/services/feldengine';
 import type { NLSScanConfig } from '@/components/NLSScanConfigPanel';
 
