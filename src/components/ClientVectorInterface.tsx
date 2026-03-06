@@ -478,36 +478,59 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSel
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="mb-6 max-h-48 overflow-y-auto space-y-2"
+                  className="mb-4 max-h-48 overflow-y-auto space-y-1"
                 >
                   {existingClients.map((client) => (
-                    <button
+                    <div
                       key={client.id}
-                      onClick={() => selectExistingClient(client)}
                       className={cn(
-                        "w-full p-3 rounded-lg text-left transition-colors",
+                        "w-full p-2 rounded-lg text-left transition-colors",
                         "bg-muted/30 hover:bg-primary/10 border border-transparent",
                         savedClient?.id === client.id && "border-primary/50 bg-primary/10"
                       )}
                     >
-                      <div className="flex items-center gap-3">
-                        {client.photoUrl ? (
-                          <img src={client.photoUrl} alt="" className="w-8 h-8 rounded-full object-cover" />
-                        ) : (
-                          <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                            <User className="w-4 h-4 text-muted-foreground" />
+                      {editingClient === client.id ? (
+                        <div className="space-y-2" onClick={(e) => e.stopPropagation()}>
+                          <div className="grid grid-cols-2 gap-1">
+                            <Input className="h-7 text-xs" value={editForm.firstName} onChange={(e) => setEditForm(f => ({...f, firstName: e.target.value}))} />
+                            <Input className="h-7 text-xs" value={editForm.lastName} onChange={(e) => setEditForm(f => ({...f, lastName: e.target.value}))} />
                           </div>
-                        )}
-                        <div>
-                          <p className="text-sm font-medium text-foreground">
-                            {client.firstName} {client.lastName}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {client.birthPlace}
-                          </p>
+                          <Input className="h-7 text-xs" value={editForm.birthPlace} onChange={(e) => setEditForm(f => ({...f, birthPlace: e.target.value}))} placeholder="Geburtsort" />
+                          <div className="flex gap-1">
+                            <Button size="sm" variant="default" className="h-6 text-xs px-2" onClick={(e) => handleSaveEdit(client.id, e)}>
+                              <Check className="w-3 h-3 mr-1" /> Speichern
+                            </Button>
+                            <Button size="sm" variant="ghost" className="h-6 text-xs px-2" onClick={(e) => { e.stopPropagation(); setEditingClient(null); }}>
+                              <X className="w-3 h-3" />
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                    </button>
+                      ) : (
+                        <div className="flex items-center gap-2 cursor-pointer" onClick={() => selectExistingClient(client)}>
+                          {client.photoUrl ? (
+                            <img src={client.photoUrl} alt="" className="w-7 h-7 rounded-full object-cover shrink-0" />
+                          ) : (
+                            <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center shrink-0">
+                              <User className="w-3 h-3 text-muted-foreground" />
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-medium text-foreground truncate">
+                              {client.firstName} {client.lastName}
+                            </p>
+                            <p className="text-[10px] text-muted-foreground truncate">{client.birthPlace}</p>
+                          </div>
+                          <div className="flex gap-0.5 shrink-0">
+                            <button onClick={(e) => handleEditClient(client, e)} className="p-1 hover:bg-muted rounded text-muted-foreground hover:text-foreground">
+                              <Edit3 className="w-3 h-3" />
+                            </button>
+                            <button onClick={(e) => handleDeleteClient(client.id, e)} className="p-1 hover:bg-destructive/20 rounded text-muted-foreground hover:text-destructive">
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </motion.div>
               )}
