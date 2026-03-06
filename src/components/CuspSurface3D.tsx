@@ -445,6 +445,11 @@ const CuspSurface3D = ({ vectorAnalysis }: CuspSurface3DProps = {}) => {
                 pathType={pathType}
               />
             )}
+
+            {/* Live-Klient auf der Kuspen-Fläche */}
+            {vectorAnalysis && (
+              <LiveClientPoint vectorAnalysis={vectorAnalysis} />
+            )}
             
             <OrbitControls
               enablePan={true}
