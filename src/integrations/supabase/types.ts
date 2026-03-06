@@ -482,6 +482,79 @@ export type Database = {
         }
         Relationships: []
       }
+      resonance_results: {
+        Row: {
+          body_region: string
+          client_id: string
+          created_at: string
+          dysregulation_score: number | null
+          harmonic_pattern: number[] | null
+          id: string
+          intensity: number
+          notes: string | null
+          organ_name: string
+          organ_system: string
+          polarity: string
+          scan_frequency: number
+          scan_point_id: string | null
+          session_id: string
+        }
+        Insert: {
+          body_region: string
+          client_id: string
+          created_at?: string
+          dysregulation_score?: number | null
+          harmonic_pattern?: number[] | null
+          id?: string
+          intensity?: number
+          notes?: string | null
+          organ_name: string
+          organ_system: string
+          polarity?: string
+          scan_frequency: number
+          scan_point_id?: string | null
+          session_id: string
+        }
+        Update: {
+          body_region?: string
+          client_id?: string
+          created_at?: string
+          dysregulation_score?: number | null
+          harmonic_pattern?: number[] | null
+          id?: string
+          intensity?: number
+          notes?: string | null
+          organ_name?: string
+          organ_system?: string
+          polarity?: string
+          scan_frequency?: number
+          scan_point_id?: string | null
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resonance_results_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resonance_results_scan_point_id_fkey"
+            columns: ["scan_point_id"]
+            isOneToOne: false
+            referencedRelation: "organ_scan_points"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resonance_results_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "treatment_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       treatment_sessions: {
         Row: {
           client_id: string

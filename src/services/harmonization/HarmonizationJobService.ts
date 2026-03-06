@@ -27,11 +27,19 @@ export interface CreateJobParams {
   clientId: string;
   vectorId?: string;
   protocolId?: string;
+  sessionId?: string;
   jobType?: 'harmonization' | 'analysis' | 'resonance_scan';
   priority?: number;
   targetFrequencies?: number[];
   targetAnatomyPoints?: string[];
   targetWordEnergies?: string[];
+}
+
+export interface BatchJobResult {
+  total: number;
+  completed: number;
+  failed: number;
+  jobs: HarmonizationJob[];
 }
 
 export interface JobUpdateParams {
@@ -241,6 +249,44 @@ class HarmonizationJobServiceClass {
           }
         });
       }
+    }
+  }
+
+  /**
+   * Batch-Jobs erstellen und sequenziell ausführen
+   */
+  async createBatchJobs(params: CreateJobParams[]): Promise<BatchJobResult> {
+    const result: BatchJobResult = { total: params.length, completed: 0, failed: 0, jobs: [] };
+    
+    for (const p of params) {
+      const job = await this.createJob(p);
+      if (job) {
+        result.jobs.push(job);
+      } else {
+        result.failed++;
+      }
+    }
+    
+    return result;
+  }
+
+  /**
+   * Job abbrechen
+   */
+  async cancelJob(jobId: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('harmonization_jobs')
+        .update({ status: 'cancelled', completed_at: new Date().toISOString() })
+        .eq('id', jobId);
+
+      if (error) throw error;
+      this.stopPolling(jobId);
+      this.activeJobs.delete(jobId);
+      return true;
+    } catch (error) {
+      console.error('Error cancelling job:', error);
+      return false;
     }
   }
 
