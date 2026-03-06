@@ -11,7 +11,16 @@
 
 import type { ClientVector, VectorTrajectory } from '@/types/hardware';
 
-// Biometrische Client-Daten für Vektor-Berechnung
+// Hardware-Entropie-Eingabedaten
+export interface HardwareEntropyInput {
+  cpuEntropy: number;
+  gpuEntropy: number;
+  ramEntropy: number;
+  latencyEntropy: number;
+  combined?: number;
+}
+
+
 export interface BiometricClientData {
   firstName: string;
   lastName: string;
