@@ -86,9 +86,15 @@ const Analyse = () => {
   const handleVectorCreated = useCallback(async (analysis: VectorAnalysis) => {
     setCurrentVectorAnalysis(analysis);
     if (selectedClientId && !activeSession) {
-      await startSession(selectedClientId, analysis);
+      const session = await startSession(selectedClientId, analysis);
+      // Chreode-Punkt aufzeichnen
+      if (session) {
+        recordChreodePoint(selectedClientId, session.id, analysis);
+      }
+    } else if (selectedClientId && activeSession) {
+      recordChreodePoint(selectedClientId, activeSession.id, analysis);
     }
-  }, [selectedClientId, activeSession, startSession]);
+  }, [selectedClientId, activeSession, startSession, recordChreodePoint]);
 
   const handleFrequencySelect = useCallback((frequency: number) => {
     setSelectedFrequency(frequency);
