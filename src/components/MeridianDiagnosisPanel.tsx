@@ -772,6 +772,11 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
                         >
                           <Play className="w-5 h-5" />
                           Behandlungssequenz starten
+                          {nlsTreatmentPoints.length > 0 && (
+                            <Badge variant="secondary" className="ml-2 bg-primary/20 text-primary border-primary/30">
+                              +{nlsTreatmentPoints.length} NLS
+                            </Badge>
+                          )}
                         </Button>
                       </div>
                     )}
