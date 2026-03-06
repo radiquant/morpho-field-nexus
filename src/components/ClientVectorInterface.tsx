@@ -272,12 +272,18 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSel
     const success = await deleteClient(clientId);
     if (success) {
       if (savedClient?.id === clientId) {
-        resetForm();
+        setBiometric(defaultBiometric);
+        setDimensions(defaultDimensions);
+        setPrimaryConcern('');
+        setNotes('');
+        setCurrentAnalysis(null);
+        setSavedClient(null);
+        onClientSelected?.(null);
       }
       const updated = await loadClients();
       setExistingClients(updated);
     }
-  }, [deleteClient, loadClients, savedClient, resetForm]);
+  }, [deleteClient, loadClients, savedClient, onClientSelected]);
 
   // Multi-Foci handler from WordEnergyDBManager
   const handleMultiFociSelected = useCallback((foci: string[]) => {
