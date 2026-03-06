@@ -127,7 +127,12 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSel
   const [showClientList, setShowClientList] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { createClient, loadClients, saveClientVector, uploadClientPhoto, isLoading } = useClientDatabase();
+  const { createClient, updateClient, deleteClient, loadClients, saveClientVector, uploadClientPhoto, isLoading } = useClientDatabase();
+  const { state: hardwareState, initialize: initializeHardware } = useRealtimeHarmonization();
+  
+  // Client edit state
+  const [editingClient, setEditingClient] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({ firstName: '', lastName: '', birthPlace: '', notes: '' });
   const { state: hardwareState, initialize: initializeHardware } = useRealtimeHarmonization();
 
   // Hardware initialisieren beim Mount
