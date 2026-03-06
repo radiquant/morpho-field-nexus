@@ -56,6 +56,9 @@ const Analyse = () => {
     completeSession,
   } = useSessionManagement();
 
+  // Chreode-Tracking
+  const { recordPoint: recordChreodePoint } = useChreodeTracking();
+
   // Session-Timer
   useEffect(() => {
     if (activeSession) {
