@@ -48,7 +48,7 @@ export function DetailedHumanModel({
       const breath = Math.sin(state.clock.elapsedTime * 0.8) * pulseIntensity;
       
       // Sanfte Bewegung
-      groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.15) * 0.08;
+      groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.15) * 0.04;
       
       // Atmung auf Torso anwenden
       groupRef.current.children.forEach((child) => {
