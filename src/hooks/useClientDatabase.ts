@@ -58,7 +58,7 @@ export function useClientDatabase() {
           last_name: biometricData.lastName,
           birth_date: biometricData.birthDate.toISOString().split('T')[0],
           birth_place: biometricData.birthPlace,
-          photo_url: biometricData.photoData,
+          photo_url: null, // Photo URL set after storage upload
           field_signature: fieldSignature.hash,
           notes,
           user_id: session.user.id,
