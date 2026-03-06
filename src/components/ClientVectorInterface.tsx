@@ -227,8 +227,66 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSel
     setSavedClient(client);
     onClientSelected?.(client.id);
     setShowClientList(false);
+    setEditingClient(null);
     toast.success(`Klient ${client.firstName} ${client.lastName} geladen`);
   }, [onClientSelected]);
+
+  // Klient bearbeiten
+  const handleEditClient = useCallback((client: ClientRecord, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingClient(client.id);
+    setEditForm({
+      firstName: client.firstName,
+      lastName: client.lastName,
+      birthPlace: client.birthPlace,
+      notes: client.notes || '',
+    });
+  }, []);
+
+  const handleSaveEdit = useCallback(async (clientId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const success = await updateClient(clientId, editForm);
+    if (success) {
+      setEditingClient(null);
+      const updated = await loadClients();
+      setExistingClients(updated);
+      // Update current if editing active client
+      if (savedClient?.id === clientId) {
+        const updatedClient = updated.find(c => c.id === clientId);
+        if (updatedClient) {
+          setSavedClient(updatedClient);
+          setBiometric(prev => ({
+            ...prev,
+            firstName: updatedClient.firstName,
+            lastName: updatedClient.lastName,
+            birthPlace: updatedClient.birthPlace,
+          }));
+        }
+      }
+    }
+  }, [editForm, updateClient, loadClients, savedClient]);
+
+  const handleDeleteClient = useCallback(async (clientId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!confirm('Klient wirklich löschen? Alle zugehörigen Daten werden entfernt.')) return;
+    const success = await deleteClient(clientId);
+    if (success) {
+      if (savedClient?.id === clientId) {
+        resetForm();
+      }
+      const updated = await loadClients();
+      setExistingClients(updated);
+    }
+  }, [deleteClient, loadClients, savedClient, resetForm]);
+
+  // Multi-Foci handler from WordEnergyDBManager
+  const handleMultiFociSelected = useCallback((foci: string[]) => {
+    setPrimaryConcern(prev => {
+      const existing = prev.trim();
+      const fociStr = `[Multifokusse: ${foci.join(', ')}]`;
+      return existing ? `${fociStr}\n${existing}` : fociStr;
+    });
+  }, []);
 
   // Vektor-Analyse durchführen
   const analyzeVector = useCallback(async () => {
