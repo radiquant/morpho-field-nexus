@@ -110,6 +110,11 @@ export function useTreatmentSequence() {
   const audioContextRef = useRef<AudioContext | null>(null);
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
+  // For sub-audible NLS frequencies: carrier oscillator + AM modulation
+  const carrierOscRef = useRef<OscillatorNode | null>(null);
+  const modulatorOscRef = useRef<OscillatorNode | null>(null);
+  const modulatorGainRef = useRef<GainNode | null>(null);
+  const isAMMode = useRef(false);
   const intervalRef = useRef<number | null>(null);
   const treatmentOptionsRef = useRef<TreatmentOptions>({});
   const imbalancesRef = useRef<MeridianImbalance[]>([]);
@@ -238,32 +243,106 @@ export function useTreatmentSequence() {
     return points;
   }, [selectExtraordinaryVessels, generatePointExplanation]);
 
+  /**
+   * Sub-audible threshold (Hz). Frequencies below this use AM modulation
+   * with a 432 Hz carrier to make them audible while preserving the
+   * therapeutic information frequency.
+   */
+  const SUB_AUDIBLE_THRESHOLD = 20;
+  const AM_CARRIER_FREQUENCY = 432; // Natürliche Stimmung als Träger
+
   const startOscillator = useCallback(async (frequency: number) => {
     try {
       if (!audioContextRef.current) {
         audioContextRef.current = new AudioContext({
           sampleRate: 48000,
-          latencyHint: 'playback', // Prioritize smooth audio over low latency
+          latencyHint: 'playback',
         });
       }
-      // Auto-resume suspended AudioContext (happens during heavy 3D rendering)
       if (audioContextRef.current.state === 'suspended') {
         await audioContextRef.current.resume();
       }
-      // Reuse existing oscillator if possible - just change frequency
-      if (oscillatorRef.current && gainNodeRef.current) {
-        oscillatorRef.current.frequency.setValueAtTime(frequency, audioContextRef.current.currentTime);
-        gainNodeRef.current.gain.setValueAtTime(0.8, audioContextRef.current.currentTime);
+
+      const ctx = audioContextRef.current;
+      const needsAM = frequency < SUB_AUDIBLE_THRESHOLD && frequency > 0;
+
+      // === AM-Modus für sub-audible Frequenzen (NLS-Punkte 1-20 Hz) ===
+      if (needsAM) {
+        // Wenn bereits im AM-Modus: nur Modulator-Frequenz ändern
+        if (isAMMode.current && carrierOscRef.current && modulatorOscRef.current && gainNodeRef.current) {
+          modulatorOscRef.current.frequency.setValueAtTime(frequency, ctx.currentTime);
+          gainNodeRef.current.gain.setValueAtTime(0.8, ctx.currentTime);
+          return;
+        }
+
+        // Bestehenden Standard-Oszillator stoppen
+        stopOscillator();
+
+        if (ctx.state !== 'running') return;
+
+        // Carrier: hörbarer Sinus-Ton (432 Hz)
+        const carrier = ctx.createOscillator();
+        carrier.type = 'sine';
+        carrier.frequency.setValueAtTime(AM_CARRIER_FREQUENCY, ctx.currentTime);
+
+        // Modulator: NLS-Frequenz steuert die Amplitude des Carriers
+        const modulator = ctx.createOscillator();
+        modulator.type = 'sine';
+        modulator.frequency.setValueAtTime(frequency, ctx.currentTime);
+
+        // ModulatorGain: Tiefe der Amplitudenmodulation (0.5 = 50%)
+        const modGain = ctx.createGain();
+        modGain.gain.setValueAtTime(0.4, ctx.currentTime);
+
+        // Output-Gain
+        const outputGain = ctx.createGain();
+        outputGain.gain.setValueAtTime(0.8, ctx.currentTime);
+
+        // AM-Verschaltung: modulator → modGain → carrier.gain
+        // Carrier → outputGain → destination
+        modulator.connect(modGain);
+        
+        // Carrier mit konstantem Basis-Gain + Modulation
+        const carrierGain = ctx.createGain();
+        carrierGain.gain.setValueAtTime(0.5, ctx.currentTime); // Basis-Amplitude
+        modGain.connect(carrierGain.gain); // AM: Modulator moduliert Carrier-Amplitude
+
+        carrier.connect(carrierGain);
+        carrierGain.connect(outputGain);
+        outputGain.connect(ctx.destination);
+
+        carrier.start();
+        modulator.start();
+
+        carrierOscRef.current = carrier;
+        modulatorOscRef.current = modulator;
+        modulatorGainRef.current = modGain;
+        gainNodeRef.current = outputGain;
+        oscillatorRef.current = carrier; // Für stopOscillator-Kompatibilität
+        isAMMode.current = true;
+        return;
+      }
+
+      // === Standard-Modus für hörbare Frequenzen (Meridian-Punkte) ===
+      if (isAMMode.current) {
+        // War im AM-Modus → komplett stoppen und neu aufbauen
+        stopOscillator();
+        isAMMode.current = false;
+      }
+
+      // Reuse existing oscillator if possible
+      if (oscillatorRef.current && gainNodeRef.current && !isAMMode.current) {
+        oscillatorRef.current.frequency.setValueAtTime(frequency, ctx.currentTime);
+        gainNodeRef.current.gain.setValueAtTime(0.8, ctx.currentTime);
         return;
       }
       stopOscillator();
-      const ctx = audioContextRef.current;
       if (ctx.state !== 'running') return;
+
       const oscillator = ctx.createOscillator();
       oscillator.type = 'sine';
       oscillator.frequency.setValueAtTime(frequency, ctx.currentTime);
       const gainNode = ctx.createGain();
-      // Constant full amplitude - no fade, no ramp
       gainNode.gain.setValueAtTime(0.8, ctx.currentTime);
       oscillator.connect(gainNode);
       gainNode.connect(ctx.destination);
@@ -274,6 +353,9 @@ export function useTreatmentSequence() {
       console.warn('[Treatment] Oscillator error (auto-recovering):', error);
       oscillatorRef.current = null;
       gainNodeRef.current = null;
+      carrierOscRef.current = null;
+      modulatorOscRef.current = null;
+      isAMMode.current = false;
     }
   }, []);
 
