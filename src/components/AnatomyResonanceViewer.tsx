@@ -1125,7 +1125,9 @@ function AnatomyScene({
         maxDistance={6}
         target={[0, 0.4, 0]}
         autoRotate={!activePointId && !activeAcupointId}
-        autoRotateSpeed={0.5}
+        autoRotateSpeed={0.3}
+        minPolarAngle={Math.PI * 0.15}
+        maxPolarAngle={Math.PI * 0.85}
       />
     </>
   );
@@ -1426,14 +1428,14 @@ const AnatomyResonanceViewer = ({
   }, [nlsDysregulationScores, scanState.isScanning, updateScores]);
 
   useEffect(() => {
-    if (nlsDysregulationScores.size > 0 && organScanPoints.length > 0) {
+    if (nlsDysregulationScores.size > 0 && modelFilteredOrganScanPoints.length > 0) {
       onNLSDysregulationData?.({
         scores: nlsDysregulationScores,
-        points: organScanPoints,
+        points: modelFilteredOrganScanPoints,
         focusLabels: activeScanConfig?.focusList?.map(f => f.label),
       });
     }
-  }, [nlsDysregulationScores, organScanPoints, onNLSDysregulationData, activeScanConfig]);
+  }, [nlsDysregulationScores, modelFilteredOrganScanPoints, onNLSDysregulationData, activeScanConfig]);
 
   // Notify parent about scan config changes
   useEffect(() => {

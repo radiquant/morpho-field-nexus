@@ -162,7 +162,8 @@ export function GLBModelLoader({
     if (groupRef.current) {
       const breath = Math.sin(state.clock.elapsedTime * 0.8) * pulseIntensity;
       groupRef.current.scale.set(1, 1 + breath, 1);
-      groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.15) * 0.06;
+      // Gentle Y-axis sway only - no X/Z rotation to prevent model tilting
+      groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.15) * 0.03;
     }
   });
 
