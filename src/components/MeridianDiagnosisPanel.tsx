@@ -679,7 +679,28 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
                               Bei dysregulierten Meridianen
                             </p>
                           </div>
-                        </div>
+
+                          {/* Sequenz-Wiederholungen */}
+                          <div className="space-y-3 p-4 rounded-lg bg-muted/30 border border-border">
+                            <Label className="flex items-center gap-2 text-sm">
+                              <RefreshCw className="w-4 h-4" />
+                              Sequenz-Durchläufe (1–42)
+                            </Label>
+                            <div className="flex items-center gap-3">
+                              <Slider
+                                value={[repeatCycles]}
+                                onValueChange={(v) => setRepeatCycles(v[0])}
+                                min={1}
+                                max={42}
+                                step={1}
+                                className="flex-1"
+                              />
+                              <span className="text-xl font-mono w-8 text-center text-primary">{repeatCycles}</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              Komplette Sequenz wird {repeatCycles}× durchlaufen
+                            </p>
+                          </div>
 
                         {/* Nachtestung-Einstellung */}
                         <div className="flex items-center justify-between p-4 rounded-lg bg-muted/30 border border-border">
