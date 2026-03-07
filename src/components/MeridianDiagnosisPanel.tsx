@@ -701,6 +701,7 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
                               Komplette Sequenz wird {repeatCycles}× durchlaufen
                             </p>
                           </div>
+                        </div>
 
                         {/* Nachtestung-Einstellung */}
                         <div className="flex items-center justify-between p-4 rounded-lg bg-muted/30 border border-border">
