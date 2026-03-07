@@ -128,6 +128,7 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
   const [timeUnit, setTimeUnit] = useState<TimeUnit>('seconds');
   const [durationValue, setDurationValue] = useState(21); // 21 Sekunden Standard
   const [pointsPerMeridian, setPointsPerMeridian] = useState(7);
+  const [repeatCycles, setRepeatCycles] = useState(1);
   
   // Hardware-Methoden Auswahl
   const [selectedMethods, setSelectedMethods] = useState<string[]>(['webaudio']);
@@ -309,6 +310,7 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
         {
           pointsPerMeridian,
           durationPerPoint: treatmentDuration,
+          repeatCycles,
         },
         undefined,
         nlsTreatmentPoints.length > 0 ? nlsTreatmentPoints : undefined
@@ -318,7 +320,7 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
         description: `${methodNames}${serverHardwareEnabled ? ' + GPU' : ''}${nlsTreatmentPoints.length > 0 ? ` + ${nlsTreatmentPoints.length} NLS-Punkte` : ''}`
       });
     }
-  }, [diagnosisResult, vectorAnalysis, startSequence, pointsPerMeridian, treatmentDuration, selectedMethods, serverHardwareEnabled, nlsTreatmentPoints]);
+  }, [diagnosisResult, vectorAnalysis, startSequence, pointsPerMeridian, treatmentDuration, selectedMethods, serverHardwareEnabled, nlsTreatmentPoints, repeatCycles]);
 
   const handleReanalyze = useCallback(() => {
     if (vectorAnalysis) {

@@ -548,8 +548,10 @@ export function useTreatmentSequence() {
         const elapsedMs = newTotalElapsed * 1000;
         overallProgress = Math.min(100, (elapsedMs / (prev.totalTreatmentTime * 1000)) * 100);
       } else {
-        const totalTreatmentSeconds = (options.totalTreatmentMinutes || DEFAULT_TOTAL_TREATMENT_MINUTES) * 60;
-        overallProgress = (newTotalElapsed / totalTreatmentSeconds) * 100;
+        const maxCycles = options.repeatCycles || 1;
+        const totalPointsAllCycles = prev.totalPoints * maxCycles;
+        const completedPoints = (prev.currentCycle - 1) * prev.totalPoints + prev.currentPointIndex;
+        overallProgress = (completedPoints / totalPointsAllCycles) * 100;
       }
 
       return {
