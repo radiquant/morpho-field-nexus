@@ -128,6 +128,7 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
   const [timeUnit, setTimeUnit] = useState<TimeUnit>('seconds');
   const [durationValue, setDurationValue] = useState(21); // 21 Sekunden Standard
   const [pointsPerMeridian, setPointsPerMeridian] = useState(7);
+  const [repeatCycles, setRepeatCycles] = useState(1);
   
   // Hardware-Methoden Auswahl
   const [selectedMethods, setSelectedMethods] = useState<string[]>(['webaudio']);
@@ -309,6 +310,7 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
         {
           pointsPerMeridian,
           durationPerPoint: treatmentDuration,
+          repeatCycles,
         },
         undefined,
         nlsTreatmentPoints.length > 0 ? nlsTreatmentPoints : undefined
@@ -318,7 +320,7 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
         description: `${methodNames}${serverHardwareEnabled ? ' + GPU' : ''}${nlsTreatmentPoints.length > 0 ? ` + ${nlsTreatmentPoints.length} NLS-Punkte` : ''}`
       });
     }
-  }, [diagnosisResult, vectorAnalysis, startSequence, pointsPerMeridian, treatmentDuration, selectedMethods, serverHardwareEnabled, nlsTreatmentPoints]);
+  }, [diagnosisResult, vectorAnalysis, startSequence, pointsPerMeridian, treatmentDuration, selectedMethods, serverHardwareEnabled, nlsTreatmentPoints, repeatCycles]);
 
   const handleReanalyze = useCallback(() => {
     if (vectorAnalysis) {
@@ -677,6 +679,28 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
                               Bei dysregulierten Meridianen
                             </p>
                           </div>
+
+                          {/* Sequenz-Wiederholungen */}
+                          <div className="space-y-3 p-4 rounded-lg bg-muted/30 border border-border">
+                            <Label className="flex items-center gap-2 text-sm">
+                              <RefreshCw className="w-4 h-4" />
+                              Sequenz-Durchläufe (1–42)
+                            </Label>
+                            <div className="flex items-center gap-3">
+                              <Slider
+                                value={[repeatCycles]}
+                                onValueChange={(v) => setRepeatCycles(v[0])}
+                                min={1}
+                                max={42}
+                                step={1}
+                                className="flex-1"
+                              />
+                              <span className="text-xl font-mono w-8 text-center text-primary">{repeatCycles}</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              Komplette Sequenz wird {repeatCycles}× durchlaufen
+                            </p>
+                          </div>
                         </div>
 
                         {/* Nachtestung-Einstellung */}
@@ -758,9 +782,9 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
                           <p className="text-foreground">
                             <span className="font-mono text-primary">
                               {Math.min(5, diagnosisResult.imbalances.length) * pointsPerMeridian + nlsTreatmentPoints.length}
-                            </span> Punkte ({Math.min(5, diagnosisResult.imbalances.length) * pointsPerMeridian} Meridian{nlsTreatmentPoints.length > 0 ? ` + ${nlsTreatmentPoints.length} NLS` : ''}) • Dauer:{' '}
+                            </span> Punkte • {repeatCycles > 1 ? <><span className="font-mono text-primary">{repeatCycles}×</span> Durchläufe • </> : ''}Dauer:{' '}
                             <span className="font-mono text-primary">
-                              {formatTime((Math.min(5, diagnosisResult.imbalances.length) * pointsPerMeridian + nlsTreatmentPoints.length) * treatmentDuration)}
+                              {formatTime((Math.min(5, diagnosisResult.imbalances.length) * pointsPerMeridian + nlsTreatmentPoints.length) * treatmentDuration * repeatCycles)}
                             </span>
                           </p>
                         </div>
@@ -923,7 +947,8 @@ function TreatmentInProgress({
       <div className="space-y-2">
         <div className="flex items-center justify-between text-sm">
           <span className="text-muted-foreground">
-            Punkt {progress.currentPointIndex + 1} von {progress.totalPoints}
+            Punkt {progress.currentPointIndex + 1}/{progress.totalPoints}
+            {progress.totalCycles > 1 && ` • Zyklus ${progress.currentCycle}/${progress.totalCycles}`}
           </span>
           <span className="text-foreground font-mono">
             {progress.overallProgress.toFixed(0)}%

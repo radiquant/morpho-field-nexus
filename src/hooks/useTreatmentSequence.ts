@@ -56,6 +56,8 @@ export interface TreatmentOptions {
   continuousMode?: boolean;
   continuousEndTime?: Date;
   retestPauseMinutes?: number;
+  // Sequenz-Wiederholungen (1-42)
+  repeatCycles?: number;
 }
 
 export interface TreatmentSnapshot {
@@ -460,15 +462,15 @@ export function useTreatmentSequence() {
           };
         }
 
-        // Normaler Modus: Prüfe Gesamtzeit
-        const totalTreatmentSeconds = (options.totalTreatmentMinutes || DEFAULT_TOTAL_TREATMENT_MINUTES) * 60;
-        if (prev.elapsedTotalTime >= totalTreatmentSeconds) {
+        // Normaler Modus: Prüfe Zyklen-Limit
+        const maxCycles = options.repeatCycles || 1;
+        if (prev.currentCycle >= maxCycles) {
           stopOscillator();
           if (intervalRef.current) {
             clearInterval(intervalRef.current);
             intervalRef.current = null;
           }
-          toast.success('Behandlungssequenz abgeschlossen!');
+          toast.success(`Behandlungssequenz abgeschlossen! (${prev.currentCycle}/${maxCycles} Zyklen)`);
           return { ...prev, isPlaying: false, isComplete: true, overallProgress: 100 };
         }
 
@@ -476,12 +478,15 @@ export function useTreatmentSequence() {
         const firstPoint = treatmentPoints[0];
         if (firstPoint) startOscillator(firstPoint.frequency);
         
+        toast.info(`Zyklus ${prev.currentCycle + 1}/${maxCycles} gestartet`);
+        
         return {
           ...prev,
           currentPointIndex: 0,
           currentPoint: firstPoint || null,
           elapsedTime: 0,
           currentCycle: prev.currentCycle + 1,
+          totalCycles: maxCycles,
           isImpulsePhase: true,
         };
       }
@@ -543,8 +548,10 @@ export function useTreatmentSequence() {
         const elapsedMs = newTotalElapsed * 1000;
         overallProgress = Math.min(100, (elapsedMs / (prev.totalTreatmentTime * 1000)) * 100);
       } else {
-        const totalTreatmentSeconds = (options.totalTreatmentMinutes || DEFAULT_TOTAL_TREATMENT_MINUTES) * 60;
-        overallProgress = (newTotalElapsed / totalTreatmentSeconds) * 100;
+        const maxCycles = options.repeatCycles || 1;
+        const totalPointsAllCycles = prev.totalPoints * maxCycles;
+        const completedPoints = (prev.currentCycle - 1) * prev.totalPoints + prev.currentPointIndex;
+        overallProgress = (completedPoints / totalPointsAllCycles) * 100;
       }
 
       return {
@@ -574,6 +581,7 @@ export function useTreatmentSequence() {
       continuousMode: options?.continuousMode ?? false,
       continuousEndTime: options?.continuousEndTime,
       retestPauseMinutes: options?.retestPauseMinutes ?? DEFAULT_RETEST_PAUSE_MINUTES,
+      repeatCycles: options?.repeatCycles ?? 1,
     };
     
     treatmentOptionsRef.current = effectiveOptions;
@@ -619,7 +627,7 @@ export function useTreatmentSequence() {
       overallProgress: 0,
       isImpulsePhase: true,
       currentCycle: 1,
-      totalCycles: 1,
+      totalCycles: effectiveOptions.repeatCycles || 1,
       totalTreatmentTime: totalTreatmentSeconds,
       elapsedTotalTime: 0,
       isContinuousMode: effectiveOptions.continuousMode || false,
