@@ -782,9 +782,9 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
                           <p className="text-foreground">
                             <span className="font-mono text-primary">
                               {Math.min(5, diagnosisResult.imbalances.length) * pointsPerMeridian + nlsTreatmentPoints.length}
-                            </span> Punkte ({Math.min(5, diagnosisResult.imbalances.length) * pointsPerMeridian} Meridian{nlsTreatmentPoints.length > 0 ? ` + ${nlsTreatmentPoints.length} NLS` : ''}) • Dauer:{' '}
+                            </span> Punkte • {repeatCycles > 1 ? <><span className="font-mono text-primary">{repeatCycles}×</span> Durchläufe • </> : ''}Dauer:{' '}
                             <span className="font-mono text-primary">
-                              {formatTime((Math.min(5, diagnosisResult.imbalances.length) * pointsPerMeridian + nlsTreatmentPoints.length) * treatmentDuration)}
+                              {formatTime((Math.min(5, diagnosisResult.imbalances.length) * pointsPerMeridian + nlsTreatmentPoints.length) * treatmentDuration * repeatCycles)}
                             </span>
                           </p>
                         </div>
