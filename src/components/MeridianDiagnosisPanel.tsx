@@ -947,7 +947,8 @@ function TreatmentInProgress({
       <div className="space-y-2">
         <div className="flex items-center justify-between text-sm">
           <span className="text-muted-foreground">
-            Punkt {progress.currentPointIndex + 1} von {progress.totalPoints}
+            Punkt {progress.currentPointIndex + 1}/{progress.totalPoints}
+            {progress.totalCycles > 1 && ` • Zyklus ${progress.currentCycle}/${progress.totalCycles}`}
           </span>
           <span className="text-foreground font-mono">
             {progress.overallProgress.toFixed(0)}%
