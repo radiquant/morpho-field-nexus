@@ -32,11 +32,11 @@ const PILOT_DATA_SOURCES = [
     detail: 'Cryosection-Daten mit CT- und MRT-Korrelation. Referenz für anatomische Koordinaten-Validierung.',
   },
   {
-    name: 'WHO Standard Acupuncture Points',
-    url: 'https://www.who.int/',
+    name: 'WHO Standard Acupuncture Point Locations',
+    url: 'https://iris.who.int/bitstream/handle/10665/353407/9789290613831-eng.pdf',
     type: 'TCM / Akupunktur',
-    format: 'PDF → CSV',
-    detail: '361 standardisierte Akupunkturpunkte mit offizieller WHO-Nomenklatur. Bereits teilweise im System integriert.',
+    format: 'PDF (361 Punkte)',
+    detail: 'Offizielle WHO-Publikation mit standardisierten Akupunkturpunkt-Lokalisierungen (Western Pacific Region). Bereits teilweise im System integriert.',
   },
   {
     name: 'Standardized Acupuncture Points (CT-basiert)',
