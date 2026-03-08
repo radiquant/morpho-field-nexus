@@ -635,6 +635,11 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSel
                   onMultiFociSelected={handleMultiFociSelected}
                 />
               </div>
+
+              {/* Gruppen-Management */}
+              <div className="pt-3 border-t border-border">
+                <GroupManagementPanel />
+              </div>
             </div>
           </motion.div>
 
