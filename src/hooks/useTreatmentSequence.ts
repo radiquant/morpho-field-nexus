@@ -662,8 +662,8 @@ export function useTreatmentSequence() {
     });
 
     if (intervalRef.current) clearInterval(intervalRef.current);
-    intervalRef.current = window.setInterval(tick, 1000);
-  }, [generateTreatmentPoints, startOscillator, tick]);
+    intervalRef.current = window.setInterval(stableTick, 1000);
+  }, [generateTreatmentPoints, startOscillator, stableTick]);
 
   const pauseSequence = useCallback(() => {
     stopOscillator();
