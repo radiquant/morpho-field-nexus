@@ -1213,6 +1213,20 @@ const AnatomyResonanceViewer = ({
     loadModels: reloadAnatomyModels,
   } = useAnatomyModels();
 
+  // Organ Landmarks (BodyParts3D Pilot)
+  const {
+    landmarks: organLandmarks,
+    filteredLandmarks: filteredOrganLandmarks,
+    organCodes: landmarkOrganCodes,
+    isLoading: landmarksLoading,
+    selectedOrgan: selectedLandmarkOrgan,
+    setSelectedOrgan: setSelectedLandmarkOrgan,
+    activeLandmark,
+    setActiveLandmark,
+    loadLandmarks,
+    toScanPoints: landmarkScanPoints,
+  } = useOrganLandmarks();
+
   // Punkte laden
   useEffect(() => {
     loadAnatomyPoints();
