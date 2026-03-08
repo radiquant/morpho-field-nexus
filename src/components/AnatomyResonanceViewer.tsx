@@ -1735,6 +1735,18 @@ const AnatomyResonanceViewer = ({
                     </Label>
                   </div>
                 )}
+                <div className="flex items-center gap-1.5">
+                  <Switch
+                    id="show-landmarks"
+                    checked={showLandmarks}
+                    onCheckedChange={setShowLandmarks}
+                    className="scale-75"
+                  />
+                  <Label htmlFor="show-landmarks" className="text-xs text-foreground">
+                    <Crosshair className="w-3 h-3 inline mr-0.5" />
+                    Landmarks
+                  </Label>
+                </div>
               </div>
             )}
 
