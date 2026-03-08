@@ -975,6 +975,11 @@ function AnatomyScene({
   activeOrganScanPointId,
   onOrganScanPointClick,
   selectedOrganFilter,
+  showLandmarks,
+  landmarkPoints,
+  activeLandmarkId,
+  onLandmarkClick,
+  selectedLandmarkOrgan,
 }: {
   modelType: AnatomyModelType;
   anatomyPoints: AnatomyResonancePoint[];
@@ -1001,6 +1006,11 @@ function AnatomyScene({
   activeOrganScanPointId: string | null;
   onOrganScanPointClick: (point: OrganScanPoint) => void;
   selectedOrganFilter: string | null;
+  showLandmarks: boolean;
+  landmarkPoints: OrganLandmark[];
+  activeLandmarkId: string | null;
+  onLandmarkClick: (landmark: OrganLandmark) => void;
+  selectedLandmarkOrgan: string | null;
 }) {
   const [surfaceMeshes, setSurfaceMeshes] = useState<THREE.Mesh[]>([]);
 
