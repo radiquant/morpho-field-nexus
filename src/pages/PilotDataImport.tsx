@@ -26,7 +26,7 @@ const PILOT_DATA_SOURCES = [
   },
   {
     name: 'Visible Human Project',
-    url: 'https://www.nlm.nih.gov/databases/download/vhp.html',
+    url: 'https://www.nlm.nih.gov/research/visible/getting_data.html',
     type: 'Ganzkörper',
     format: 'CT/MRT Slices',
     detail: 'Cryosection-Daten mit CT- und MRT-Korrelation. Referenz für anatomische Koordinaten-Validierung.',
