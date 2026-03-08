@@ -239,6 +239,12 @@ const Analyse = () => {
           nlsDysregulationData={nlsDysregulationData}
         />
         <FrequencyOutputModule />
+        
+        {/* Hardware-Ausgabe */}
+        <div className="container mx-auto px-4 py-4">
+          <Spooky2Panel currentFrequency={selectedFrequency || undefined} />
+        </div>
+        
         <RemedyDatabasePanel onSelectFrequency={handleFrequencySelect} />
         <TCMTrendAnalytics clientId={selectedClientId} />
         <SessionReportGenerator clientId={selectedClientId} />
