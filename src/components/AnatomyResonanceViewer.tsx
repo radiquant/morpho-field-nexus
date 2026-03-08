@@ -1626,8 +1626,13 @@ const AnatomyResonanceViewer = ({
                   showOrganScan={showOrganScan}
                   organScanPoints={modelFilteredOrganScanPoints}
                   activeOrganScanPointId={activeOrganScanPoint?.id || null}
-                  onOrganScanPointClick={(p) => { setActiveOrganScanPoint(p); setActivePoint(null); setActiveAcupoint(null); setActiveChakra(null); }}
+                  onOrganScanPointClick={(p) => { setActiveOrganScanPoint(p); setActivePoint(null); setActiveAcupoint(null); setActiveChakra(null); setActiveLandmark(null); }}
                   selectedOrganFilter={selectedOrganFilter}
+                  showLandmarks={showLandmarks}
+                  landmarkPoints={organLandmarks}
+                  activeLandmarkId={activeLandmark?.id || null}
+                  onLandmarkClick={(lm) => { setActiveLandmark(lm); setActivePoint(null); setActiveAcupoint(null); setActiveChakra(null); setActiveOrganScanPoint(null); }}
+                  selectedLandmarkOrgan={selectedLandmarkOrgan}
                 />
               </Canvas>
             </Suspense>
