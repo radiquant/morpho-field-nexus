@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import Index from "./pages/Index";
 import Analyse from "./pages/Analyse";
+import KlientDashboard from "./pages/KlientDashboard";
 import Login from "./pages/Login";
 import Export from "./pages/Export";
 import NotFound from "./pages/NotFound";
