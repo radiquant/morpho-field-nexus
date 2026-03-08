@@ -26,6 +26,10 @@ const Index = () => {
       </Helmet>
 
       <main className="min-h-screen bg-background">
+        {/* Theme Toggle */}
+        <div className="fixed top-4 right-4 z-50">
+          <ThemeToggle />
+        </div>
         <Hero />
         <ConceptSection />
         <CuspVisualization />

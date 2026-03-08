@@ -157,7 +157,10 @@ const Analyse = () => {
               </h1>
             </motion.div>
 
-            <div className="w-[120px]" /> {/* Spacer für Zentrierung */}
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <div className="w-[80px]" />
+            </div>
           </div>
         </header>
 
