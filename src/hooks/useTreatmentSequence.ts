@@ -715,8 +715,9 @@ export function useTreatmentSequence() {
   }, [stopOscillator]);
 
   const skipToPoint = useCallback((index: number) => {
-    if (index < 0 || index >= treatmentPoints.length) return;
-    const point = treatmentPoints[index];
+    const points = treatmentPointsRef.current;
+    if (index < 0 || index >= points.length) return;
+    const point = points[index];
     startOscillator(point.frequency);
     setProgress((prev) => ({
       ...prev,
@@ -726,7 +727,7 @@ export function useTreatmentSequence() {
       remainingTime: point.duration,
       isImpulsePhase: true,
     }));
-  }, [treatmentPoints, startOscillator]);
+  }, [startOscillator]);
 
   const addSnapshot = useCallback((dimensions: number[], phase: TreatmentSnapshot['phase']) => {
     setSnapshots(prev => [...prev, { dimensions, timestamp: new Date(), phase }]);
