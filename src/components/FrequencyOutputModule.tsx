@@ -705,6 +705,33 @@ registerProcessor('freq-gen',FreqProcessor);
                   )}
                 </Button>
               </div>
+
+              {/* Echtzeit-Spektrum-Visualisierung */}
+              <div className="mt-6 space-y-2">
+                <div className="flex items-center gap-2">
+                  <BarChart3 className="w-4 h-4 text-primary" />
+                  <Label className="text-sm">FFT-Spektrum & Wellenform</Label>
+                  {workletReady && (
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-primary/10 text-primary">
+                      AudioWorklet
+                    </span>
+                  )}
+                </div>
+                <SpectrumVisualizer
+                  analyser={analyserNode}
+                  isPlaying={isPlaying}
+                  mode="both"
+                  height={140}
+                  className="border border-border"
+                />
+                {isPlaying && audioContextRef.current && (
+                  <p className="text-[10px] font-mono text-muted-foreground">
+                    Latenz: {Math.round((audioContextRef.current.baseLatency || 0) * 1000)}ms • 
+                    Sample-Rate: {audioContextRef.current.sampleRate} Hz • 
+                    {workletReady ? 'AudioWorklet' : 'Oszillator-Fallback'}
+                  </p>
+                )}
+              </div>
             </div>
           </motion.div>
 
