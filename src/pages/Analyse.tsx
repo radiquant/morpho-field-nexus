@@ -35,6 +35,7 @@ export interface TreatmentResult {
   treatmentDuration: number;
   cyclesCompleted: number;
   pointsProcessed: number;
+  diagnosisSnapshot?: Record<string, unknown>;
 }
 
 const Analyse = () => {
