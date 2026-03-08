@@ -680,9 +680,9 @@ export function useTreatmentSequence() {
     setProgress((prev) => ({ ...prev, isPaused: false, isPlaying: true }));
     // Restart the tick interval
     if (intervalRef.current) clearInterval(intervalRef.current);
-    intervalRef.current = window.setInterval(tick, 1000);
+    intervalRef.current = window.setInterval(stableTick, 1000);
     toast.info('Behandlung fortgesetzt');
-  }, [progress.currentPoint, startOscillator, tick]);
+  }, [progress.currentPoint, startOscillator, stableTick]);
 
   const stopSequence = useCallback(() => {
     stopOscillator();
