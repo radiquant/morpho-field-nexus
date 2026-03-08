@@ -400,6 +400,7 @@ export function useTreatmentSequence() {
 
     const options = treatmentOptionsRef.current;
     const continuousEndTime = options.continuousEndTime;
+    const points = treatmentPointsRef.current; // Use ref
 
     // Prüfen ob Endzeit noch nicht erreicht (Continuous-Mode)
     if (options.continuousMode && continuousEndTime && new Date() < continuousEndTime) {
@@ -415,7 +416,7 @@ export function useTreatmentSequence() {
         isPlaying: true,
       }));
 
-      const firstPoint = treatmentPoints[0];
+      const firstPoint = points[0];
       if (firstPoint) {
         startOscillator(firstPoint.frequency);
       }
@@ -439,7 +440,7 @@ export function useTreatmentSequence() {
         description: 'Trendanalyse verfügbar'
       });
     }
-  }, [treatmentPoints, startOscillator]);
+  }, [startOscillator]);
 
   // Keep ref in sync with state
   useEffect(() => {
