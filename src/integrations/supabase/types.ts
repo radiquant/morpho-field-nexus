@@ -482,6 +482,83 @@ export type Database = {
           },
         ]
       }
+      organ_landmarks: {
+        Row: {
+          confidence: number
+          created_at: string
+          harmonic_frequencies: number[] | null
+          id: string
+          label: string
+          mirror_pair: string | null
+          notes: string | null
+          organ_schema_id: string
+          placement_method: string
+          point_class: string
+          point_id: string
+          region_code: string
+          scan_frequency: number | null
+          structure_concept_id: string | null
+          surface_normal_x: number | null
+          surface_normal_y: number | null
+          surface_normal_z: number | null
+          x_position: number
+          y_position: number
+          z_position: number
+        }
+        Insert: {
+          confidence?: number
+          created_at?: string
+          harmonic_frequencies?: number[] | null
+          id?: string
+          label: string
+          mirror_pair?: string | null
+          notes?: string | null
+          organ_schema_id: string
+          placement_method?: string
+          point_class?: string
+          point_id: string
+          region_code: string
+          scan_frequency?: number | null
+          structure_concept_id?: string | null
+          surface_normal_x?: number | null
+          surface_normal_y?: number | null
+          surface_normal_z?: number | null
+          x_position: number
+          y_position: number
+          z_position: number
+        }
+        Update: {
+          confidence?: number
+          created_at?: string
+          harmonic_frequencies?: number[] | null
+          id?: string
+          label?: string
+          mirror_pair?: string | null
+          notes?: string | null
+          organ_schema_id?: string
+          placement_method?: string
+          point_class?: string
+          point_id?: string
+          region_code?: string
+          scan_frequency?: number | null
+          structure_concept_id?: string | null
+          surface_normal_x?: number | null
+          surface_normal_y?: number | null
+          surface_normal_z?: number | null
+          x_position?: number
+          y_position?: number
+          z_position?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organ_landmarks_organ_schema_id_fkey"
+            columns: ["organ_schema_id"]
+            isOneToOne: false
+            referencedRelation: "organ_schemas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organ_scan_points: {
         Row: {
           body_region: string
@@ -539,6 +616,57 @@ export type Database = {
           x_position?: number
           y_position?: number
           z_position?: number
+        }
+        Relationships: []
+      }
+      organ_schemas: {
+        Row: {
+          coordinate_system: string
+          created_at: string
+          id: string
+          mesh_file: string | null
+          organ_code: string
+          organ_name: string
+          point_classes: string[]
+          regions: Json
+          sampling_config: Json | null
+          source_concept_id: string | null
+          source_dataset: string
+          updated_at: string
+          validation_config: Json | null
+          version: string
+        }
+        Insert: {
+          coordinate_system?: string
+          created_at?: string
+          id?: string
+          mesh_file?: string | null
+          organ_code: string
+          organ_name: string
+          point_classes?: string[]
+          regions?: Json
+          sampling_config?: Json | null
+          source_concept_id?: string | null
+          source_dataset?: string
+          updated_at?: string
+          validation_config?: Json | null
+          version?: string
+        }
+        Update: {
+          coordinate_system?: string
+          created_at?: string
+          id?: string
+          mesh_file?: string | null
+          organ_code?: string
+          organ_name?: string
+          point_classes?: string[]
+          regions?: Json
+          sampling_config?: Json | null
+          source_concept_id?: string | null
+          source_dataset?: string
+          updated_at?: string
+          validation_config?: Json | null
+          version?: string
         }
         Relationships: []
       }
