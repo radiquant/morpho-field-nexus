@@ -1231,7 +1231,8 @@ const AnatomyResonanceViewer = ({
   useEffect(() => {
     loadAnatomyPoints();
     loadOrganScanPoints();
-  }, [loadAnatomyPoints, loadOrganScanPoints]);
+    loadLandmarks();
+  }, [loadAnatomyPoints, loadOrganScanPoints, loadLandmarks]);
 
   // Model-aware layer visibility
   const visibleLayers = useMemo(() => {
