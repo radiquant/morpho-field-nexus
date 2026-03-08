@@ -120,6 +120,9 @@ export function useTreatmentSequence() {
   const intervalRef = useRef<number | null>(null);
   const treatmentOptionsRef = useRef<TreatmentOptions>({});
   const imbalancesRef = useRef<MeridianImbalance[]>([]);
+  // Refs to avoid stale closures in setInterval
+  const treatmentPointsRef = useRef<TreatmentPoint[]>([]);
+  const tickRef = useRef<() => void>(() => {});
 
   useEffect(() => {
     // Auto-resume AudioContext when tab regains focus (prevents 3D view interaction breakage)
@@ -397,6 +400,7 @@ export function useTreatmentSequence() {
 
     const options = treatmentOptionsRef.current;
     const continuousEndTime = options.continuousEndTime;
+    const points = treatmentPointsRef.current; // Use ref
 
     // Prüfen ob Endzeit noch nicht erreicht (Continuous-Mode)
     if (options.continuousMode && continuousEndTime && new Date() < continuousEndTime) {
@@ -412,7 +416,7 @@ export function useTreatmentSequence() {
         isPlaying: true,
       }));
 
-      const firstPoint = treatmentPoints[0];
+      const firstPoint = points[0];
       if (firstPoint) {
         startOscillator(firstPoint.frequency);
       }
@@ -436,11 +440,17 @@ export function useTreatmentSequence() {
         description: 'Trendanalyse verfügbar'
       });
     }
-  }, [treatmentPoints, startOscillator]);
+  }, [startOscillator]);
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    treatmentPointsRef.current = treatmentPoints;
+  }, [treatmentPoints]);
 
   const moveToNextPoint = useCallback(() => {
     setProgress((prev) => {
       const options = treatmentOptionsRef.current;
+      const points = treatmentPointsRef.current; // Use ref, not stale closure
       const nextIndex = prev.currentPointIndex + 1;
 
       // Zyklus beendet
@@ -475,7 +485,7 @@ export function useTreatmentSequence() {
         }
 
         // Neuer Zyklus
-        const firstPoint = treatmentPoints[0];
+        const firstPoint = points[0];
         if (firstPoint) startOscillator(firstPoint.frequency);
         
         toast.info(`Zyklus ${prev.currentCycle + 1}/${maxCycles} gestartet`);
@@ -491,7 +501,7 @@ export function useTreatmentSequence() {
         };
       }
 
-      const nextPoint = treatmentPoints[nextIndex];
+      const nextPoint = points[nextIndex];
       if (nextPoint) startOscillator(nextPoint.frequency);
 
       return {
@@ -502,7 +512,7 @@ export function useTreatmentSequence() {
         isImpulsePhase: true,
       };
     });
-  }, [treatmentPoints, startOscillator, stopOscillator]);
+  }, [startOscillator, stopOscillator]);
 
   const tick = useCallback(() => {
     setProgress((prev) => {
@@ -564,6 +574,16 @@ export function useTreatmentSequence() {
       };
     });
   }, [moveToNextPoint, onRetestCallback, handleRetestComplete]);
+
+  // Keep tickRef in sync so the interval always calls the latest tick
+  useEffect(() => {
+    tickRef.current = tick;
+  }, [tick]);
+
+  // Stable interval callback that delegates to tickRef
+  const stableTick = useCallback(() => {
+    tickRef.current();
+  }, []);
 
   const startSequence = useCallback((
     imbalances: MeridianImbalance[], 
@@ -642,8 +662,8 @@ export function useTreatmentSequence() {
     });
 
     if (intervalRef.current) clearInterval(intervalRef.current);
-    intervalRef.current = window.setInterval(tick, 1000);
-  }, [generateTreatmentPoints, startOscillator, tick]);
+    intervalRef.current = window.setInterval(stableTick, 1000);
+  }, [generateTreatmentPoints, startOscillator, stableTick]);
 
   const pauseSequence = useCallback(() => {
     stopOscillator();
@@ -660,9 +680,9 @@ export function useTreatmentSequence() {
     setProgress((prev) => ({ ...prev, isPaused: false, isPlaying: true }));
     // Restart the tick interval
     if (intervalRef.current) clearInterval(intervalRef.current);
-    intervalRef.current = window.setInterval(tick, 1000);
+    intervalRef.current = window.setInterval(stableTick, 1000);
     toast.info('Behandlung fortgesetzt');
-  }, [progress.currentPoint, startOscillator, tick]);
+  }, [progress.currentPoint, startOscillator, stableTick]);
 
   const stopSequence = useCallback(() => {
     stopOscillator();
@@ -695,8 +715,9 @@ export function useTreatmentSequence() {
   }, [stopOscillator]);
 
   const skipToPoint = useCallback((index: number) => {
-    if (index < 0 || index >= treatmentPoints.length) return;
-    const point = treatmentPoints[index];
+    const points = treatmentPointsRef.current;
+    if (index < 0 || index >= points.length) return;
+    const point = points[index];
     startOscillator(point.frequency);
     setProgress((prev) => ({
       ...prev,
@@ -706,7 +727,7 @@ export function useTreatmentSequence() {
       remainingTime: point.duration,
       isImpulsePhase: true,
     }));
-  }, [treatmentPoints, startOscillator]);
+  }, [startOscillator]);
 
   const addSnapshot = useCallback((dimensions: number[], phase: TreatmentSnapshot['phase']) => {
     setSnapshots(prev => [...prev, { dimensions, timestamp: new Date(), phase }]);
