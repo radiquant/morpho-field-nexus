@@ -575,6 +575,16 @@ export function useTreatmentSequence() {
     });
   }, [moveToNextPoint, onRetestCallback, handleRetestComplete]);
 
+  // Keep tickRef in sync so the interval always calls the latest tick
+  useEffect(() => {
+    tickRef.current = tick;
+  }, [tick]);
+
+  // Stable interval callback that delegates to tickRef
+  const stableTick = useCallback(() => {
+    tickRef.current();
+  }, []);
+
   const startSequence = useCallback((
     imbalances: MeridianImbalance[], 
     options?: TreatmentOptions,
