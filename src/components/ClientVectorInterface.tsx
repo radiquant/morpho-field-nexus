@@ -40,6 +40,7 @@ import { ThomVectorEngine, type VectorAnalysis, type RecommendedFrequency } from
 import { useClientDatabase, type ClientRecord } from '@/hooks/useClientDatabase';
 import { useRealtimeHarmonization } from '@/hooks/useRealtimeHarmonization';
 import WordEnergyDBManager from '@/components/WordEnergyDBManager';
+import GroupManagementPanel from '@/components/GroupManagementPanel';
 
 // Biometrische Klienten-Daten
 interface BiometricData {
