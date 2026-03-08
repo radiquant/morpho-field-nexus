@@ -1,0 +1,284 @@
+/**
+ * Hook für Organ-Landmarks (definierte anatomische Punkte)
+ * Lädt Organ-Schemas und zugehörige Landmarks aus der Datenbank
+ * Fallback auf lokale Pilotdaten wenn DB leer
+ */
+import { useState, useCallback, useMemo } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import {
+  HEART_SCHEMA, HEART_LANDMARKS,
+  BRAIN_SCHEMA, BRAIN_LANDMARKS,
+} from '@/data/anatomy-pilots';
+
+export interface OrganSchema {
+  id: string;
+  organCode: string;
+  organName: string;
+  sourceDataset: string;
+  sourceConceptId: string | null;
+  coordinateSystem: string;
+  regions: { region_code: string; name: string }[];
+  pointClasses: string[];
+  samplingConfig: Record<string, unknown>;
+  validationConfig: Record<string, unknown>;
+  meshFile: string | null;
+  version: string;
+}
+
+export interface OrganLandmark {
+  id: string;
+  organSchemaId: string;
+  pointId: string;
+  label: string;
+  pointClass: string;
+  regionCode: string;
+  structureConceptId: string | null;
+  x: number;
+  y: number;
+  z: number;
+  surfaceNormal?: [number, number, number];
+  scanFrequency: number | null;
+  harmonicFrequencies: number[];
+  placementMethod: string;
+  confidence: number;
+  mirrorPair: string | null;
+  notes: string | null;
+  // Computed
+  organCode?: string;
+}
+
+export function useOrganLandmarks() {
+  const [schemas, setSchemas] = useState<OrganSchema[]>([]);
+  const [landmarks, setLandmarks] = useState<OrganLandmark[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedOrgan, setSelectedOrgan] = useState<string | null>(null);
+  const [activeLandmark, setActiveLandmark] = useState<OrganLandmark | null>(null);
+
+  const loadFromDatabase = useCallback(async (): Promise<boolean> => {
+    try {
+      const { data: schemaData, error: schemaError } = await supabase
+        .from('organ_schemas')
+        .select('*')
+        .order('organ_code');
+
+      if (schemaError) throw schemaError;
+      if (!schemaData || schemaData.length === 0) return false;
+
+      const mappedSchemas: OrganSchema[] = schemaData.map((s: any) => ({
+        id: s.id,
+        organCode: s.organ_code,
+        organName: s.organ_name,
+        sourceDataset: s.source_dataset,
+        sourceConceptId: s.source_concept_id,
+        coordinateSystem: s.coordinate_system,
+        regions: (s.regions || []) as { region_code: string; name: string }[],
+        pointClasses: s.point_classes || ['A', 'S', 'V'],
+        samplingConfig: s.sampling_config || {},
+        validationConfig: s.validation_config || {},
+        meshFile: s.mesh_file,
+        version: s.version,
+      }));
+
+      setSchemas(mappedSchemas);
+
+      // Load landmarks for all schemas
+      const schemaIds = mappedSchemas.map(s => s.id);
+      const { data: landmarkData, error: landmarkError } = await supabase
+        .from('organ_landmarks')
+        .select('*')
+        .in('organ_schema_id', schemaIds)
+        .order('point_id');
+
+      if (landmarkError) throw landmarkError;
+
+      const schemaMap = new Map(mappedSchemas.map(s => [s.id, s.organCode]));
+
+      const mappedLandmarks: OrganLandmark[] = (landmarkData || []).map((l: any) => ({
+        id: l.id,
+        organSchemaId: l.organ_schema_id,
+        pointId: l.point_id,
+        label: l.label,
+        pointClass: l.point_class,
+        regionCode: l.region_code,
+        structureConceptId: l.structure_concept_id,
+        x: l.x_position,
+        y: l.y_position,
+        z: l.z_position,
+        surfaceNormal: l.surface_normal_x != null
+          ? [l.surface_normal_x, l.surface_normal_y, l.surface_normal_z] as [number, number, number]
+          : undefined,
+        scanFrequency: l.scan_frequency,
+        harmonicFrequencies: l.harmonic_frequencies || [],
+        placementMethod: l.placement_method,
+        confidence: l.confidence,
+        mirrorPair: l.mirror_pair,
+        notes: l.notes,
+        organCode: schemaMap.get(l.organ_schema_id),
+      }));
+
+      setLandmarks(mappedLandmarks);
+      return true;
+    } catch (err) {
+      console.error('[OrganLandmarks] DB-Ladefehler:', err);
+      return false;
+    }
+  }, []);
+
+  const loadFromPilotData = useCallback(() => {
+    // Generiere temporäre IDs für lokale Pilotdaten
+    const heartSchemaId = 'pilot-heart';
+    const brainSchemaId = 'pilot-brain';
+
+    const pilotSchemas: OrganSchema[] = [
+      {
+        id: heartSchemaId,
+        organCode: HEART_SCHEMA.organ_code,
+        organName: HEART_SCHEMA.organ_name,
+        sourceDataset: HEART_SCHEMA.source_dataset,
+        sourceConceptId: HEART_SCHEMA.source_concept_id,
+        coordinateSystem: HEART_SCHEMA.coordinate_system,
+        regions: HEART_SCHEMA.regions,
+        pointClasses: HEART_SCHEMA.point_classes,
+        samplingConfig: HEART_SCHEMA.sampling_config,
+        validationConfig: HEART_SCHEMA.validation_config,
+        meshFile: null,
+        version: HEART_SCHEMA.version,
+      },
+      {
+        id: brainSchemaId,
+        organCode: BRAIN_SCHEMA.organ_code,
+        organName: BRAIN_SCHEMA.organ_name,
+        sourceDataset: BRAIN_SCHEMA.source_dataset,
+        sourceConceptId: BRAIN_SCHEMA.source_concept_id,
+        coordinateSystem: BRAIN_SCHEMA.coordinate_system,
+        regions: BRAIN_SCHEMA.regions,
+        pointClasses: BRAIN_SCHEMA.point_classes,
+        samplingConfig: BRAIN_SCHEMA.sampling_config,
+        validationConfig: BRAIN_SCHEMA.validation_config,
+        meshFile: null,
+        version: BRAIN_SCHEMA.version,
+      },
+    ];
+
+    const pilotLandmarks: OrganLandmark[] = [
+      ...HEART_LANDMARKS.map((l, i) => ({
+        id: `pilot-heart-${i}`,
+        organSchemaId: heartSchemaId,
+        pointId: l.point_id,
+        label: l.label,
+        pointClass: l.point_class,
+        regionCode: l.region_code,
+        structureConceptId: l.structure_concept_id || null,
+        x: l.x,
+        y: l.y,
+        z: l.z,
+        scanFrequency: l.scan_frequency,
+        harmonicFrequencies: [],
+        placementMethod: l.placement_method,
+        confidence: l.confidence,
+        mirrorPair: null,
+        notes: l.notes || null,
+        organCode: 'HEART',
+      })),
+      ...BRAIN_LANDMARKS.map((l, i) => ({
+        id: `pilot-brain-${i}`,
+        organSchemaId: brainSchemaId,
+        pointId: l.point_id,
+        label: l.label,
+        pointClass: l.point_class,
+        regionCode: l.region_code,
+        structureConceptId: l.structure_concept_id || null,
+        x: l.x,
+        y: l.y,
+        z: l.z,
+        scanFrequency: l.scan_frequency,
+        harmonicFrequencies: [],
+        placementMethod: l.placement_method,
+        confidence: l.confidence,
+        mirrorPair: l.mirror_pair || null,
+        notes: l.notes || null,
+        organCode: 'BRAIN',
+      })),
+    ];
+
+    setSchemas(pilotSchemas);
+    setLandmarks(pilotLandmarks);
+    console.log('[OrganLandmarks] Pilotdaten geladen:', pilotLandmarks.length, 'Punkte');
+  }, []);
+
+  const loadLandmarks = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const loaded = await loadFromDatabase();
+      if (!loaded) {
+        loadFromPilotData();
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [loadFromDatabase, loadFromPilotData]);
+
+  // Filter by organ
+  const filteredLandmarks = useMemo(() => {
+    if (!selectedOrgan) return landmarks;
+    return landmarks.filter(l => l.organCode === selectedOrgan);
+  }, [landmarks, selectedOrgan]);
+
+  // Get landmarks by class
+  const aLandmarks = useMemo(() =>
+    filteredLandmarks.filter(l => l.pointClass === 'A'),
+  [filteredLandmarks]);
+
+  const sLandmarks = useMemo(() =>
+    filteredLandmarks.filter(l => l.pointClass === 'S'),
+  [filteredLandmarks]);
+
+  // Available organ codes
+  const organCodes = useMemo(() =>
+    [...new Set(landmarks.map(l => l.organCode).filter(Boolean))] as string[],
+  [landmarks]);
+
+  // Get schema for an organ
+  const getSchema = useCallback((organCode: string) =>
+    schemas.find(s => s.organCode === organCode),
+  [schemas]);
+
+  // Convert landmarks to OrganScanPoint format for NLS integration
+  const toScanPoints = useMemo(() => {
+    return filteredLandmarks.map(l => ({
+      id: l.id,
+      organSystem: l.organCode?.toLowerCase() || 'unknown',
+      organNameDe: l.label,
+      organNameLatin: l.structureConceptId,
+      pointIndex: parseInt(l.pointId.split('_').pop() || '0', 10),
+      pointName: `${l.pointId}: ${l.label}`,
+      scanFrequency: l.scanFrequency || 528,
+      harmonicFrequencies: l.harmonicFrequencies,
+      x: l.x,
+      y: l.y,
+      z: l.z,
+      tissueType: l.pointClass === 'A' ? 'landmark' : 'scan',
+      dysregulationThreshold: 1.5,
+      bodyRegion: l.regionCode,
+      layerDepth: 'surface' as const,
+      description: l.notes,
+    }));
+  }, [filteredLandmarks]);
+
+  return {
+    schemas,
+    landmarks,
+    filteredLandmarks,
+    aLandmarks,
+    sLandmarks,
+    organCodes,
+    isLoading,
+    selectedOrgan,
+    setSelectedOrgan,
+    activeLandmark,
+    setActiveLandmark,
+    loadLandmarks,
+    getSchema,
+    toScanPoints,
+  };
+}
