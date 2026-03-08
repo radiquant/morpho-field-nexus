@@ -407,22 +407,28 @@ registerProcessor('freq-gen',FreqProcessor);
 
   // Audio stoppen
   const stopAudio = useCallback(() => {
+    // WorkletNode stoppen
+    if (workletNodeRef.current) {
+      workletNodeRef.current.disconnect();
+      workletNodeRef.current = null;
+    }
+
     // Stop all oscillators
     oscillatorsRef.current.forEach(osc => {
-      try {
-        osc.stop();
-        osc.disconnect();
-      } catch {}
+      try { osc.stop(); osc.disconnect(); } catch {}
     });
     oscillatorsRef.current = [];
     
-    oscillatorRef.current?.stop();
-    oscillatorRef.current?.disconnect();
-    modulatorRef.current?.stop();
-    modulatorRef.current?.disconnect();
+    try { oscillatorRef.current?.stop(); oscillatorRef.current?.disconnect(); } catch {}
+    try { modulatorRef.current?.stop(); modulatorRef.current?.disconnect(); } catch {}
     
     oscillatorRef.current = null;
     modulatorRef.current = null;
+    
+    // Analyser trennen (aber nicht zerstören)
+    if (analyserRef.current) {
+      try { analyserRef.current.disconnect(); } catch {}
+    }
     
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -432,12 +438,14 @@ registerProcessor('freq-gen',FreqProcessor);
     setIsPlaying(false);
   }, []);
 
-  // Frequenz live aktualisieren
+  // Frequenz live aktualisieren (WorkletNode + Fallback)
   useEffect(() => {
-    if (oscillatorRef.current && isPlaying) {
+    if (!isPlaying) return;
+    if (workletNodeRef.current) {
+      workletNodeRef.current.port.postMessage({ frequency });
+    } else if (oscillatorRef.current) {
       oscillatorRef.current.frequency.setValueAtTime(
-        frequency, 
-        audioContextRef.current?.currentTime || 0
+        frequency, audioContextRef.current?.currentTime || 0
       );
     }
   }, [frequency, isPlaying]);
@@ -450,11 +458,17 @@ registerProcessor('freq-gen',FreqProcessor);
         audioContextRef.current?.currentTime || 0
       );
     }
+    if (workletNodeRef.current) {
+      workletNodeRef.current.port.postMessage({ amplitude: isMuted ? 0 : 0.8 });
+    }
   }, [amplitude, isMuted]);
 
   // Waveform aktualisieren
   useEffect(() => {
-    if (oscillatorRef.current && isPlaying && waveform !== 'bipolar_sine' && waveform !== 'harmonic_complex') {
+    if (!isPlaying) return;
+    if (workletNodeRef.current) {
+      workletNodeRef.current.port.postMessage({ waveform });
+    } else if (oscillatorRef.current && waveform !== 'bipolar_sine' && waveform !== 'harmonic_complex') {
       oscillatorRef.current.type = getOscillatorType(waveform);
     }
   }, [waveform, isPlaying]);
