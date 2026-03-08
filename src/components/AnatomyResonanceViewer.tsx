@@ -34,7 +34,8 @@ import {
   Info,
   GitBranch,
   AlertTriangle,
-  Settings2
+  Settings2,
+  Crosshair
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
