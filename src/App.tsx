@@ -9,6 +9,8 @@ import Analyse from "./pages/Analyse";
 import KlientDashboard from "./pages/KlientDashboard";
 import Login from "./pages/Login";
 import Export from "./pages/Export";
+import ZAnatomyWorkflow from "./pages/ZAnatomyWorkflow";
+import PilotDataImport from "./pages/PilotDataImport";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
