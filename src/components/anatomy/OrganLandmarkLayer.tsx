@@ -19,6 +19,12 @@ interface OrganLandmarkLayerProps {
 const ORGAN_COLORS: Record<string, string> = {
   HEART: '#ef4444',
   BRAIN: '#a855f7',
+  LIVER: '#f59e0b',
+  KIDNEY_PAIR: '#10b981',
+  LUNG_PAIR: '#06b6d4',
+  SPINE_PELVIS: '#8b5cf6',
+  WHOLEBODY: '#6366f1',
+  TCM_SURFACE: '#ec4899',
 };
 
 const CLASS_SHAPES: Record<string, 'sphere' | 'octahedron' | 'diamond'> = {
