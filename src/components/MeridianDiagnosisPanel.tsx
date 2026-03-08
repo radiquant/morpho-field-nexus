@@ -279,6 +279,18 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
         treatmentDuration: progress.elapsedTotalTime,
         cyclesCompleted: progress.currentCycle,
         pointsProcessed: treatmentPoints.length,
+        diagnosisSnapshot: diagnosisResult ? {
+          overallPattern: diagnosisResult.overallPattern,
+          primaryElement: diagnosisResult.primaryElement,
+          imbalanceCount: diagnosisResult.imbalances.length,
+          imbalances: diagnosisResult.imbalances.map(i => ({
+            meridianId: i.meridianId,
+            meridianName: i.meridianName,
+            element: i.element,
+            imbalanceType: i.imbalanceType,
+            imbalanceScore: i.imbalanceScore,
+          })),
+        } : undefined,
       });
     }
     
