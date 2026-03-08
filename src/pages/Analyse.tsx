@@ -24,6 +24,7 @@ import TCMTrendAnalytics from '@/components/TCMTrendAnalytics';
 import SessionReportGenerator from '@/components/SessionReportGenerator';
 import SessionManagementPanel from '@/components/SessionManagementPanel';
 import Footer from '@/components/Footer';
+import Spooky2Panel from '@/components/Spooky2Panel';
 import { useSessionManagement } from '@/hooks/useSessionManagement';
 import { useChreodeTracking } from '@/hooks/useChreodeTracking';
 import type { VectorAnalysis } from '@/services/feldengine';
