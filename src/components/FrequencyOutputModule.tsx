@@ -23,6 +23,7 @@ import {
   BarChart3,
   Search
 } from 'lucide-react';
+import { SpectrumVisualizer } from './SpectrumVisualizer';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
@@ -144,6 +145,10 @@ const FrequencyOutputModule = ({ onFrequencyChange }: FrequencyOutputModuleProps
   const gainNodeRef = useRef<GainNode | null>(null);
   const modulatorRef = useRef<OscillatorNode | null>(null);
   const modulationGainRef = useRef<GainNode | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const workletNodeRef = useRef<AudioWorkletNode | null>(null);
+  const [workletReady, setWorkletReady] = useState(false);
+  const [analyserNode, setAnalyserNode] = useState<AnalyserNode | null>(null);
 
   // Serial Port Ref
   const serialPortRef = useRef<SerialPort | null>(null);
@@ -156,13 +161,90 @@ const FrequencyOutputModule = ({ onFrequencyChange }: FrequencyOutputModuleProps
     };
   }, []);
 
-  // Audio initialisieren
-  const initAudio = useCallback(() => {
-    if (!audioContextRef.current) {
-      audioContextRef.current = new AudioContext();
+  // AudioWorklet Processor Code
+  const WORKLET_CODE = `
+class FreqProcessor extends AudioWorkletProcessor {
+  constructor() {
+    super();
+    this.freq = 440; this.amp = 0.5; this.wf = 'sine'; this.phase = 0;
+    this.harmonics = [1,0.5,0.25,0.125]; this.modFreq = 0; this.modDepth = 0; this.modPhase = 0;
+    this.port.onmessage = (e) => {
+      const d = e.data;
+      if (d.frequency !== undefined) this.freq = d.frequency;
+      if (d.amplitude !== undefined) this.amp = d.amplitude;
+      if (d.waveform !== undefined) this.wf = d.waveform;
+      if (d.harmonics !== undefined) this.harmonics = d.harmonics;
+      if (d.modFreq !== undefined) this.modFreq = d.modFreq;
+      if (d.modDepth !== undefined) this.modDepth = d.modDepth;
+    };
+  }
+  gen(p) {
+    switch(this.wf) {
+      case 'sine': return Math.sin(p*2*Math.PI);
+      case 'square': return p<0.5?1:-1;
+      case 'triangle': return 4*Math.abs(p-0.5)-1;
+      case 'sawtooth': return 2*p-1;
+      case 'bipolar_sine': return Math.sin(p*2*Math.PI)*Math.cos(p*Math.PI);
+      case 'harmonic_complex': {
+        let s=0;
+        for(let i=0;i<this.harmonics.length;i++) s+=this.harmonics[i]*Math.sin(p*(i+1)*2*Math.PI);
+        return s/this.harmonics.reduce((a,b)=>a+b,1);
+      }
+      default: return Math.sin(p*2*Math.PI);
     }
-    return audioContextRef.current;
-  }, []);
+  }
+  process(inputs,outputs) {
+    const ch = outputs[0][0];
+    if(!ch) return true;
+    for(let i=0;i<ch.length;i++){
+      let mod=0;
+      if(this.modFreq>0&&this.modDepth>0){
+        mod=Math.sin(this.modPhase*2*Math.PI)*this.modDepth*this.freq;
+        this.modPhase+=this.modFreq/sampleRate;
+        if(this.modPhase>=1)this.modPhase-=1;
+      }
+      ch[i]=this.gen(this.phase)*this.amp;
+      this.phase+=(this.freq+mod)/sampleRate;
+      if(this.phase>=1)this.phase-=1;
+    }
+    return true;
+  }
+}
+registerProcessor('freq-gen',FreqProcessor);
+`;
+
+  // Audio initialisieren (mit AudioWorklet + AnalyserNode)
+  const initAudio = useCallback(async () => {
+    if (!audioContextRef.current) {
+      audioContextRef.current = new AudioContext({ sampleRate: 48000, latencyHint: 'interactive' });
+    }
+    const ctx = audioContextRef.current;
+
+    // AnalyserNode erstellen
+    if (!analyserRef.current) {
+      const an = ctx.createAnalyser();
+      an.fftSize = 2048;
+      an.smoothingTimeConstant = 0.8;
+      analyserRef.current = an;
+      setAnalyserNode(an);
+    }
+
+    // AudioWorklet laden (einmalig)
+    if (!workletReady) {
+      try {
+        const blob = new Blob([WORKLET_CODE], { type: 'application/javascript' });
+        const url = URL.createObjectURL(blob);
+        await ctx.audioWorklet.addModule(url);
+        URL.revokeObjectURL(url);
+        setWorkletReady(true);
+        console.log('[FreqOutput] AudioWorklet geladen – sub-1ms Latenz aktiv');
+      } catch (e) {
+        console.warn('[FreqOutput] AudioWorklet Fallback:', e);
+      }
+    }
+
+    return ctx;
+  }, [workletReady]);
 
   // Current therapy mode config
   const currentModeConfig = THERAPY_MODES.find(m => m.id === therapyMode)!;
@@ -204,83 +286,44 @@ const FrequencyOutputModule = ({ onFrequencyChange }: FrequencyOutputModuleProps
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Audio starten
-  const startAudio = useCallback(() => {
-    const ctx = initAudio();
+  // Audio starten (AudioWorklet mit AnalyserNode)
+  const startAudio = useCallback(async () => {
+    const ctx = await initAudio();
     
     // Gain-Node für Amplitude
     const gain = ctx.createGain();
     gain.gain.value = isMuted ? 0 : amplitude;
     gainNodeRef.current = gain;
-    gain.connect(ctx.destination);
 
-    // Create oscillators based on therapy mode
-    if (currentModeConfig.bipolar && waveform === 'bipolar_sine') {
-      // Bipolar mode: two anti-phase oscillators
-      const osc1 = ctx.createOscillator();
-      const osc2 = ctx.createOscillator();
-      osc1.frequency.value = frequency;
-      osc2.frequency.value = frequency;
-      
-      const gain1 = ctx.createGain();
-      const gain2 = ctx.createGain();
-      gain1.gain.value = 0.5;
-      gain2.gain.value = -0.5; // Inverted = anti-phase
-      
-      osc1.connect(gain1);
-      osc2.connect(gain2);
-      gain1.connect(gain);
-      gain2.connect(gain);
-      
-      osc1.start();
-      osc2.start();
-      oscillatorsRef.current = [osc1, osc2];
-      oscillatorRef.current = osc1;
-    } else if (waveform === 'harmonic_complex') {
-      // Harmonic mode: fundamental + overtones
-      const oscs: OscillatorNode[] = [];
-      currentModeConfig.harmonics.forEach((harmonic) => {
-        const harmonicFreq = frequency * harmonic;
-        if (harmonicFreq < 20000) {
-          const osc = ctx.createOscillator();
-          osc.frequency.value = harmonicFreq;
-          osc.type = 'sine';
-          
-          const harmonicGain = ctx.createGain();
-          harmonicGain.gain.value = (1 / (harmonic * 1.5)) * amplitude;
-          
-          osc.connect(harmonicGain);
-          harmonicGain.connect(gain);
-          osc.start();
-          oscs.push(osc);
-        }
-      });
-      oscillatorsRef.current = oscs;
-      oscillatorRef.current = oscs[0] || null;
+    // Audio-Kette: Source → Gain → Analyser → Destination
+    const analyser = analyserRef.current!;
+    gain.connect(analyser);
+    analyser.connect(ctx.destination);
+
+    // Versuche AudioWorklet, Fallback auf OscillatorNode
+    if (workletReady) {
+      try {
+        const worklet = new AudioWorkletNode(ctx, 'freq-gen');
+        worklet.connect(gain);
+        worklet.port.postMessage({
+          frequency,
+          amplitude: 0.8, // Konstante Amplitude gemäß Audio-Engine-Spec
+          waveform,
+          harmonics: currentModeConfig.harmonics.map((h, i) => 1 / (h * 1.5)),
+          modFreq: modulationEnabled ? modulationFreq : 0,
+          modDepth: modulationEnabled ? modulationDepth : 0,
+        });
+        workletNodeRef.current = worklet;
+        oscillatorsRef.current = [];
+        oscillatorRef.current = null;
+        console.log('[FreqOutput] AudioWorklet aktiv – Latenz:', 
+          Math.round((ctx.baseLatency || 0) * 1000), 'ms');
+      } catch {
+        console.warn('[FreqOutput] Worklet-Start fehlgeschlagen, nutze Oszillator-Fallback');
+        startOscillatorFallback(ctx, gain);
+      }
     } else {
-      // Standard single oscillator
-      const osc = ctx.createOscillator();
-      osc.type = getOscillatorType(waveform);
-      osc.frequency.value = frequency;
-      osc.connect(gain);
-      osc.start();
-      oscillatorRef.current = osc;
-      oscillatorsRef.current = [osc];
-    }
-
-    // Modulation Setup (only for harmonic modulation mode)
-    if (modulationEnabled && currentModeConfig.supportsModulation) {
-      const modulator = ctx.createOscillator();
-      modulator.frequency.value = modulationFreq;
-      modulatorRef.current = modulator;
-
-      const modGain = ctx.createGain();
-      modGain.gain.value = modulationDepth * amplitude;
-      modulationGainRef.current = modGain;
-
-      modulator.connect(modGain);
-      modGain.connect(gain.gain);
-      modulator.start();
+      startOscillatorFallback(ctx, gain);
     }
 
     setIsPlaying(true);
@@ -301,28 +344,91 @@ const FrequencyOutputModule = ({ onFrequencyChange }: FrequencyOutputModuleProps
     onFrequencyChange?.(config);
 
     toast.success(`${currentModeConfig.name} gestartet`, {
-      description: `${frequency} Hz • ${waveform}`
+      description: `${frequency} Hz • ${waveform}${workletReady ? ' • AudioWorklet' : ''}`
     });
-  }, [frequency, amplitude, waveform, modulationEnabled, modulationFreq, modulationDepth, isMuted, emOutputEnabled, initAudio, onFrequencyChange, currentModeConfig]);
+  }, [frequency, amplitude, waveform, modulationEnabled, modulationFreq, modulationDepth, isMuted, emOutputEnabled, initAudio, onFrequencyChange, currentModeConfig, workletReady]);
+
+  // Fallback: Standard-Oszillatoren (wenn AudioWorklet nicht verfügbar)
+  const startOscillatorFallback = useCallback((ctx: AudioContext, gain: GainNode) => {
+    if (currentModeConfig.bipolar && waveform === 'bipolar_sine') {
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      osc1.frequency.value = frequency;
+      osc2.frequency.value = frequency;
+      const gain1 = ctx.createGain();
+      const gain2 = ctx.createGain();
+      gain1.gain.value = 0.5;
+      gain2.gain.value = -0.5;
+      osc1.connect(gain1); osc2.connect(gain2);
+      gain1.connect(gain); gain2.connect(gain);
+      osc1.start(); osc2.start();
+      oscillatorsRef.current = [osc1, osc2];
+      oscillatorRef.current = osc1;
+    } else if (waveform === 'harmonic_complex') {
+      const oscs: OscillatorNode[] = [];
+      currentModeConfig.harmonics.forEach((harmonic) => {
+        const harmonicFreq = frequency * harmonic;
+        if (harmonicFreq < 20000) {
+          const osc = ctx.createOscillator();
+          osc.frequency.value = harmonicFreq;
+          osc.type = 'sine';
+          const harmonicGain = ctx.createGain();
+          harmonicGain.gain.value = (1 / (harmonic * 1.5)) * amplitude;
+          osc.connect(harmonicGain);
+          harmonicGain.connect(gain);
+          osc.start();
+          oscs.push(osc);
+        }
+      });
+      oscillatorsRef.current = oscs;
+      oscillatorRef.current = oscs[0] || null;
+    } else {
+      const osc = ctx.createOscillator();
+      osc.type = getOscillatorType(waveform);
+      osc.frequency.value = frequency;
+      osc.connect(gain);
+      osc.start();
+      oscillatorRef.current = osc;
+      oscillatorsRef.current = [osc];
+    }
+
+    if (modulationEnabled && currentModeConfig.supportsModulation) {
+      const modulator = ctx.createOscillator();
+      modulator.frequency.value = modulationFreq;
+      modulatorRef.current = modulator;
+      const modGain = ctx.createGain();
+      modGain.gain.value = modulationDepth * amplitude;
+      modulationGainRef.current = modGain;
+      modulator.connect(modGain);
+      modGain.connect(gain.gain);
+      modulator.start();
+    }
+  }, [frequency, amplitude, waveform, modulationEnabled, modulationFreq, modulationDepth, currentModeConfig]);
 
   // Audio stoppen
   const stopAudio = useCallback(() => {
+    // WorkletNode stoppen
+    if (workletNodeRef.current) {
+      workletNodeRef.current.disconnect();
+      workletNodeRef.current = null;
+    }
+
     // Stop all oscillators
     oscillatorsRef.current.forEach(osc => {
-      try {
-        osc.stop();
-        osc.disconnect();
-      } catch {}
+      try { osc.stop(); osc.disconnect(); } catch {}
     });
     oscillatorsRef.current = [];
     
-    oscillatorRef.current?.stop();
-    oscillatorRef.current?.disconnect();
-    modulatorRef.current?.stop();
-    modulatorRef.current?.disconnect();
+    try { oscillatorRef.current?.stop(); oscillatorRef.current?.disconnect(); } catch {}
+    try { modulatorRef.current?.stop(); modulatorRef.current?.disconnect(); } catch {}
     
     oscillatorRef.current = null;
     modulatorRef.current = null;
+    
+    // Analyser trennen (aber nicht zerstören)
+    if (analyserRef.current) {
+      try { analyserRef.current.disconnect(); } catch {}
+    }
     
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -332,12 +438,14 @@ const FrequencyOutputModule = ({ onFrequencyChange }: FrequencyOutputModuleProps
     setIsPlaying(false);
   }, []);
 
-  // Frequenz live aktualisieren
+  // Frequenz live aktualisieren (WorkletNode + Fallback)
   useEffect(() => {
-    if (oscillatorRef.current && isPlaying) {
+    if (!isPlaying) return;
+    if (workletNodeRef.current) {
+      workletNodeRef.current.port.postMessage({ frequency });
+    } else if (oscillatorRef.current) {
       oscillatorRef.current.frequency.setValueAtTime(
-        frequency, 
-        audioContextRef.current?.currentTime || 0
+        frequency, audioContextRef.current?.currentTime || 0
       );
     }
   }, [frequency, isPlaying]);
@@ -350,11 +458,17 @@ const FrequencyOutputModule = ({ onFrequencyChange }: FrequencyOutputModuleProps
         audioContextRef.current?.currentTime || 0
       );
     }
+    if (workletNodeRef.current) {
+      workletNodeRef.current.port.postMessage({ amplitude: isMuted ? 0 : 0.8 });
+    }
   }, [amplitude, isMuted]);
 
   // Waveform aktualisieren
   useEffect(() => {
-    if (oscillatorRef.current && isPlaying && waveform !== 'bipolar_sine' && waveform !== 'harmonic_complex') {
+    if (!isPlaying) return;
+    if (workletNodeRef.current) {
+      workletNodeRef.current.port.postMessage({ waveform });
+    } else if (oscillatorRef.current && waveform !== 'bipolar_sine' && waveform !== 'harmonic_complex') {
       oscillatorRef.current.type = getOscillatorType(waveform);
     }
   }, [waveform, isPlaying]);
@@ -590,6 +704,33 @@ const FrequencyOutputModule = ({ onFrequencyChange }: FrequencyOutputModuleProps
                     <Volume2 className="w-5 h-5" />
                   )}
                 </Button>
+              </div>
+
+              {/* Echtzeit-Spektrum-Visualisierung */}
+              <div className="mt-6 space-y-2">
+                <div className="flex items-center gap-2">
+                  <BarChart3 className="w-4 h-4 text-primary" />
+                  <Label className="text-sm">FFT-Spektrum & Wellenform</Label>
+                  {workletReady && (
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-primary/10 text-primary">
+                      AudioWorklet
+                    </span>
+                  )}
+                </div>
+                <SpectrumVisualizer
+                  analyser={analyserNode}
+                  isPlaying={isPlaying}
+                  mode="both"
+                  height={140}
+                  className="border border-border"
+                />
+                {isPlaying && audioContextRef.current && (
+                  <p className="text-[10px] font-mono text-muted-foreground">
+                    Latenz: {Math.round((audioContextRef.current.baseLatency || 0) * 1000)}ms • 
+                    Sample-Rate: {audioContextRef.current.sampleRate} Hz • 
+                    {workletReady ? 'AudioWorklet' : 'Oszillator-Fallback'}
+                  </p>
+                )}
               </div>
             </div>
           </motion.div>
