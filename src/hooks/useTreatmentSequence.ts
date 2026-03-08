@@ -441,9 +441,15 @@ export function useTreatmentSequence() {
     }
   }, [treatmentPoints, startOscillator]);
 
+  // Keep ref in sync with state
+  useEffect(() => {
+    treatmentPointsRef.current = treatmentPoints;
+  }, [treatmentPoints]);
+
   const moveToNextPoint = useCallback(() => {
     setProgress((prev) => {
       const options = treatmentOptionsRef.current;
+      const points = treatmentPointsRef.current; // Use ref, not stale closure
       const nextIndex = prev.currentPointIndex + 1;
 
       // Zyklus beendet
@@ -478,7 +484,7 @@ export function useTreatmentSequence() {
         }
 
         // Neuer Zyklus
-        const firstPoint = treatmentPoints[0];
+        const firstPoint = points[0];
         if (firstPoint) startOscillator(firstPoint.frequency);
         
         toast.info(`Zyklus ${prev.currentCycle + 1}/${maxCycles} gestartet`);
@@ -494,7 +500,7 @@ export function useTreatmentSequence() {
         };
       }
 
-      const nextPoint = treatmentPoints[nextIndex];
+      const nextPoint = points[nextIndex];
       if (nextPoint) startOscillator(nextPoint.frequency);
 
       return {
@@ -505,7 +511,7 @@ export function useTreatmentSequence() {
         isImpulsePhase: true,
       };
     });
-  }, [treatmentPoints, startOscillator, stopOscillator]);
+  }, [startOscillator, stopOscillator]);
 
   const tick = useCallback(() => {
     setProgress((prev) => {
