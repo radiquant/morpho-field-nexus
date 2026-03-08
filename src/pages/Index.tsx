@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Activity } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { motion } from 'framer-motion';
 import Hero from "@/components/Hero";
 import ConceptSection from "@/components/ConceptSection";
@@ -25,6 +26,10 @@ const Index = () => {
       </Helmet>
 
       <main className="min-h-screen bg-background">
+        {/* Theme Toggle */}
+        <div className="fixed top-4 right-4 z-50">
+          <ThemeToggle />
+        </div>
         <Hero />
         <ConceptSection />
         <CuspVisualization />

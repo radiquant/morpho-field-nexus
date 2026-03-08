@@ -1490,6 +1490,42 @@ const AnatomyResonanceViewer = ({
           </p>
         </motion.div>
 
+        {/* NLS Scan Configuration – Top right below header */}
+        {canShowNLS && (
+          <div className="flex justify-end mb-4">
+            <div className="w-full max-w-md">
+              {showScanConfig ? (
+                <NLSScanConfigPanel
+                  organGroups={organGroups}
+                  organSystems={organSystems}
+                  allPoints={organScanPoints}
+                  models={anatomyModels}
+                  selectedModel={selectedAnatomyModel}
+                  onConfigConfirm={handleScanConfigConfirm}
+                  onCancel={() => setShowScanConfig(false)}
+                  isOpen={showScanConfig}
+                />
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowScanConfig(true)}
+                  className="w-full gap-2"
+                >
+                  <Settings2 className="w-4 h-4" />
+                  NLS-Scan konfigurieren
+                  {activeScanConfig && (
+                    <Badge variant="secondary" className="ml-auto text-[10px]">
+                      {activeScanConfig.selectedPointIds.length} Punkte
+                      {activeScanConfig.focusList.length > 0 && ` • ${activeScanConfig.focusList.length} Fokus`}
+                    </Badge>
+                  )}
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_440px] gap-6">
           {/* 3D Viewer */}
           <motion.div
@@ -1685,38 +1721,6 @@ const AnatomyResonanceViewer = ({
             viewport={{ once: true }}
             className="space-y-4 max-h-[900px] overflow-y-auto"
           >
-            {/* NLS Scan Configuration – oben im Side Panel */}
-            {canShowNLS && (
-              <NLSScanConfigPanel
-                organGroups={organGroups}
-                organSystems={organSystems}
-                allPoints={organScanPoints}
-                models={anatomyModels}
-                selectedModel={selectedAnatomyModel}
-                onConfigConfirm={handleScanConfigConfirm}
-                onCancel={() => setShowScanConfig(false)}
-                isOpen={showScanConfig}
-              />
-            )}
-
-            {canShowNLS && !showScanConfig && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowScanConfig(true)}
-                className="w-full gap-2"
-              >
-                <Settings2 className="w-4 h-4" />
-                NLS-Scan konfigurieren
-                {activeScanConfig && (
-                  <Badge variant="secondary" className="ml-auto text-[10px]">
-                    {activeScanConfig.selectedPointIds.length} Punkte
-                    {activeScanConfig.focusList.length > 0 && ` • ${activeScanConfig.focusList.length} Fokus`}
-                  </Badge>
-                )}
-              </Button>
-            )}
-
             {/* Aktiver Punkt / Akupunkturpunkt Details */}
             <div className="bg-card rounded-lg border border-border p-4">
               <div className="flex items-center gap-2 mb-3">

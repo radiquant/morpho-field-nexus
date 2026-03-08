@@ -71,6 +71,7 @@ export interface TreatmentCompleteResult {
   treatmentDuration: number;
   cyclesCompleted: number;
   pointsProcessed: number;
+  diagnosisSnapshot?: Record<string, unknown>;
 }
 
 interface MeridianDiagnosisPanelProps {
@@ -279,6 +280,18 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
         treatmentDuration: progress.elapsedTotalTime,
         cyclesCompleted: progress.currentCycle,
         pointsProcessed: treatmentPoints.length,
+        diagnosisSnapshot: diagnosisResult ? {
+          overallPattern: diagnosisResult.overallPattern,
+          primaryElement: diagnosisResult.primaryElement,
+          imbalanceCount: diagnosisResult.imbalances.length,
+          imbalances: diagnosisResult.imbalances.map(i => ({
+            meridianId: i.meridianId,
+            meridianName: i.meridianName,
+            element: i.element,
+            imbalanceType: i.imbalanceType,
+            imbalanceScore: i.imbalanceScore,
+          })),
+        } : undefined,
       });
     }
     
@@ -703,33 +716,38 @@ const MeridianDiagnosisPanel = ({ vectorAnalysis, clientId, onFrequencySelect, o
                           </div>
                         </div>
 
-                        {/* Nachtestung-Einstellung */}
-                        <div className="flex items-center justify-between p-4 rounded-lg bg-muted/30 border border-border">
-                          <div className="flex items-center gap-3">
-                            <RotateCcw className="w-5 h-5 text-primary" />
-                            <div>
-                              <p className="text-sm font-medium">Automatische Nachtestung</p>
-                              <p className="text-xs text-muted-foreground">
-                                Nach Behandlungsende und {retestPauseMinutes} Min. Pause
-                              </p>
+                        {/* Adaptive Harmonisierung + Nachtestung */}
+                        <div className="space-y-3 p-4 rounded-lg bg-muted/30 border border-border">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <RotateCcw className="w-5 h-5 text-primary" />
+                              <div>
+                                <p className="text-sm font-medium">Adaptive Harmonisierung</p>
+                                <p className="text-xs text-muted-foreground">
+                                  Nach jedem Zyklus: Re-Analyse → verbleibende Dysregulationen fließen in den nächsten Zyklus ein
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <Input
-                              type="number"
-                              value={retestPauseMinutes}
-                              onChange={(e) => setRetestPauseMinutes(Math.max(1, parseInt(e.target.value) || 5))}
-                              className="w-16 font-mono"
-                              min={1}
-                              max={60}
-                              disabled={!retestEnabled}
-                            />
-                            <span className="text-xs text-muted-foreground">Min</span>
                             <Switch
                               checked={retestEnabled}
                               onCheckedChange={setRetestEnabled}
                             />
                           </div>
+                          
+                          {retestEnabled && (
+                            <div className="flex items-center gap-3 ml-8">
+                              <span className="text-xs text-muted-foreground">Pause zwischen Zyklen:</span>
+                              <Input
+                                type="number"
+                                value={retestPauseMinutes}
+                                onChange={(e) => setRetestPauseMinutes(Math.max(1, parseInt(e.target.value) || 5))}
+                                className="w-16 font-mono"
+                                min={1}
+                                max={60}
+                              />
+                              <span className="text-xs text-muted-foreground">Min</span>
+                            </div>
+                          )}
                         </div>
 
                         {/* Dysregulierte Punkte Vorschau */}

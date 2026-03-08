@@ -8,6 +8,7 @@ import type { NLSDysregulationData } from '@/components/MeridianDiagnosisPanel';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { ArrowLeft, Activity, X } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import ClientVectorInterface from '@/components/ClientVectorInterface';
@@ -23,6 +24,7 @@ import TCMTrendAnalytics from '@/components/TCMTrendAnalytics';
 import SessionReportGenerator from '@/components/SessionReportGenerator';
 import SessionManagementPanel from '@/components/SessionManagementPanel';
 import Footer from '@/components/Footer';
+import Spooky2Panel from '@/components/Spooky2Panel';
 import { useSessionManagement } from '@/hooks/useSessionManagement';
 import { useChreodeTracking } from '@/hooks/useChreodeTracking';
 import type { VectorAnalysis } from '@/services/feldengine';
@@ -34,6 +36,7 @@ export interface TreatmentResult {
   treatmentDuration: number;
   cyclesCompleted: number;
   pointsProcessed: number;
+  diagnosisSnapshot?: Record<string, unknown>;
 }
 
 const Analyse = () => {
@@ -102,13 +105,14 @@ const Analyse = () => {
 
   const handleTreatmentComplete = useCallback(async (result: TreatmentResult) => {
     setTreatmentResult(result);
-    // Session automatisch abschließen
+    // Session automatisch abschließen mit diagnosis_snapshot
     if (activeSession) {
       await completeSession(activeSession.id, undefined, {
         beforeDimensions: result.beforeDimensions,
         afterDimensions: result.afterDimensions,
         cyclesCompleted: result.cyclesCompleted,
         pointsProcessed: result.pointsProcessed,
+        ...(result.diagnosisSnapshot || {}),
       }, result.treatmentDuration);
     }
   }, [activeSession, completeSession]);
@@ -156,7 +160,10 @@ const Analyse = () => {
               </h1>
             </motion.div>
 
-            <div className="w-[120px]" /> {/* Spacer für Zentrierung */}
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <div className="w-[80px]" />
+            </div>
           </div>
         </header>
 
@@ -232,6 +239,12 @@ const Analyse = () => {
           nlsDysregulationData={nlsDysregulationData}
         />
         <FrequencyOutputModule />
+        
+        {/* Hardware-Ausgabe */}
+        <div className="container mx-auto px-4 py-4">
+          <Spooky2Panel currentFrequency={selectedFrequency || undefined} />
+        </div>
+        
         <RemedyDatabasePanel onSelectFrequency={handleFrequencySelect} />
         <TCMTrendAnalytics clientId={selectedClientId} />
         <SessionReportGenerator clientId={selectedClientId} />

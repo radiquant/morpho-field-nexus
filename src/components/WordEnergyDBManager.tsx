@@ -152,7 +152,10 @@ const WordEnergyDBManager = ({ vectorAnalysis, onMultiFociSelected }: WordEnergy
   // Resonance pre-analysis against client vector
   const analyzeResonance = useCallback(async (collection: WordEnergyCollection) => {
     if (!vectorAnalysis) {
-      toast.warning('Bitte erst einen Klienten-Vektor erstellen');
+      toast.info('Resonanz-Analyse benötigt einen Klienten-Vektor. Sammlung wird ohne Analyse angezeigt.');
+      // Still allow viewing the collection words without vector analysis
+      setSelectedCollectionId(collection.id);
+      setResonanceResults(collection.words.map(word => ({ word, score: 0.5 })));
       return;
     }
 

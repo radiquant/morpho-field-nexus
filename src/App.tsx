@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import Index from "./pages/Index";
 import Analyse from "./pages/Analyse";
+import KlientDashboard from "./pages/KlientDashboard";
 import Login from "./pages/Login";
 import Export from "./pages/Export";
 import NotFound from "./pages/NotFound";
@@ -24,6 +25,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/analyse" element={<ProtectedRoute><Analyse /></ProtectedRoute>} />
             <Route path="/export" element={<ProtectedRoute><Export /></ProtectedRoute>} />
+            <Route path="/klient/:id" element={<ProtectedRoute><KlientDashboard /></ProtectedRoute>} />
             {/* Backward/typo-friendly alias */}
             <Route path="/exports" element={<Navigate to="/export" replace />} />
             <Route path="/login" element={<Login />} />
