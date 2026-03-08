@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Activity } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { motion } from 'framer-motion';
 import Hero from "@/components/Hero";
 import ConceptSection from "@/components/ConceptSection";
