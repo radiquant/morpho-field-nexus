@@ -72,6 +72,9 @@ const Index = () => {
                   </Button>
                 </Link>
               </div>
+            </motion.div>
+          </div>
+        </section>
         
         <section id="ressourcen">
           <ThomResources />
