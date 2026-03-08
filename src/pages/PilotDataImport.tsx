@@ -39,11 +39,11 @@ const PILOT_DATA_SOURCES = [
     detail: '361 standardisierte Akupunkturpunkte mit offizieller WHO-Nomenklatur. Bereits teilweise im System integriert.',
   },
   {
-    name: 'Korean Acupuncture & Moxibustion (KIOM)',
-    url: 'https://www.kiom.re.kr/eng/',
+    name: 'Standardized Acupuncture Points (CT-basiert)',
+    url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC3929431/',
     type: 'TCM / Akupunktur',
-    format: '3D Atlas',
-    detail: 'Hochauflösendes 3D-Mapping koreanischer Akupunkturpunkte mit Sub-Millimeter-Genauigkeit.',
+    format: 'CT-Koordinaten / PDF',
+    detail: 'CT-basiertes 3D-Mapping standardisierter Akupunkturpunkte am gesamten Körper (PubMed Central).',
   },
   {
     name: 'BodyParts3D FMA-Browser',
