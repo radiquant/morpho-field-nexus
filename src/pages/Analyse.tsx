@@ -8,6 +8,7 @@ import type { NLSDysregulationData } from '@/components/MeridianDiagnosisPanel';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { ArrowLeft, Activity, X } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import ClientVectorInterface from '@/components/ClientVectorInterface';
