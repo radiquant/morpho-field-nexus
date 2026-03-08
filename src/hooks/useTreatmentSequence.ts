@@ -120,6 +120,9 @@ export function useTreatmentSequence() {
   const intervalRef = useRef<number | null>(null);
   const treatmentOptionsRef = useRef<TreatmentOptions>({});
   const imbalancesRef = useRef<MeridianImbalance[]>([]);
+  // Refs to avoid stale closures in setInterval
+  const treatmentPointsRef = useRef<TreatmentPoint[]>([]);
+  const tickRef = useRef<() => void>(() => {});
 
   useEffect(() => {
     // Auto-resume AudioContext when tab regains focus (prevents 3D view interaction breakage)
