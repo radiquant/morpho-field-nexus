@@ -1130,6 +1130,16 @@ function AnatomyScene({
         />
       )}
 
+      {/* Organ Landmark Punkte (BodyParts3D Pilot) */}
+      {showLandmarks && (
+        <OrganLandmarkLayer
+          landmarks={landmarkPoints}
+          activeLandmarkId={activeLandmarkId}
+          onLandmarkClick={onLandmarkClick}
+          selectedOrgan={selectedLandmarkOrgan}
+        />
+      )}
+
       {/* Controls */}
       <OrbitControls
         enablePan={false}
@@ -1137,7 +1147,7 @@ function AnatomyScene({
         minDistance={1}
         maxDistance={6}
         target={[0, 0.4, 0]}
-        autoRotate={!activePointId && !activeAcupointId}
+        autoRotate={!activePointId && !activeAcupointId && !activeLandmarkId}
         autoRotateSpeed={0.3}
         minPolarAngle={Math.PI * 0.15}
         maxPolarAngle={Math.PI * 0.85}
