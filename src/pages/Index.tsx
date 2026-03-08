@@ -54,12 +54,24 @@ const Index = () => {
                 analysieren Sie Meridian-Ungleichgewichte nach TCM und führen Sie eine 
                 Frequenz-Harmonisierung mit der vollständigen WHO-409-Punkte-Datenbank durch.
               </p>
-              <Link to="/analyse">
-                <Button size="lg" className="gap-2">
-                  Zur Feldanalyse
-                  <ArrowRight className="w-5 h-5" />
-                </Button>
-              </Link>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link to="/analyse">
+                  <Button size="lg" className="gap-2">
+                    Zur Feldanalyse
+                    <ArrowRight className="w-5 h-5" />
+                  </Button>
+                </Link>
+                <Link to="/workflow">
+                  <Button size="lg" variant="outline" className="gap-2">
+                    Z-Anatomy Workflow
+                  </Button>
+                </Link>
+                <Link to="/import">
+                  <Button size="lg" variant="outline" className="gap-2">
+                    Pilotdaten-Import
+                  </Button>
+                </Link>
+              </div>
             </motion.div>
           </div>
         </section>

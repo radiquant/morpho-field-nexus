@@ -9,6 +9,8 @@ import Analyse from "./pages/Analyse";
 import KlientDashboard from "./pages/KlientDashboard";
 import Login from "./pages/Login";
 import Export from "./pages/Export";
+import ZAnatomyWorkflow from "./pages/ZAnatomyWorkflow";
+import PilotDataImport from "./pages/PilotDataImport";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -26,6 +28,8 @@ const App = () => (
             <Route path="/analyse" element={<ProtectedRoute><Analyse /></ProtectedRoute>} />
             <Route path="/export" element={<ProtectedRoute><Export /></ProtectedRoute>} />
             <Route path="/klient/:id" element={<ProtectedRoute><KlientDashboard /></ProtectedRoute>} />
+            <Route path="/workflow" element={<ZAnatomyWorkflow />} />
+            <Route path="/import" element={<PilotDataImport />} />
             {/* Backward/typo-friendly alias */}
             <Route path="/exports" element={<Navigate to="/export" replace />} />
             <Route path="/login" element={<Login />} />
