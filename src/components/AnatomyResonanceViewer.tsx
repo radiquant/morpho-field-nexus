@@ -2202,7 +2202,68 @@ const AnatomyResonanceViewer = ({
               </div>
             )}
 
-            {/* Resonanz-Punkte Liste */}
+            {/* Organ Landmarks (BodyParts3D Pilot) */}
+            {showLandmarks && (
+              <div className="bg-card rounded-lg border border-border p-4 max-h-[320px] overflow-y-auto">
+                <div className="flex items-center gap-2 mb-3">
+                  <Crosshair className="w-5 h-5 text-primary" />
+                  <h3 className="font-medium text-foreground">Organ-Landmarks</h3>
+                  <span className="text-xs text-muted-foreground ml-auto">{organLandmarks.length} Punkte</span>
+                </div>
+
+                {/* Organ-Filter */}
+                <div className="flex flex-wrap gap-1 mb-3">
+                  <button
+                    onClick={() => setSelectedLandmarkOrgan(null)}
+                    className={`text-xs px-2 py-0.5 rounded-full transition-colors ${
+                      !selectedLandmarkOrgan
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                    }`}
+                  >
+                    Alle
+                  </button>
+                  {landmarkOrganCodes.map((code) => (
+                    <button
+                      key={code}
+                      onClick={() => setSelectedLandmarkOrgan(selectedLandmarkOrgan === code ? null : code)}
+                      className={`text-xs px-2 py-0.5 rounded-full transition-colors ${
+                        selectedLandmarkOrgan === code
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                      }`}
+                    >
+                      {code}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Punkte-Liste */}
+                <div className="space-y-1">
+                  {filteredOrganLandmarks.map((lm) => (
+                    <button
+                      key={lm.id}
+                      onClick={() => setActiveLandmark(lm)}
+                      className={`w-full p-2 rounded-lg text-left transition-colors flex items-center gap-2 ${
+                        activeLandmark?.id === lm.id
+                          ? 'bg-primary/20 border border-primary/30'
+                          : 'bg-muted/30 hover:bg-muted/50 border border-transparent'
+                      }`}
+                    >
+                      <div className={`w-2.5 h-2.5 flex-shrink-0 ${lm.pointClass === 'A' ? 'rotate-45 bg-primary' : 'rounded-full bg-muted-foreground'}`} />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-foreground truncate">{lm.pointId}</span>
+                          <span className="text-[10px] text-muted-foreground">{lm.regionCode}</span>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground truncate">{lm.label}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="bg-card rounded-lg border border-border p-4 max-h-[300px] overflow-y-auto">
               <div className="flex items-center gap-2 mb-3">
                 <Activity className="w-5 h-5 text-primary" />
