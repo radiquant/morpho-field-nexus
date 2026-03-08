@@ -8,6 +8,12 @@ import { supabase } from '@/integrations/supabase/client';
 import {
   HEART_SCHEMA, HEART_LANDMARKS,
   BRAIN_SCHEMA, BRAIN_LANDMARKS,
+  LIVER_SCHEMA, LIVER_LANDMARKS,
+  KIDNEY_SCHEMA, KIDNEY_LANDMARKS,
+  LUNG_SCHEMA, LUNG_LANDMARKS,
+  SPINE_SCHEMA, SPINE_LANDMARKS,
+  WHOLEBODY_SCHEMA, WHOLEBODY_LANDMARKS,
+  TCM_SCHEMA, TCM_LANDMARKS,
 } from '@/data/anatomy-pilots';
 
 export interface OrganSchema {
@@ -43,9 +49,19 @@ export interface OrganLandmark {
   confidence: number;
   mirrorPair: string | null;
   notes: string | null;
-  // Computed
   organCode?: string;
 }
+
+const ALL_PILOT_SCHEMAS = [
+  { schema: HEART_SCHEMA, landmarks: HEART_LANDMARKS, id: 'pilot-heart' },
+  { schema: BRAIN_SCHEMA, landmarks: BRAIN_LANDMARKS, id: 'pilot-brain' },
+  { schema: LIVER_SCHEMA, landmarks: LIVER_LANDMARKS, id: 'pilot-liver' },
+  { schema: KIDNEY_SCHEMA, landmarks: KIDNEY_LANDMARKS, id: 'pilot-kidney' },
+  { schema: LUNG_SCHEMA, landmarks: LUNG_LANDMARKS, id: 'pilot-lung' },
+  { schema: SPINE_SCHEMA, landmarks: SPINE_LANDMARKS, id: 'pilot-spine' },
+  { schema: WHOLEBODY_SCHEMA, landmarks: WHOLEBODY_LANDMARKS, id: 'pilot-wholebody' },
+  { schema: TCM_SCHEMA, landmarks: TCM_LANDMARKS, id: 'pilot-tcm' },
+];
 
 export function useOrganLandmarks() {
   const [schemas, setSchemas] = useState<OrganSchema[]>([]);
@@ -81,7 +97,6 @@ export function useOrganLandmarks() {
 
       setSchemas(mappedSchemas);
 
-      // Load landmarks for all schemas
       const schemaIds = mappedSchemas.map(s => s.id);
       const { data: landmarkData, error: landmarkError } = await supabase
         .from('organ_landmarks')
@@ -125,45 +140,25 @@ export function useOrganLandmarks() {
   }, []);
 
   const loadFromPilotData = useCallback(() => {
-    // Generiere temporäre IDs für lokale Pilotdaten
-    const heartSchemaId = 'pilot-heart';
-    const brainSchemaId = 'pilot-brain';
+    const pilotSchemas: OrganSchema[] = ALL_PILOT_SCHEMAS.map(({ schema, id }) => ({
+      id,
+      organCode: schema.organ_code,
+      organName: schema.organ_name,
+      sourceDataset: schema.source_dataset,
+      sourceConceptId: schema.source_concept_id || null,
+      coordinateSystem: schema.coordinate_system,
+      regions: schema.regions as { region_code: string; name: string }[],
+      pointClasses: [...schema.point_classes],
+      samplingConfig: schema.sampling_config || {},
+      validationConfig: schema.validation_config || {},
+      meshFile: null,
+      version: schema.version,
+    }));
 
-    const pilotSchemas: OrganSchema[] = [
-      {
-        id: heartSchemaId,
-        organCode: HEART_SCHEMA.organ_code,
-        organName: HEART_SCHEMA.organ_name,
-        sourceDataset: HEART_SCHEMA.source_dataset,
-        sourceConceptId: HEART_SCHEMA.source_concept_id,
-        coordinateSystem: HEART_SCHEMA.coordinate_system,
-        regions: HEART_SCHEMA.regions,
-        pointClasses: HEART_SCHEMA.point_classes,
-        samplingConfig: HEART_SCHEMA.sampling_config,
-        validationConfig: HEART_SCHEMA.validation_config,
-        meshFile: null,
-        version: HEART_SCHEMA.version,
-      },
-      {
-        id: brainSchemaId,
-        organCode: BRAIN_SCHEMA.organ_code,
-        organName: BRAIN_SCHEMA.organ_name,
-        sourceDataset: BRAIN_SCHEMA.source_dataset,
-        sourceConceptId: BRAIN_SCHEMA.source_concept_id,
-        coordinateSystem: BRAIN_SCHEMA.coordinate_system,
-        regions: BRAIN_SCHEMA.regions,
-        pointClasses: BRAIN_SCHEMA.point_classes,
-        samplingConfig: BRAIN_SCHEMA.sampling_config,
-        validationConfig: BRAIN_SCHEMA.validation_config,
-        meshFile: null,
-        version: BRAIN_SCHEMA.version,
-      },
-    ];
-
-    const pilotLandmarks: OrganLandmark[] = [
-      ...HEART_LANDMARKS.map((l, i) => ({
-        id: `pilot-heart-${i}`,
-        organSchemaId: heartSchemaId,
+    const pilotLandmarks: OrganLandmark[] = ALL_PILOT_SCHEMAS.flatMap(({ schema, landmarks: lms, id: schemaId }) =>
+      lms.map((l: any, i: number) => ({
+        id: `${schemaId}-${i}`,
+        organSchemaId: schemaId,
         pointId: l.point_id,
         label: l.label,
         pointClass: l.point_class,
@@ -172,38 +167,19 @@ export function useOrganLandmarks() {
         x: l.x,
         y: l.y,
         z: l.z,
-        scanFrequency: l.scan_frequency,
-        harmonicFrequencies: [],
-        placementMethod: l.placement_method,
-        confidence: l.confidence,
-        mirrorPair: null,
-        notes: l.notes || null,
-        organCode: 'HEART',
-      })),
-      ...BRAIN_LANDMARKS.map((l, i) => ({
-        id: `pilot-brain-${i}`,
-        organSchemaId: brainSchemaId,
-        pointId: l.point_id,
-        label: l.label,
-        pointClass: l.point_class,
-        regionCode: l.region_code,
-        structureConceptId: l.structure_concept_id || null,
-        x: l.x,
-        y: l.y,
-        z: l.z,
-        scanFrequency: l.scan_frequency,
+        scanFrequency: l.scan_frequency || null,
         harmonicFrequencies: [],
         placementMethod: l.placement_method,
         confidence: l.confidence,
         mirrorPair: l.mirror_pair || null,
         notes: l.notes || null,
-        organCode: 'BRAIN',
-      })),
-    ];
+        organCode: schema.organ_code,
+      }))
+    );
 
     setSchemas(pilotSchemas);
     setLandmarks(pilotLandmarks);
-    console.log('[OrganLandmarks] Pilotdaten geladen:', pilotLandmarks.length, 'Punkte');
+    console.log('[OrganLandmarks] Pilotdaten geladen:', pilotLandmarks.length, 'Punkte aus', pilotSchemas.length, 'Organsystemen');
   }, []);
 
   const loadLandmarks = useCallback(async () => {
@@ -218,13 +194,11 @@ export function useOrganLandmarks() {
     }
   }, [loadFromDatabase, loadFromPilotData]);
 
-  // Filter by organ
   const filteredLandmarks = useMemo(() => {
     if (!selectedOrgan) return landmarks;
     return landmarks.filter(l => l.organCode === selectedOrgan);
   }, [landmarks, selectedOrgan]);
 
-  // Get landmarks by class
   const aLandmarks = useMemo(() =>
     filteredLandmarks.filter(l => l.pointClass === 'A'),
   [filteredLandmarks]);
@@ -233,17 +207,14 @@ export function useOrganLandmarks() {
     filteredLandmarks.filter(l => l.pointClass === 'S'),
   [filteredLandmarks]);
 
-  // Available organ codes
   const organCodes = useMemo(() =>
     [...new Set(landmarks.map(l => l.organCode).filter(Boolean))] as string[],
   [landmarks]);
 
-  // Get schema for an organ
   const getSchema = useCallback((organCode: string) =>
     schemas.find(s => s.organCode === organCode),
   [schemas]);
 
-  // Convert landmarks to OrganScanPoint format for NLS integration
   const toScanPoints = useMemo(() => {
     return filteredLandmarks.map(l => ({
       id: l.id,
