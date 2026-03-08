@@ -104,13 +104,14 @@ const Analyse = () => {
 
   const handleTreatmentComplete = useCallback(async (result: TreatmentResult) => {
     setTreatmentResult(result);
-    // Session automatisch abschließen
+    // Session automatisch abschließen mit diagnosis_snapshot
     if (activeSession) {
       await completeSession(activeSession.id, undefined, {
         beforeDimensions: result.beforeDimensions,
         afterDimensions: result.afterDimensions,
         cyclesCompleted: result.cyclesCompleted,
         pointsProcessed: result.pointsProcessed,
+        ...(result.diagnosisSnapshot || {}),
       }, result.treatmentDuration);
     }
   }, [activeSession, completeSession]);

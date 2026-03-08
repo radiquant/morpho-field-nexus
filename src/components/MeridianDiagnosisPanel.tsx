@@ -71,6 +71,7 @@ export interface TreatmentCompleteResult {
   treatmentDuration: number;
   cyclesCompleted: number;
   pointsProcessed: number;
+  diagnosisSnapshot?: Record<string, unknown>;
 }
 
 interface MeridianDiagnosisPanelProps {
