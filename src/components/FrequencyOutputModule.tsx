@@ -145,6 +145,10 @@ const FrequencyOutputModule = ({ onFrequencyChange }: FrequencyOutputModuleProps
   const gainNodeRef = useRef<GainNode | null>(null);
   const modulatorRef = useRef<OscillatorNode | null>(null);
   const modulationGainRef = useRef<GainNode | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const workletNodeRef = useRef<AudioWorkletNode | null>(null);
+  const [workletReady, setWorkletReady] = useState(false);
+  const [analyserNode, setAnalyserNode] = useState<AnalyserNode | null>(null);
 
   // Serial Port Ref
   const serialPortRef = useRef<SerialPort | null>(null);
