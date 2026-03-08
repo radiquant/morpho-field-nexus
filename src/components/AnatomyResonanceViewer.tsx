@@ -1983,6 +1983,75 @@ const AnatomyResonanceViewer = ({
                     Frequenz anwenden
                   </Button>
                 </div>
+              ) : activeLandmark ? (
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <Crosshair className="w-4 h-4 text-primary" />
+                      <span className="text-lg font-bold text-foreground">{activeLandmark.pointId}</span>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded ${activeLandmark.pointClass === 'A' ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'}`}>
+                        {activeLandmark.pointClass === 'A' ? 'Anatomisch' : 'Scan'}
+                      </span>
+                    </div>
+                    <p className="text-md font-medium text-foreground">{activeLandmark.label}</p>
+                    {activeLandmark.structureConceptId && (
+                      <p className="text-xs text-muted-foreground font-mono">{activeLandmark.structureConceptId}</p>
+                    )}
+                  </div>
+
+                  {activeLandmark.scanFrequency && (
+                    <div className="p-3 bg-primary/10 rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">Scan-Frequenz</span>
+                        <span className="font-mono text-primary text-lg">
+                          {activeLandmark.scanFrequency} Hz
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <p className="text-xs text-muted-foreground">Region</p>
+                      <p className="text-sm text-foreground">{activeLandmark.regionCode}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Organ</p>
+                      <p className="text-sm text-foreground">{activeLandmark.organCode || '–'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Konfidenz</p>
+                      <p className="text-sm text-foreground">{(activeLandmark.confidence * 100).toFixed(0)}%</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Methode</p>
+                      <p className="text-sm text-foreground capitalize">{activeLandmark.placementMethod}</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Koordinaten (RAS)</p>
+                    <div className="flex gap-2 font-mono text-xs text-foreground">
+                      <span>X: {activeLandmark.x.toFixed(3)}</span>
+                      <span>Y: {activeLandmark.y.toFixed(3)}</span>
+                      <span>Z: {activeLandmark.z.toFixed(3)}</span>
+                    </div>
+                  </div>
+
+                  {activeLandmark.notes && (
+                    <p className="text-xs text-muted-foreground italic">{activeLandmark.notes}</p>
+                  )}
+
+                  {activeLandmark.scanFrequency && (
+                    <Button
+                      onClick={() => onFrequencySelect?.(activeLandmark.scanFrequency!)}
+                      className="w-full gap-2"
+                    >
+                      <Volume2 className="w-4 h-4" />
+                      Frequenz anwenden
+                    </Button>
+                  )}
+                </div>
               ) : (
                 <p className="text-sm text-muted-foreground text-center py-6">
                   Klicken Sie auf einen Punkt im 3D-Modell
