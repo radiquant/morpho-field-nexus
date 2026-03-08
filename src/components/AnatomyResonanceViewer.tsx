@@ -13,7 +13,9 @@ import { ModelUpload } from '@/components/anatomy/ModelUpload';
 import { useAnatomyModels, type AnatomyModel } from '@/hooks/useAnatomyModels';
 import { projectMeridianPoints, projectMeridianPath, collectMeshes, isMeshSufficientForProjection, type ProjectedPoint } from '@/utils/surfaceProjection';
 import { OrganScanLayer } from '@/components/anatomy/OrganScanLayer';
+import { OrganLandmarkLayer } from '@/components/anatomy/OrganLandmarkLayer';
 import { useOrganScanPoints, type OrganScanPoint, getOrganColor, getTissueIcon } from '@/hooks/useOrganScanPoints';
+import { useOrganLandmarks, type OrganLandmark } from '@/hooks/useOrganLandmarks';
 import { NLSScanConfigPanel, type NLSScanConfig } from '@/components/NLSScanConfigPanel';
 import { useNLSAutoScan } from '@/hooks/useNLSAutoScan';
 import { NLSAutoScanOverlay } from '@/components/NLSAutoScanOverlay';
@@ -32,7 +34,8 @@ import {
   Info,
   GitBranch,
   AlertTriangle,
-  Settings2
+  Settings2,
+  Crosshair
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -972,6 +975,11 @@ function AnatomyScene({
   activeOrganScanPointId,
   onOrganScanPointClick,
   selectedOrganFilter,
+  showLandmarks,
+  landmarkPoints,
+  activeLandmarkId,
+  onLandmarkClick,
+  selectedLandmarkOrgan,
 }: {
   modelType: AnatomyModelType;
   anatomyPoints: AnatomyResonancePoint[];
@@ -998,6 +1006,11 @@ function AnatomyScene({
   activeOrganScanPointId: string | null;
   onOrganScanPointClick: (point: OrganScanPoint) => void;
   selectedOrganFilter: string | null;
+  showLandmarks: boolean;
+  landmarkPoints: OrganLandmark[];
+  activeLandmarkId: string | null;
+  onLandmarkClick: (landmark: OrganLandmark) => void;
+  selectedLandmarkOrgan: string | null;
 }) {
   const [surfaceMeshes, setSurfaceMeshes] = useState<THREE.Mesh[]>([]);
 
@@ -1117,6 +1130,16 @@ function AnatomyScene({
         />
       )}
 
+      {/* Organ Landmark Punkte (BodyParts3D Pilot) */}
+      {showLandmarks && (
+        <OrganLandmarkLayer
+          landmarks={landmarkPoints}
+          activeLandmarkId={activeLandmarkId}
+          onLandmarkClick={onLandmarkClick}
+          selectedOrgan={selectedLandmarkOrgan}
+        />
+      )}
+
       {/* Controls */}
       <OrbitControls
         enablePan={false}
@@ -1124,7 +1147,7 @@ function AnatomyScene({
         minDistance={1}
         maxDistance={6}
         target={[0, 0.4, 0]}
-        autoRotate={!activePointId && !activeAcupointId}
+        autoRotate={!activePointId && !activeAcupointId && !activeLandmarkId}
         autoRotateSpeed={0.3}
         minPolarAngle={Math.PI * 0.15}
         maxPolarAngle={Math.PI * 0.85}
@@ -1153,6 +1176,7 @@ const AnatomyResonanceViewer = ({
   const [showChakras, setShowChakras] = useState(false);
   const [showResonancePoints, setShowResonancePoints] = useState(false);
   const [showOrganScan, setShowOrganScan] = useState(false);
+  const [showLandmarks, setShowLandmarks] = useState(false);
   const [activeChakra, setActiveChakra] = useState<ChakraData | null>(null);
   const [glbModelInfo, setGlbModelInfo] = useState<GLBModelInfo | null>(null);
   const [showScanConfig, setShowScanConfig] = useState(false);
@@ -1189,11 +1213,26 @@ const AnatomyResonanceViewer = ({
     loadModels: reloadAnatomyModels,
   } = useAnatomyModels();
 
+  // Organ Landmarks (BodyParts3D Pilot)
+  const {
+    landmarks: organLandmarks,
+    filteredLandmarks: filteredOrganLandmarks,
+    organCodes: landmarkOrganCodes,
+    isLoading: landmarksLoading,
+    selectedOrgan: selectedLandmarkOrgan,
+    setSelectedOrgan: setSelectedLandmarkOrgan,
+    activeLandmark,
+    setActiveLandmark,
+    loadLandmarks,
+    toScanPoints: landmarkScanPoints,
+  } = useOrganLandmarks();
+
   // Punkte laden
   useEffect(() => {
     loadAnatomyPoints();
     loadOrganScanPoints();
-  }, [loadAnatomyPoints, loadOrganScanPoints]);
+    loadLandmarks();
+  }, [loadAnatomyPoints, loadOrganScanPoints, loadLandmarks]);
 
   // Model-aware layer visibility
   const visibleLayers = useMemo(() => {
@@ -1587,8 +1626,13 @@ const AnatomyResonanceViewer = ({
                   showOrganScan={showOrganScan}
                   organScanPoints={modelFilteredOrganScanPoints}
                   activeOrganScanPointId={activeOrganScanPoint?.id || null}
-                  onOrganScanPointClick={(p) => { setActiveOrganScanPoint(p); setActivePoint(null); setActiveAcupoint(null); setActiveChakra(null); }}
+                  onOrganScanPointClick={(p) => { setActiveOrganScanPoint(p); setActivePoint(null); setActiveAcupoint(null); setActiveChakra(null); setActiveLandmark(null); }}
                   selectedOrganFilter={selectedOrganFilter}
+                  showLandmarks={showLandmarks}
+                  landmarkPoints={organLandmarks}
+                  activeLandmarkId={activeLandmark?.id || null}
+                  onLandmarkClick={(lm) => { setActiveLandmark(lm); setActivePoint(null); setActiveAcupoint(null); setActiveChakra(null); setActiveOrganScanPoint(null); }}
+                  selectedLandmarkOrgan={selectedLandmarkOrgan}
                 />
               </Canvas>
             </Suspense>
@@ -1691,6 +1735,18 @@ const AnatomyResonanceViewer = ({
                     </Label>
                   </div>
                 )}
+                <div className="flex items-center gap-1.5">
+                  <Switch
+                    id="show-landmarks"
+                    checked={showLandmarks}
+                    onCheckedChange={setShowLandmarks}
+                    className="scale-75"
+                  />
+                  <Label htmlFor="show-landmarks" className="text-xs text-foreground">
+                    <Crosshair className="w-3 h-3 inline mr-0.5" />
+                    Landmarks
+                  </Label>
+                </div>
               </div>
             )}
 
@@ -1927,6 +1983,75 @@ const AnatomyResonanceViewer = ({
                     Frequenz anwenden
                   </Button>
                 </div>
+              ) : activeLandmark ? (
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <Crosshair className="w-4 h-4 text-primary" />
+                      <span className="text-lg font-bold text-foreground">{activeLandmark.pointId}</span>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded ${activeLandmark.pointClass === 'A' ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'}`}>
+                        {activeLandmark.pointClass === 'A' ? 'Anatomisch' : 'Scan'}
+                      </span>
+                    </div>
+                    <p className="text-md font-medium text-foreground">{activeLandmark.label}</p>
+                    {activeLandmark.structureConceptId && (
+                      <p className="text-xs text-muted-foreground font-mono">{activeLandmark.structureConceptId}</p>
+                    )}
+                  </div>
+
+                  {activeLandmark.scanFrequency && (
+                    <div className="p-3 bg-primary/10 rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">Scan-Frequenz</span>
+                        <span className="font-mono text-primary text-lg">
+                          {activeLandmark.scanFrequency} Hz
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <p className="text-xs text-muted-foreground">Region</p>
+                      <p className="text-sm text-foreground">{activeLandmark.regionCode}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Organ</p>
+                      <p className="text-sm text-foreground">{activeLandmark.organCode || '–'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Konfidenz</p>
+                      <p className="text-sm text-foreground">{(activeLandmark.confidence * 100).toFixed(0)}%</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Methode</p>
+                      <p className="text-sm text-foreground capitalize">{activeLandmark.placementMethod}</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Koordinaten (RAS)</p>
+                    <div className="flex gap-2 font-mono text-xs text-foreground">
+                      <span>X: {activeLandmark.x.toFixed(3)}</span>
+                      <span>Y: {activeLandmark.y.toFixed(3)}</span>
+                      <span>Z: {activeLandmark.z.toFixed(3)}</span>
+                    </div>
+                  </div>
+
+                  {activeLandmark.notes && (
+                    <p className="text-xs text-muted-foreground italic">{activeLandmark.notes}</p>
+                  )}
+
+                  {activeLandmark.scanFrequency && (
+                    <Button
+                      onClick={() => onFrequencySelect?.(activeLandmark.scanFrequency!)}
+                      className="w-full gap-2"
+                    >
+                      <Volume2 className="w-4 h-4" />
+                      Frequenz anwenden
+                    </Button>
+                  )}
+                </div>
               ) : (
                 <p className="text-sm text-muted-foreground text-center py-6">
                   Klicken Sie auf einen Punkt im 3D-Modell
@@ -2077,7 +2202,68 @@ const AnatomyResonanceViewer = ({
               </div>
             )}
 
-            {/* Resonanz-Punkte Liste */}
+            {/* Organ Landmarks (BodyParts3D Pilot) */}
+            {showLandmarks && (
+              <div className="bg-card rounded-lg border border-border p-4 max-h-[320px] overflow-y-auto">
+                <div className="flex items-center gap-2 mb-3">
+                  <Crosshair className="w-5 h-5 text-primary" />
+                  <h3 className="font-medium text-foreground">Organ-Landmarks</h3>
+                  <span className="text-xs text-muted-foreground ml-auto">{organLandmarks.length} Punkte</span>
+                </div>
+
+                {/* Organ-Filter */}
+                <div className="flex flex-wrap gap-1 mb-3">
+                  <button
+                    onClick={() => setSelectedLandmarkOrgan(null)}
+                    className={`text-xs px-2 py-0.5 rounded-full transition-colors ${
+                      !selectedLandmarkOrgan
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                    }`}
+                  >
+                    Alle
+                  </button>
+                  {landmarkOrganCodes.map((code) => (
+                    <button
+                      key={code}
+                      onClick={() => setSelectedLandmarkOrgan(selectedLandmarkOrgan === code ? null : code)}
+                      className={`text-xs px-2 py-0.5 rounded-full transition-colors ${
+                        selectedLandmarkOrgan === code
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                      }`}
+                    >
+                      {code}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Punkte-Liste */}
+                <div className="space-y-1">
+                  {filteredOrganLandmarks.map((lm) => (
+                    <button
+                      key={lm.id}
+                      onClick={() => setActiveLandmark(lm)}
+                      className={`w-full p-2 rounded-lg text-left transition-colors flex items-center gap-2 ${
+                        activeLandmark?.id === lm.id
+                          ? 'bg-primary/20 border border-primary/30'
+                          : 'bg-muted/30 hover:bg-muted/50 border border-transparent'
+                      }`}
+                    >
+                      <div className={`w-2.5 h-2.5 flex-shrink-0 ${lm.pointClass === 'A' ? 'rotate-45 bg-primary' : 'rounded-full bg-muted-foreground'}`} />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-foreground truncate">{lm.pointId}</span>
+                          <span className="text-[10px] text-muted-foreground">{lm.regionCode}</span>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground truncate">{lm.label}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="bg-card rounded-lg border border-border p-4 max-h-[300px] overflow-y-auto">
               <div className="flex items-center gap-2 mb-3">
                 <Activity className="w-5 h-5 text-primary" />
