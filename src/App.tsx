@@ -28,6 +28,8 @@ const App = () => (
             <Route path="/analyse" element={<ProtectedRoute><Analyse /></ProtectedRoute>} />
             <Route path="/export" element={<ProtectedRoute><Export /></ProtectedRoute>} />
             <Route path="/klient/:id" element={<ProtectedRoute><KlientDashboard /></ProtectedRoute>} />
+            <Route path="/workflow" element={<ZAnatomyWorkflow />} />
+            <Route path="/import" element={<PilotDataImport />} />
             {/* Backward/typo-friendly alias */}
             <Route path="/exports" element={<Navigate to="/export" replace />} />
             <Route path="/login" element={<Login />} />
