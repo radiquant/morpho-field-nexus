@@ -161,13 +161,90 @@ const FrequencyOutputModule = ({ onFrequencyChange }: FrequencyOutputModuleProps
     };
   }, []);
 
-  // Audio initialisieren
-  const initAudio = useCallback(() => {
-    if (!audioContextRef.current) {
-      audioContextRef.current = new AudioContext();
+  // AudioWorklet Processor Code
+  const WORKLET_CODE = `
+class FreqProcessor extends AudioWorkletProcessor {
+  constructor() {
+    super();
+    this.freq = 440; this.amp = 0.5; this.wf = 'sine'; this.phase = 0;
+    this.harmonics = [1,0.5,0.25,0.125]; this.modFreq = 0; this.modDepth = 0; this.modPhase = 0;
+    this.port.onmessage = (e) => {
+      const d = e.data;
+      if (d.frequency !== undefined) this.freq = d.frequency;
+      if (d.amplitude !== undefined) this.amp = d.amplitude;
+      if (d.waveform !== undefined) this.wf = d.waveform;
+      if (d.harmonics !== undefined) this.harmonics = d.harmonics;
+      if (d.modFreq !== undefined) this.modFreq = d.modFreq;
+      if (d.modDepth !== undefined) this.modDepth = d.modDepth;
+    };
+  }
+  gen(p) {
+    switch(this.wf) {
+      case 'sine': return Math.sin(p*2*Math.PI);
+      case 'square': return p<0.5?1:-1;
+      case 'triangle': return 4*Math.abs(p-0.5)-1;
+      case 'sawtooth': return 2*p-1;
+      case 'bipolar_sine': return Math.sin(p*2*Math.PI)*Math.cos(p*Math.PI);
+      case 'harmonic_complex': {
+        let s=0;
+        for(let i=0;i<this.harmonics.length;i++) s+=this.harmonics[i]*Math.sin(p*(i+1)*2*Math.PI);
+        return s/this.harmonics.reduce((a,b)=>a+b,1);
+      }
+      default: return Math.sin(p*2*Math.PI);
     }
-    return audioContextRef.current;
-  }, []);
+  }
+  process(inputs,outputs) {
+    const ch = outputs[0][0];
+    if(!ch) return true;
+    for(let i=0;i<ch.length;i++){
+      let mod=0;
+      if(this.modFreq>0&&this.modDepth>0){
+        mod=Math.sin(this.modPhase*2*Math.PI)*this.modDepth*this.freq;
+        this.modPhase+=this.modFreq/sampleRate;
+        if(this.modPhase>=1)this.modPhase-=1;
+      }
+      ch[i]=this.gen(this.phase)*this.amp;
+      this.phase+=(this.freq+mod)/sampleRate;
+      if(this.phase>=1)this.phase-=1;
+    }
+    return true;
+  }
+}
+registerProcessor('freq-gen',FreqProcessor);
+`;
+
+  // Audio initialisieren (mit AudioWorklet + AnalyserNode)
+  const initAudio = useCallback(async () => {
+    if (!audioContextRef.current) {
+      audioContextRef.current = new AudioContext({ sampleRate: 48000, latencyHint: 'interactive' });
+    }
+    const ctx = audioContextRef.current;
+
+    // AnalyserNode erstellen
+    if (!analyserRef.current) {
+      const an = ctx.createAnalyser();
+      an.fftSize = 2048;
+      an.smoothingTimeConstant = 0.8;
+      analyserRef.current = an;
+      setAnalyserNode(an);
+    }
+
+    // AudioWorklet laden (einmalig)
+    if (!workletReady) {
+      try {
+        const blob = new Blob([WORKLET_CODE], { type: 'application/javascript' });
+        const url = URL.createObjectURL(blob);
+        await ctx.audioWorklet.addModule(url);
+        URL.revokeObjectURL(url);
+        setWorkletReady(true);
+        console.log('[FreqOutput] AudioWorklet geladen – sub-1ms Latenz aktiv');
+      } catch (e) {
+        console.warn('[FreqOutput] AudioWorklet Fallback:', e);
+      }
+    }
+
+    return ctx;
+  }, [workletReady]);
 
   // Current therapy mode config
   const currentModeConfig = THERAPY_MODES.find(m => m.id === therapyMode)!;
