@@ -125,7 +125,7 @@ const FrequencyOutputModule = ({ onFrequencyChange }: FrequencyOutputModuleProps
   const [duration, setDuration] = useState(180);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isTimerEnabled, setIsTimerEnabled] = useState(true);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
   // Additional oscillators for bipolar/harmonic modes
   const oscillatorsRef = useRef<OscillatorNode[]>([]);

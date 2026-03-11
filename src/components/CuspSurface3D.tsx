@@ -383,7 +383,7 @@ const CuspSurface3D = ({ vectorAnalysis }: CuspSurface3DProps = {}) => {
   });
   
   // Effect for animation
-  const intervalRef = useRef<NodeJS.Timeout>();
+  const intervalRef = useRef<ReturnType<typeof setInterval>>();
   useState(() => {
     intervalRef.current = setInterval(() => {
       if (isPlaying) {

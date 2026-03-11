@@ -40,7 +40,7 @@ class RealtimeSyncService {
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
   private reconnectDelay = 1000;
-  private pingInterval: NodeJS.Timeout | null = null;
+  private pingInterval: ReturnType<typeof setInterval> | null = null;
   private latencyStats: LatencyStats = {
     current: 0,
     min: Infinity,

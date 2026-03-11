@@ -22,7 +22,7 @@ class HardwareDiscoveryService {
   private usbDevices: Map<string, USBDevice> = new Map();
   private serialPorts: Map<string, SerialPort> = new Map();
   private isScanning = false;
-  private scanInterval: NodeJS.Timeout | null = null;
+  private scanInterval: ReturnType<typeof setInterval> | null = null;
 
   // WebUSB Unterstützung prüfen
   get isWebUSBSupported(): boolean {

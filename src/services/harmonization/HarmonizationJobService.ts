@@ -52,7 +52,7 @@ export interface JobUpdateParams {
 class HarmonizationJobServiceClass {
   private activeJobs: Map<string, HarmonizationJob> = new Map();
   private jobListeners: Map<string, Set<(job: HarmonizationJob) => void>> = new Map();
-  private pollingIntervals: Map<string, NodeJS.Timeout> = new Map();
+  private pollingIntervals: Map<string, ReturnType<typeof setInterval>> = new Map();
 
   /**
    * Neuen Job erstellen

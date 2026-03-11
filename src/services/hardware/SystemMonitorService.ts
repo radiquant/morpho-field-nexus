@@ -99,7 +99,7 @@ type MetricsCallback = (metrics: SystemMetrics) => void;
 class SystemMonitorService {
   private listeners: Set<MetricsCallback> = new Set();
   private currentMetrics: SystemMetrics | null = null;
-  private updateInterval: NodeJS.Timeout | null = null;
+  private updateInterval: ReturnType<typeof setInterval> | null = null;
   private isRunning = false;
   private mode: EnvironmentMode = 'development';
 
