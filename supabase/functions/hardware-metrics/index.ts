@@ -178,7 +178,7 @@ serve(async (req) => {
           }));
           break;
 
-        case 'set_interval':
+        case 'set_interval': {
           // Erlaubt Änderung des Streaming-Intervalls (min 100ms, max 5000ms)
           const conn = connections.get(clientId);
           if (conn && conn.interval) {
@@ -199,6 +199,7 @@ serve(async (req) => {
             }));
           }
           break;
+        }
 
         default:
           console.log(`[hardware-metrics] Unknown message type: ${message.type}`);

@@ -9,6 +9,13 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
+import type { Database, Json } from '@/integrations/supabase/types';
+
+type TreatmentSessionRow = Database['public']['Tables']['treatment_sessions']['Row'];
+
+type ReportVectorSnapshot = SessionReportData['vectorSnapshot'];
+type ReportDiagnosisSnapshot = SessionReportData['diagnosisSnapshot'];
+type ReportTreatmentSummary = SessionReportData['treatmentSummary'];
 
 interface SessionReportData {
   clientName: string;
@@ -46,6 +53,59 @@ interface SessionReportGeneratorProps {
 
 const DIMENSION_NAMES = ['Körperlich', 'Emotional', 'Mental', 'Energie', 'Stress'];
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const toNumber = (value: unknown, fallback: number): number =>
+  typeof value === 'number' ? value : fallback;
+
+const toString = (value: unknown, fallback: string): string =>
+  typeof value === 'string' ? value : fallback;
+
+const toNumberArray = (value: unknown): number[] =>
+  Array.isArray(value) ? value.filter((item): item is number => typeof item === 'number') : [];
+
+const parseVectorSnapshot = (snapshot: Json | null): ReportVectorSnapshot => {
+  if (!isRecord(snapshot)) return null;
+
+  return {
+    dimensions: toNumberArray(snapshot.dimensions),
+    stability: toNumber(snapshot.stability, 0),
+    phase: toString(snapshot.phase, ''),
+    bifurcationRisk: toNumber(snapshot.bifurcationRisk, 0),
+  };
+};
+
+const parseDiagnosisSnapshot = (snapshot: Json | null): ReportDiagnosisSnapshot => {
+  if (!isRecord(snapshot)) return null;
+
+  const imbalances = Array.isArray(snapshot.imbalances)
+    ? snapshot.imbalances.filter(isRecord).map((imbalance) => ({
+      meridianName: toString(imbalance.meridianName, ''),
+      element: toString(imbalance.element, ''),
+      imbalanceType: toString(imbalance.imbalanceType, ''),
+      imbalanceScore: toNumber(imbalance.imbalanceScore, 0),
+    }))
+    : [];
+
+  return {
+    overallPattern: toString(snapshot.overallPattern, ''),
+    imbalanceCount: toNumber(snapshot.imbalanceCount, imbalances.length),
+    imbalances,
+  };
+};
+
+const parseTreatmentSummary = (snapshot: Json | null): ReportTreatmentSummary => {
+  if (!isRecord(snapshot)) return null;
+
+  return {
+    beforeDimensions: toNumberArray(snapshot.beforeDimensions),
+    afterDimensions: toNumberArray(snapshot.afterDimensions),
+    cyclesCompleted: typeof snapshot.cyclesCompleted === 'number' ? snapshot.cyclesCompleted : undefined,
+    pointsProcessed: typeof snapshot.pointsProcessed === 'number' ? snapshot.pointsProcessed : undefined,
+  };
+};
+
 const SessionReportGenerator = ({ clientId, clientName }: SessionReportGeneratorProps) => {
   const [reports, setReports] = useState<SessionReportData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -65,7 +125,7 @@ const SessionReportGenerator = ({ clientId, clientName }: SessionReportGenerator
 
       if (error) throw error;
 
-      const mapped: SessionReportData[] = (data || []).map((s: any) => ({
+      const mapped: SessionReportData[] = (data || []).map((s: TreatmentSessionRow) => ({
         clientName: clientName || 'Unbekannt',
         sessionNumber: s.session_number,
         sessionDate: new Date(s.session_date).toLocaleDateString('de-DE', {
@@ -74,9 +134,9 @@ const SessionReportGenerator = ({ clientId, clientName }: SessionReportGenerator
         duration: s.duration_seconds
           ? `${Math.floor(s.duration_seconds / 60)}:${String(s.duration_seconds % 60).padStart(2, '0')} min`
           : 'Nicht erfasst',
-        vectorSnapshot: s.vector_snapshot as any,
-        diagnosisSnapshot: s.diagnosis_snapshot as any,
-        treatmentSummary: s.treatment_summary as any,
+        vectorSnapshot: parseVectorSnapshot(s.vector_snapshot),
+        diagnosisSnapshot: parseDiagnosisSnapshot(s.diagnosis_snapshot),
+        treatmentSummary: parseTreatmentSummary(s.treatment_summary),
       }));
 
       setReports(mapped);

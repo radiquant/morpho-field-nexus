@@ -128,6 +128,7 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSel
   const [showClientList, setShowClientList] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const hasCapturedInitialEntropyRef = useRef(false);
   const { createClient, updateClient, deleteClient, loadClients, saveClientVector, uploadClientPhoto, isLoading } = useClientDatabase();
   const { state: hardwareState, initialize: initializeHardware } = useRealtimeHarmonization();
   
@@ -189,10 +190,10 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSel
 
   // Initiale Entropie-Erfassung beim Mount
   useEffect(() => {
-    if (!manualOverride) {
-      captureHardwareEntropy();
-    }
-  }, []);
+    if (manualOverride || hasCapturedInitialEntropyRef.current) return;
+    hasCapturedInitialEntropyRef.current = true;
+    captureHardwareEntropy();
+  }, [manualOverride, captureHardwareEntropy]);
 
   // Biometrische Daten aktualisieren
   const updateBiometric = useCallback((key: keyof BiometricData, value: unknown) => {
@@ -411,7 +412,7 @@ const ClientVectorInterface = ({ onVectorCreated, onFrequencySelect, onClientSel
     } finally {
       setIsProcessing(false);
     }
-  }, [currentAnalysis, savedClient, biometric, dimensions, primaryConcern, notes, createClient, saveClientVector, uploadClientPhoto, loadClients]);
+  }, [currentAnalysis, savedClient, biometric, dimensions, primaryConcern, notes, createClient, saveClientVector, uploadClientPhoto, loadClients, onClientSelected]);
 
   // Formular zurücksetzen
   const resetForm = useCallback(() => {

@@ -21,6 +21,9 @@ interface ModelUploadProps {
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 
+const getErrorMessage = (error: unknown, fallback: string): string =>
+  error instanceof Error && error.message ? error.message : fallback;
+
 export function ModelUpload({ onUploadComplete }: ModelUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -59,51 +62,57 @@ export function ModelUpload({ onUploadComplete }: ModelUploadProps) {
   };
 
   const uploadWithTus = (bucketName: string, fileName: string, file: File): Promise<void> => {
-    return new Promise(async (resolve, reject) => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        reject(new Error('Nicht authentifiziert'));
-        return;
-      }
+    return new Promise((resolve, reject) => {
+      void (async () => {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session) {
+            reject(new Error('Nicht authentifiziert'));
+            return;
+          }
 
-      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID || 'yoryyvfuscyfumeseour';
+          const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID || 'yoryyvfuscyfumeseour';
 
-      const upload = new tus.Upload(file, {
-        endpoint: `https://${projectId}.supabase.co/storage/v1/upload/resumable`,
-        retryDelays: [0, 3000, 5000, 10000],
-        headers: {
-          authorization: `Bearer ${session.access_token}`,
-          'x-upsert': 'false',
-        },
-        uploadDataDuringCreation: true,
-        removeFingerprintOnSuccess: true,
-        metadata: {
-          bucketName: bucketName,
-          objectName: fileName,
-          contentType: file.type || 'application/octet-stream',
-          cacheControl: '3600',
-        },
-        chunkSize: 6 * 1024 * 1024, // 6MB chunks
-        onError: (error) => {
-          console.error('TUS Upload-Fehler:', error);
+          const upload = new tus.Upload(file, {
+            endpoint: `https://${projectId}.supabase.co/storage/v1/upload/resumable`,
+            retryDelays: [0, 3000, 5000, 10000],
+            headers: {
+              authorization: `Bearer ${session.access_token}`,
+              'x-upsert': 'false',
+            },
+            uploadDataDuringCreation: true,
+            removeFingerprintOnSuccess: true,
+            metadata: {
+              bucketName: bucketName,
+              objectName: fileName,
+              contentType: file.type || 'application/octet-stream',
+              cacheControl: '3600',
+            },
+            chunkSize: 6 * 1024 * 1024, // 6MB chunks
+            onError: (error) => {
+              console.error('TUS Upload-Fehler:', error);
+              reject(error);
+            },
+            onProgress: (bytesUploaded, bytesTotal) => {
+              const percentage = Math.round((bytesUploaded / bytesTotal) * 60) + 10; // 10-70%
+              setUploadProgress(percentage);
+            },
+            onSuccess: () => {
+              resolve();
+            },
+          });
+
+          // Check for previous uploads to resume
+          const previousUploads = await upload.findPreviousUploads();
+          if (previousUploads.length) {
+            upload.resumeFromPreviousUpload(previousUploads[0]);
+          }
+
+          upload.start();
+        } catch (error) {
           reject(error);
-        },
-        onProgress: (bytesUploaded, bytesTotal) => {
-          const percentage = Math.round((bytesUploaded / bytesTotal) * 60) + 10; // 10-70%
-          setUploadProgress(percentage);
-        },
-        onSuccess: () => {
-          resolve();
-        },
-      });
-
-      // Check for previous uploads to resume
-      const previousUploads = await upload.findPreviousUploads();
-      if (previousUploads.length) {
-        upload.resumeFromPreviousUpload(previousUploads[0]);
-      }
-
-      upload.start();
+        }
+      })();
     });
   };
 
@@ -163,9 +172,9 @@ export function ModelUpload({ onUploadComplete }: ModelUploadProps) {
       if (fileInputRef.current) fileInputRef.current.value = '';
 
       onUploadComplete?.();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Upload-Fehler:', err);
-      toast.error(`Upload fehlgeschlagen: ${err.message}`);
+      toast.error(`Upload fehlgeschlagen: ${getErrorMessage(err, 'Unbekannter Fehler')}`);
     } finally {
       setIsUploading(false);
       setUploadProgress(0);

@@ -1,6 +1,4 @@
 // Hardware Discovery Service für WebUSB und WebSerial
-/// <reference path="../../types/webapis.d.ts" />
-
 import type { 
   ExternalDevice, 
   HardwareEvent,

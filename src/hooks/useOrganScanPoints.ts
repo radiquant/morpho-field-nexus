@@ -4,6 +4,9 @@
  */
 import { useState, useCallback, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
+
+type OrganScanPointRow = Database['public']['Tables']['organ_scan_points']['Row'];
 
 export interface OrganScanPoint {
   id: string;
@@ -102,7 +105,7 @@ export function useOrganScanPoints() {
       const { data, error } = await query;
       if (error) throw error;
 
-      const mapped: OrganScanPoint[] = (data || []).map((p: any) => ({
+      const mapped: OrganScanPoint[] = (data || []).map((p: OrganScanPointRow) => ({
         id: p.id,
         organSystem: p.organ_system,
         organNameDe: p.organ_name_de,

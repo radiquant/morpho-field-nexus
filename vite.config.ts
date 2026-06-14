@@ -5,6 +5,11 @@ import { componentTagger } from "lovable-tagger";
 import { mkdir, writeFile } from "node:fs/promises";
 import { Buffer } from "node:buffer";
 import { build } from "esbuild";
+import type { AcupuncturePoint } from "./src/utils/meridianPointsDatabase";
+
+type MeridianPointsModule = {
+  COMPLETE_ACUPUNCTURE_DATABASE: AcupuncturePoint[];
+};
 
 function escapeCsv(value: unknown): string {
   if (value === null || value === undefined) return "";
@@ -20,7 +25,7 @@ function arrayToCsvCell(arr?: unknown[]): string {
 }
 
 function generateWhoMeridianExports(): Plugin {
-  async function loadPointsFromTypescript(): Promise<any[]> {
+  async function loadPointsFromTypescript(): Promise<AcupuncturePoint[]> {
     // IMPORTANT:
     // Node cannot import .ts files directly in all environments. We bundle the TS entry
     // with esbuild to a single ESM module, then import it via a data: URL.
@@ -42,7 +47,7 @@ function generateWhoMeridianExports(): Plugin {
     const dataUrl = `data:text/javascript;base64,${Buffer.from(output).toString(
       "base64"
     )}`;
-    const mod: any = await import(dataUrl);
+    const mod = (await import(dataUrl)) as MeridianPointsModule;
     return mod.COMPLETE_ACUPUNCTURE_DATABASE;
   }
 

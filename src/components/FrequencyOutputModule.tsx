@@ -1,17 +1,17 @@
 /**
  * Frequency Output Module
  * Unterstützt verschiedene Therapie-Modi für Frequenzausgabe
- * 
+ *
  * Modi:
  * - Bipolar-Resonanz: Bipolare Wellenformen nach dem Prinzip gegenpoliger Schwingungen
  * - Harmonikale Modulation: Frequenztherapie mit harmonischen Obertönen und Modulationen
  */
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Play, 
-  Square, 
-  Volume2, 
+import {
+  Play,
+  Square,
+  Volume2,
   VolumeX,
   Radio,
   Waves,
@@ -27,7 +27,7 @@ import { SpectrumVisualizer } from './SpectrumVisualizer';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
-import { 
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -110,59 +110,8 @@ const getOscillatorType = (wf: WaveformType): OscillatorType => {
   }
 };
 
-const FrequencyOutputModule = ({ onFrequencyChange }: FrequencyOutputModuleProps) => {
-  // Therapy Mode
-  const [therapyMode, setTherapyMode] = useState<TherapyMode>('bipolar_resonance');
-  
-  // Audio State
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [frequency, setFrequency] = useState(7.83);
-  const [amplitude, setAmplitude] = useState(0.5);
-  const [waveform, setWaveform] = useState<WaveformType>('bipolar_sine');
-  
-  // Timer
-  const [duration, setDuration] = useState(180);
-  const [elapsedTime, setElapsedTime] = useState(0);
-  const [isTimerEnabled, setIsTimerEnabled] = useState(true);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  
-  // Additional oscillators for bipolar/harmonic modes
-  const oscillatorsRef = useRef<OscillatorNode[]>([]);
-  
-  // Modulation
-  const [modulationEnabled, setModulationEnabled] = useState(false);
-  const [modulationFreq, setModulationFreq] = useState(1);
-  const [modulationDepth, setModulationDepth] = useState(0.3);
-  
-  // EM-Feld Output
-  const [emOutputEnabled, setEmOutputEnabled] = useState(false);
-  const [serialConnected, setSerialConnected] = useState(false);
-
-  // WebAudio Refs
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const oscillatorRef = useRef<OscillatorNode | null>(null);
-  const gainNodeRef = useRef<GainNode | null>(null);
-  const modulatorRef = useRef<OscillatorNode | null>(null);
-  const modulationGainRef = useRef<GainNode | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const workletNodeRef = useRef<AudioWorkletNode | null>(null);
-  const [workletReady, setWorkletReady] = useState(false);
-  const [analyserNode, setAnalyserNode] = useState<AnalyserNode | null>(null);
-
-  // Serial Port Ref
-  const serialPortRef = useRef<SerialPort | null>(null);
-
-  // Cleanup bei Unmount
-  useEffect(() => {
-    return () => {
-      stopAudio();
-      disconnectSerial();
-    };
-  }, []);
-
-  // AudioWorklet Processor Code
-  const WORKLET_CODE = `
+// AudioWorklet Processor Code
+const WORKLET_CODE = `
 class FreqProcessor extends AudioWorkletProcessor {
   constructor() {
     super();
@@ -213,6 +162,49 @@ class FreqProcessor extends AudioWorkletProcessor {
 registerProcessor('freq-gen',FreqProcessor);
 `;
 
+const FrequencyOutputModule = ({ onFrequencyChange }: FrequencyOutputModuleProps) => {
+  // Therapy Mode
+  const [therapyMode, setTherapyMode] = useState<TherapyMode>('bipolar_resonance');
+
+  // Audio State
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [frequency, setFrequency] = useState(7.83);
+  const [amplitude, setAmplitude] = useState(0.5);
+  const [waveform, setWaveform] = useState<WaveformType>('bipolar_sine');
+
+  // Timer
+  const [duration, setDuration] = useState(180);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [isTimerEnabled, setIsTimerEnabled] = useState(true);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Additional oscillators for bipolar/harmonic modes
+  const oscillatorsRef = useRef<OscillatorNode[]>([]);
+
+  // Modulation
+  const [modulationEnabled, setModulationEnabled] = useState(false);
+  const [modulationFreq, setModulationFreq] = useState(1);
+  const [modulationDepth, setModulationDepth] = useState(0.3);
+
+  // EM-Feld Output
+  const [emOutputEnabled, setEmOutputEnabled] = useState(false);
+  const [serialConnected, setSerialConnected] = useState(false);
+
+  // WebAudio Refs
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const oscillatorRef = useRef<OscillatorNode | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
+  const modulatorRef = useRef<OscillatorNode | null>(null);
+  const modulationGainRef = useRef<GainNode | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const workletNodeRef = useRef<AudioWorkletNode | null>(null);
+  const [workletReady, setWorkletReady] = useState(false);
+  const [analyserNode, setAnalyserNode] = useState<AnalyserNode | null>(null);
+
+  // Serial Port Ref
+  const serialPortRef = useRef<SerialPort | null>(null);
+
   // Audio initialisieren (mit AudioWorklet + AnalyserNode)
   const initAudio = useCallback(async () => {
     if (!audioContextRef.current) {
@@ -249,6 +241,39 @@ registerProcessor('freq-gen',FreqProcessor);
   // Current therapy mode config
   const currentModeConfig = THERAPY_MODES.find(m => m.id === therapyMode)!;
 
+  // Audio stoppen
+  const stopAudio = useCallback(() => {
+    // WorkletNode stoppen
+    if (workletNodeRef.current) {
+      workletNodeRef.current.disconnect();
+      workletNodeRef.current = null;
+    }
+
+    // Stop all oscillators
+    oscillatorsRef.current.forEach(osc => {
+      try { osc.stop(); osc.disconnect(); } catch (error) { void error; }
+    });
+    oscillatorsRef.current = [];
+
+    try { oscillatorRef.current?.stop(); oscillatorRef.current?.disconnect(); } catch (error) { void error; }
+    try { modulatorRef.current?.stop(); modulatorRef.current?.disconnect(); } catch (error) { void error; }
+
+    oscillatorRef.current = null;
+    modulatorRef.current = null;
+
+    // Analyser trennen (aber nicht zerstören)
+    if (analyserRef.current) {
+      try { analyserRef.current.disconnect(); } catch (error) { void error; }
+    }
+
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+
+    setIsPlaying(false);
+  }, []);
+
   // Update waveform when therapy mode changes
   useEffect(() => {
     setWaveform(currentModeConfig.defaultWaveform);
@@ -271,13 +296,13 @@ registerProcessor('freq-gen',FreqProcessor);
         });
       }, 1000);
     }
-    
+
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
     };
-  }, [isPlaying, isTimerEnabled, duration, frequency]);
+  }, [isPlaying, isTimerEnabled, duration, frequency, stopAudio]);
 
   // Format time helper
   const formatTime = (seconds: number) => {
@@ -285,68 +310,6 @@ registerProcessor('freq-gen',FreqProcessor);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
-
-  // Audio starten (AudioWorklet mit AnalyserNode)
-  const startAudio = useCallback(async () => {
-    const ctx = await initAudio();
-    
-    // Gain-Node für Amplitude
-    const gain = ctx.createGain();
-    gain.gain.value = isMuted ? 0 : amplitude;
-    gainNodeRef.current = gain;
-
-    // Audio-Kette: Source → Gain → Analyser → Destination
-    const analyser = analyserRef.current!;
-    gain.connect(analyser);
-    analyser.connect(ctx.destination);
-
-    // Versuche AudioWorklet, Fallback auf OscillatorNode
-    if (workletReady) {
-      try {
-        const worklet = new AudioWorkletNode(ctx, 'freq-gen');
-        worklet.connect(gain);
-        worklet.port.postMessage({
-          frequency,
-          amplitude: 0.8, // Konstante Amplitude gemäß Audio-Engine-Spec
-          waveform,
-          harmonics: currentModeConfig.harmonics.map((h, i) => 1 / (h * 1.5)),
-          modFreq: modulationEnabled ? modulationFreq : 0,
-          modDepth: modulationEnabled ? modulationDepth : 0,
-        });
-        workletNodeRef.current = worklet;
-        oscillatorsRef.current = [];
-        oscillatorRef.current = null;
-        console.log('[FreqOutput] AudioWorklet aktiv – Latenz:', 
-          Math.round((ctx.baseLatency || 0) * 1000), 'ms');
-      } catch {
-        console.warn('[FreqOutput] Worklet-Start fehlgeschlagen, nutze Oszillator-Fallback');
-        startOscillatorFallback(ctx, gain);
-      }
-    } else {
-      startOscillatorFallback(ctx, gain);
-    }
-
-    setIsPlaying(true);
-    setElapsedTime(0);
-    
-    // Callback
-    const config: FrequencyOutput = {
-      type: emOutputEnabled ? 'dual' : 'audio',
-      frequency,
-      amplitude,
-      waveform: getOscillatorType(waveform) as 'sine' | 'square' | 'triangle' | 'sawtooth',
-      modulation: modulationEnabled ? {
-        type: 'fm',
-        frequency: modulationFreq,
-        depth: modulationDepth,
-      } : undefined,
-    };
-    onFrequencyChange?.(config);
-
-    toast.success(`${currentModeConfig.name} gestartet`, {
-      description: `${frequency} Hz • ${waveform}${workletReady ? ' • AudioWorklet' : ''}`
-    });
-  }, [frequency, amplitude, waveform, modulationEnabled, modulationFreq, modulationDepth, isMuted, emOutputEnabled, initAudio, onFrequencyChange, currentModeConfig, workletReady]);
 
   // Fallback: Standard-Oszillatoren (wenn AudioWorklet nicht verfügbar)
   const startOscillatorFallback = useCallback((ctx: AudioContext, gain: GainNode) => {
@@ -405,38 +368,67 @@ registerProcessor('freq-gen',FreqProcessor);
     }
   }, [frequency, amplitude, waveform, modulationEnabled, modulationFreq, modulationDepth, currentModeConfig]);
 
-  // Audio stoppen
-  const stopAudio = useCallback(() => {
-    // WorkletNode stoppen
-    if (workletNodeRef.current) {
-      workletNodeRef.current.disconnect();
-      workletNodeRef.current = null;
+  // Audio starten (AudioWorklet mit AnalyserNode)
+  const startAudio = useCallback(async () => {
+    const ctx = await initAudio();
+
+    // Gain-Node für Amplitude
+    const gain = ctx.createGain();
+    gain.gain.value = isMuted ? 0 : amplitude;
+    gainNodeRef.current = gain;
+
+    // Audio-Kette: Source → Gain → Analyser → Destination
+    const analyser = analyserRef.current!;
+    gain.connect(analyser);
+    analyser.connect(ctx.destination);
+
+    // Versuche AudioWorklet, Fallback auf OscillatorNode
+    if (workletReady) {
+      try {
+        const worklet = new AudioWorkletNode(ctx, 'freq-gen');
+        worklet.connect(gain);
+        worklet.port.postMessage({
+          frequency,
+          amplitude: 0.8, // Konstante Amplitude gemäß Audio-Engine-Spec
+          waveform,
+          harmonics: currentModeConfig.harmonics.map((h, i) => 1 / (h * 1.5)),
+          modFreq: modulationEnabled ? modulationFreq : 0,
+          modDepth: modulationEnabled ? modulationDepth : 0,
+        });
+        workletNodeRef.current = worklet;
+        oscillatorsRef.current = [];
+        oscillatorRef.current = null;
+        console.log('[FreqOutput] AudioWorklet aktiv – Latenz:',
+          Math.round((ctx.baseLatency || 0) * 1000), 'ms');
+      } catch {
+        console.warn('[FreqOutput] Worklet-Start fehlgeschlagen, nutze Oszillator-Fallback');
+        startOscillatorFallback(ctx, gain);
+      }
+    } else {
+      startOscillatorFallback(ctx, gain);
     }
 
-    // Stop all oscillators
-    oscillatorsRef.current.forEach(osc => {
-      try { osc.stop(); osc.disconnect(); } catch {}
+    setIsPlaying(true);
+    setElapsedTime(0);
+
+    // Callback
+    const config: FrequencyOutput = {
+      type: emOutputEnabled ? 'dual' : 'audio',
+      frequency,
+      amplitude,
+      waveform: getOscillatorType(waveform) as 'sine' | 'square' | 'triangle' | 'sawtooth',
+      modulation: modulationEnabled ? {
+        type: 'fm',
+        frequency: modulationFreq,
+        depth: modulationDepth,
+      } : undefined,
+    };
+    onFrequencyChange?.(config);
+
+    toast.success(`${currentModeConfig.name} gestartet`, {
+      description: `${frequency} Hz • ${waveform}${workletReady ? ' • AudioWorklet' : ''}`
     });
-    oscillatorsRef.current = [];
-    
-    try { oscillatorRef.current?.stop(); oscillatorRef.current?.disconnect(); } catch {}
-    try { modulatorRef.current?.stop(); modulatorRef.current?.disconnect(); } catch {}
-    
-    oscillatorRef.current = null;
-    modulatorRef.current = null;
-    
-    // Analyser trennen (aber nicht zerstören)
-    if (analyserRef.current) {
-      try { analyserRef.current.disconnect(); } catch {}
-    }
-    
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    
-    setIsPlaying(false);
-  }, []);
+  }, [frequency, amplitude, waveform, modulationEnabled, modulationFreq, modulationDepth, isMuted, emOutputEnabled, initAudio, onFrequencyChange, currentModeConfig, workletReady, startOscillatorFallback]);
 
   // Frequenz live aktualisieren (WorkletNode + Fallback)
   useEffect(() => {
@@ -506,13 +498,21 @@ registerProcessor('freq-gen',FreqProcessor);
     }
   }, []);
 
+  // Cleanup bei Unmount
+  useEffect(() => {
+    return () => {
+      stopAudio();
+      void disconnectSerial();
+    };
+  }, [stopAudio, disconnectSerial]);
+
   // Frequenz an Serial senden
   const sendFrequencyToSerial = useCallback(async (freq: number) => {
     if (!serialPortRef.current || !serialConnected) return;
 
     const encoder = new TextEncoder();
     const writer = serialPortRef.current.writable?.getWriter();
-    
+
     if (writer) {
       const command = `FREQ:${freq.toFixed(2)}\n`;
       await writer.write(encoder.encode(command));
@@ -640,7 +640,7 @@ registerProcessor('freq-gen',FreqProcessor);
                     onCheckedChange={setModulationEnabled}
                   />
                 </div>
-                
+
                 {modulationEnabled && (
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -726,8 +726,8 @@ registerProcessor('freq-gen',FreqProcessor);
                 />
                 {isPlaying && audioContextRef.current && (
                   <p className="text-[10px] font-mono text-muted-foreground">
-                    Latenz: {Math.round((audioContextRef.current.baseLatency || 0) * 1000)}ms • 
-                    Sample-Rate: {audioContextRef.current.sampleRate} Hz • 
+                    Latenz: {Math.round((audioContextRef.current.baseLatency || 0) * 1000)}ms •
+                    Sample-Rate: {audioContextRef.current.sampleRate} Hz •
                     {workletReady ? 'AudioWorklet' : 'Oszillator-Fallback'}
                   </p>
                 )}
@@ -755,7 +755,7 @@ registerProcessor('freq-gen',FreqProcessor);
                     Akupunktur
                   </TabsTrigger>
                 </TabsList>
-                
+
                 <TabsContent value="presets" className="mt-0">
                   <div className="space-y-2 max-h-64 overflow-y-auto">
                     {THERAPEUTIC_FREQUENCIES.map((preset) => (
@@ -777,7 +777,7 @@ registerProcessor('freq-gen',FreqProcessor);
                     ))}
                   </div>
                 </TabsContent>
-                
+
                 <TabsContent value="acupoints" className="mt-0">
                   <AcupuncturePointSearch
                     compact
@@ -798,7 +798,7 @@ registerProcessor('freq-gen',FreqProcessor);
                 <Radio className="w-5 h-5 text-secondary" />
                 <h4 className="font-medium text-foreground">EM-Feld Output</h4>
               </div>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Aktiviert</span>
@@ -828,9 +828,9 @@ registerProcessor('freq-gen',FreqProcessor);
                         {serialConnected ? 'Trennen' : 'Verbinden'}
                       </Button>
                     </div>
-                    
+
                     <p className="text-xs text-muted-foreground">
-                      Verbinden Sie einen Frequenzgenerator (Spooky2, etc.) über WebSerial 
+                      Verbinden Sie einen Frequenzgenerator (Spooky2, etc.) über WebSerial
                       für elektromagnetische Feldausgabe.
                     </p>
                   </>

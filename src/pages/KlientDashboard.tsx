@@ -29,6 +29,7 @@ import RemedyDatabasePanel from '@/components/RemedyDatabasePanel';
 import Footer from '@/components/Footer';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import type { Json } from '@/integrations/supabase/types';
 
 interface ClientInfo {
   id: string;
@@ -42,15 +43,29 @@ interface ClientInfo {
   createdAt: string;
 }
 
+interface SnapshotRecord {
+  [key: string]: unknown;
+}
+
+interface DiagnosisSnapshot extends SnapshotRecord {
+  imbalanceCount?: unknown;
+}
+
+interface TreatmentSummarySnapshot extends SnapshotRecord {
+  pointsProcessed?: unknown;
+  beforeDimensions?: unknown;
+  afterDimensions?: unknown;
+}
+
 interface SessionSummary {
   id: string;
   sessionNumber: number;
   sessionDate: string;
   status: string;
   durationSeconds: number | null;
-  vectorSnapshot: Record<string, unknown> | null;
-  diagnosisSnapshot: Record<string, unknown> | null;
-  treatmentSummary: Record<string, unknown> | null;
+  vectorSnapshot: SnapshotRecord | null;
+  diagnosisSnapshot: DiagnosisSnapshot | null;
+  treatmentSummary: TreatmentSummarySnapshot | null;
   notes: string | null;
 }
 
@@ -67,6 +82,24 @@ const formatDuration = (seconds: number | null) => {
 };
 
 const DIMENSION_LABELS = ['Körperlich', 'Emotional', 'Mental', 'Energie', 'Stress'];
+
+const isSnapshotRecord = (value: Json | null): value is SnapshotRecord =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const parseSnapshotRecord = (value: Json | null): SnapshotRecord | null =>
+  isSnapshotRecord(value) ? value : null;
+
+const parseDiagnosisSnapshot = (value: Json | null): DiagnosisSnapshot | null =>
+  isSnapshotRecord(value) ? value : null;
+
+const parseTreatmentSummary = (value: Json | null): TreatmentSummarySnapshot | null =>
+  isSnapshotRecord(value) ? value : null;
+
+const formatSnapshotCount = (value: unknown): string | number =>
+  typeof value === 'string' || typeof value === 'number' ? value : '?';
+
+const getDimensionValue = (value: unknown, index: number): number =>
+  Array.isArray(value) && typeof value[index] === 'number' ? value[index] : 50;
 
 const KlientDashboard = () => {
   const { id: clientId } = useParams<{ id: string }>();
@@ -118,9 +151,9 @@ const KlientDashboard = () => {
         sessionDate: s.session_date,
         status: s.status,
         durationSeconds: s.duration_seconds,
-        vectorSnapshot: s.vector_snapshot as Record<string, unknown> | null,
-        diagnosisSnapshot: s.diagnosis_snapshot as Record<string, unknown> | null,
-        treatmentSummary: s.treatment_summary as Record<string, unknown> | null,
+        vectorSnapshot: parseSnapshotRecord(s.vector_snapshot),
+        diagnosisSnapshot: parseDiagnosisSnapshot(s.diagnosis_snapshot),
+        treatmentSummary: parseTreatmentSummary(s.treatment_summary),
         notes: s.notes,
       })));
     } catch (error) {
@@ -295,14 +328,14 @@ const KlientDashboard = () => {
                               {/* Diagnosis info */}
                               {session.diagnosisSnapshot && (
                                 <span className="text-xs text-muted-foreground">
-                                  {(session.diagnosisSnapshot as any).imbalanceCount || '?'} Imbalancen
+                                  {formatSnapshotCount(session.diagnosisSnapshot.imbalanceCount)} Imbalancen
                                 </span>
                               )}
 
                               {/* Treatment info */}
                               {session.treatmentSummary && (
                                 <span className="text-xs text-muted-foreground">
-                                  {(session.treatmentSummary as any).pointsProcessed || '?'} Punkte
+                                  {formatSnapshotCount(session.treatmentSummary.pointsProcessed)} Punkte
                                 </span>
                               )}
 
@@ -311,12 +344,12 @@ const KlientDashboard = () => {
                           </div>
 
                           {/* Vector dimensions comparison */}
-                          {session.treatmentSummary && (session.treatmentSummary as any).beforeDimensions && (
+                          {session.treatmentSummary && Array.isArray(session.treatmentSummary.beforeDimensions) && (
                             <div className="mt-3 pt-3 border-t border-border">
                               <div className="grid grid-cols-5 gap-2">
                                 {DIMENSION_LABELS.map((label, i) => {
-                                  const before = (session.treatmentSummary as any).beforeDimensions?.[i] || 50;
-                                  const after = (session.treatmentSummary as any).afterDimensions?.[i] || 50;
+                                  const before = getDimensionValue(session.treatmentSummary.beforeDimensions, i);
+                                  const after = getDimensionValue(session.treatmentSummary.afterDimensions, i);
                                   const diff = after - before;
                                   const improved = Math.abs(after - 50) < Math.abs(before - 50);
                                   return (

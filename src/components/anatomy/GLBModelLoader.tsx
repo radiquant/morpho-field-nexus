@@ -38,10 +38,6 @@ const TARGET_BOUNDS = {
   centerZ: 0,
 };
 
-export const AVAILABLE_MODELS = {
-  fullBody: '/models/human-body.glb',
-} as const;
-
 export function GLBModelLoader({
   modelPath,
   opacity = 0.4,
@@ -174,13 +170,6 @@ export function GLBModelLoader({
       </group>
     </Float>
   );
-}
-
-// Preload
-export function preloadModels() {
-  Object.values(AVAILABLE_MODELS).forEach((path) => {
-    try { useGLTF.preload(path); } catch { /* not yet */ }
-  });
 }
 
 export default GLBModelLoader;

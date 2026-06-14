@@ -6,44 +6,44 @@
 import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import type { VectorAnalysis } from '@/services/feldengine';
-import { 
+import {
   getCompletePointsByMeridian,
-  COMPLETE_DATABASE_STATS 
+  COMPLETE_DATABASE_STATS
 } from '@/utils/meridianPoints';
 
 // TCM Elemente mit ihren Zuordnungen
 const ELEMENT_MERIDIAN_MAP = {
-  wood: { 
+  wood: {
     yin: 'LR', yang: 'GB',
     emotions: ['anger', 'frustration', 'resentment'],
     physical: ['eyes', 'tendons', 'nails'],
     season: 'spring'
   },
-  fire: { 
+  fire: {
     yin: 'HT', yang: 'SI',
     emotions: ['joy', 'anxiety', 'mania'],
     physical: ['tongue', 'blood vessels', 'complexion'],
     season: 'summer'
   },
-  fire_ministerial: { 
+  fire_ministerial: {
     yin: 'PC', yang: 'TE',
     emotions: ['elation', 'shock'],
     physical: ['circulation', 'hormones'],
     season: 'summer'
   },
-  earth: { 
+  earth: {
     yin: 'SP', yang: 'ST',
     emotions: ['worry', 'pensiveness', 'overthinking'],
     physical: ['muscles', 'mouth', 'lips'],
     season: 'late_summer'
   },
-  metal: { 
+  metal: {
     yin: 'LU', yang: 'LI',
     emotions: ['grief', 'sadness', 'letting_go'],
     physical: ['skin', 'nose', 'body_hair'],
     season: 'autumn'
   },
-  water: { 
+  water: {
     yin: 'KI', yang: 'BL',
     emotions: ['fear', 'willpower', 'wisdom'],
     physical: ['bones', 'ears', 'head_hair'],
@@ -77,9 +77,9 @@ export interface DiagnosisResult {
  * Nutzt die tatsächlichen Frequenzen und Punkttypen aus der vollständigen Datenbank
  */
 const getMeridianDataFromDatabase = () => {
-  const meridianConfigs: Record<string, { 
-    name: string; 
-    organ: string; 
+  const meridianConfigs: Record<string, {
+    name: string;
+    organ: string;
     element: string;
     yinYang: 'yin' | 'yang';
   }> = {
@@ -97,9 +97,9 @@ const getMeridianDataFromDatabase = () => {
     LR: { name: 'Leber-Meridian', organ: 'Leber', element: 'wood', yinYang: 'yin' },
   };
 
-  const meridianData: Record<string, { 
-    name: string; 
-    organ: string; 
+  const meridianData: Record<string, {
+    name: string;
+    organ: string;
     element: string;
     yinYang: 'yin' | 'yang';
     frequency: number;
@@ -109,23 +109,23 @@ const getMeridianDataFromDatabase = () => {
 
   Object.entries(meridianConfigs).forEach(([id, config]) => {
     const points = getCompletePointsByMeridian(id);
-    
+
     // Berechne Durchschnittsfrequenz aus allen Punkten
-    const avgFrequency = points.length > 0 
-      ? points.reduce((sum, p) => sum + p.frequency, 0) / points.length 
+    const avgFrequency = points.length > 0
+      ? points.reduce((sum, p) => sum + p.frequency, 0) / points.length
       : 100;
-    
+
     // Finde die wichtigsten Punkte (Yuan-Source, He-Sea, Shu-Stream)
     const keyPoints = points
-      .filter(p => p.pointTypes?.some(t => 
+      .filter(p => p.pointTypes?.some(t =>
         ['yuan_source', 'he_sea', 'shu_stream', 'luo_connecting'].includes(t)
       ))
       .slice(0, 3)
       .map(p => p.id);
-    
+
     // Fallback auf erste 3 Punkte
-    const finalKeyPoints = keyPoints.length > 0 
-      ? keyPoints 
+    const finalKeyPoints = keyPoints.length > 0
+      ? keyPoints
       : points.slice(0, 3).map(p => p.id);
 
     meridianData[id] = {
@@ -266,7 +266,7 @@ export function useMeridianDiagnosis() {
   const calculateImbalances = useCallback((vectorAnalysis: VectorAnalysis): MeridianImbalance[] => {
     const imbalances: MeridianImbalance[] = [];
     const dimensions = vectorAnalysis.clientVector.dimensions;
-    
+
     // Extrahiere Dimensionswerte
     const physical = dimensions[0] || 0;
     const emotional = dimensions[1] || 0;
@@ -285,26 +285,26 @@ export function useMeridianDiagnosis() {
           score = Math.abs(stress) * 0.4 + Math.abs(emotional) * 0.3 + Math.abs(physical) * 0.2;
           type = stress > 0.3 ? 'excess' : (emotional < -0.3 ? 'stagnation' : 'deficiency');
           break;
-        
+
         case 'fire':
         case 'fire_ministerial':
           // Feuer: beeinflusst durch emotionale Zustände und Energie
           score = Math.abs(emotional) * 0.4 + Math.abs(energy) * 0.3 + Math.abs(mental) * 0.2;
           type = emotional > 0.3 ? 'excess' : (energy < -0.3 ? 'deficiency' : 'stagnation');
           break;
-        
+
         case 'earth':
           // Erde: beeinflusst durch mentale Aktivität und Verdauung
           score = Math.abs(mental) * 0.4 + Math.abs(physical) * 0.3 + Math.abs(stress) * 0.2;
           type = mental > 0.3 ? 'excess' : (physical < -0.3 ? 'deficiency' : 'stagnation');
           break;
-        
+
         case 'metal':
           // Metall: beeinflusst durch Trauer, Loslassen, Atmung
           score = Math.abs(emotional) * 0.3 + Math.abs(physical) * 0.4 + Math.abs(energy) * 0.2;
           type = physical > 0.2 && emotional < 0 ? 'deficiency' : (stress > 0.3 ? 'stagnation' : 'excess');
           break;
-        
+
         case 'water':
           // Wasser: beeinflusst durch Angst, Willenskraft, Essenz
           score = Math.abs(stress) * 0.3 + Math.abs(energy) * 0.4 + Math.abs(mental) * 0.2;
@@ -339,15 +339,15 @@ export function useMeridianDiagnosis() {
   /**
    * Identifiziert das primäre Element-Muster
    */
-  const identifyElementPattern = useCallback((imbalances: MeridianImbalance[]): { 
-    primary: string; 
-    controlling: string; 
-    supporting: string; 
+  const identifyElementPattern = useCallback((imbalances: MeridianImbalance[]): {
+    primary: string;
+    controlling: string;
+    supporting: string;
     pattern: string;
   } => {
     // Zähle Element-Häufigkeiten gewichtet nach Score
     const elementScores: Record<string, number> = {};
-    
+
     imbalances.forEach(imb => {
       const elem = imb.element === 'fire_ministerial' ? 'fire' : imb.element;
       elementScores[elem] = (elementScores[elem] || 0) + imb.imbalanceScore;
@@ -356,13 +356,13 @@ export function useMeridianDiagnosis() {
     // Finde primäres Element
     const sortedElements = Object.entries(elementScores)
       .sort(([, a], [, b]) => b - a);
-    
+
     const primary = sortedElements[0]?.[0] || 'earth';
     const primaryIndex = GENERATION_CYCLE.indexOf(primary);
-    
+
     // Kontrollierendes Element (Ke-Zyklus)
     const controlling = CONTROL_CYCLE[primary as keyof typeof CONTROL_CYCLE] || 'water';
-    
+
     // Unterstützendes Element (Sheng-Zyklus - vorheriges Element)
     const supportingIndex = (primaryIndex - 1 + 5) % 5;
     const supporting = GENERATION_CYCLE[supportingIndex];
@@ -382,43 +382,6 @@ export function useMeridianDiagnosis() {
 
     return { primary, controlling, supporting, pattern };
   }, []);
-
-  /**
-   * Führt die vollständige Diagnose durch
-   */
-  const analyzeMeridians = useCallback(async (vectorAnalysis: VectorAnalysis) => {
-    setIsAnalyzing(true);
-    setAiRecommendation('');
-
-    try {
-      // Berechne Imbalancen
-      const imbalances = calculateImbalances(vectorAnalysis);
-      
-      // Identifiziere Element-Muster
-      const { primary, controlling, supporting, pattern } = identifyElementPattern(imbalances);
-
-      const result: DiagnosisResult = {
-        imbalances,
-        primaryElement: primary,
-        controllingElement: controlling,
-        supportingElement: supporting,
-        overallPattern: pattern,
-      };
-
-      setDiagnosisResult(result);
-
-      // Hole KI-Empfehlung
-      await fetchAIRecommendation(vectorAnalysis, imbalances);
-
-      return result;
-    } catch (error) {
-      console.error('Meridian analysis error:', error);
-      toast.error('Fehler bei der Meridian-Analyse');
-      return null;
-    } finally {
-      setIsAnalyzing(false);
-    }
-  }, [calculateImbalances, identifyElementPattern]);
 
   /**
    * Holt KI-basierte Behandlungsempfehlungen
@@ -509,6 +472,43 @@ export function useMeridianDiagnosis() {
       setIsLoadingAI(false);
     }
   }, []);
+
+  /**
+   * Führt die vollständige Diagnose durch
+   */
+  const analyzeMeridians = useCallback(async (vectorAnalysis: VectorAnalysis) => {
+    setIsAnalyzing(true);
+    setAiRecommendation('');
+
+    try {
+      // Berechne Imbalancen
+      const imbalances = calculateImbalances(vectorAnalysis);
+
+      // Identifiziere Element-Muster
+      const { primary, controlling, supporting, pattern } = identifyElementPattern(imbalances);
+
+      const result: DiagnosisResult = {
+        imbalances,
+        primaryElement: primary,
+        controllingElement: controlling,
+        supportingElement: supporting,
+        overallPattern: pattern,
+      };
+
+      setDiagnosisResult(result);
+
+      // Hole KI-Empfehlung
+      await fetchAIRecommendation(vectorAnalysis, imbalances);
+
+      return result;
+    } catch (error) {
+      console.error('Meridian analysis error:', error);
+      toast.error('Fehler bei der Meridian-Analyse');
+      return null;
+    } finally {
+      setIsAnalyzing(false);
+    }
+  }, [calculateImbalances, identifyElementPattern, fetchAIRecommendation]);
 
   return {
     isAnalyzing,

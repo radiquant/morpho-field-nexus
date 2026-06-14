@@ -5,6 +5,10 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import type { Database } from '@/integrations/supabase/types';
+
+type RemedyRow = Database['public']['Tables']['remedies']['Row'];
+type RemedyInsert = Database['public']['Tables']['remedies']['Insert'];
 
 export interface Remedy {
   id: string;
@@ -38,7 +42,7 @@ export function useRemedyDatabase() {
   const [remedies, setRemedies] = useState<Remedy[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const mapRow = (row: any): Remedy => ({
+  const mapRow = (row: RemedyRow): Remedy => ({
     id: row.id,
     name: row.name,
     nameLatin: row.name_latin,
@@ -59,7 +63,7 @@ export function useRemedyDatabase() {
     setIsLoading(true);
     try {
       let query = supabase
-        .from('remedies' as any)
+        .from('remedies')
         .select('*')
         .order('name', { ascending: true })
         .limit(500);
@@ -87,22 +91,24 @@ export function useRemedyDatabase() {
 
   const addRemedy = useCallback(async (remedy: Omit<Remedy, 'id' | 'createdAt'>) => {
     try {
+      const newRemedy: RemedyInsert = {
+        name: remedy.name,
+        name_latin: remedy.nameLatin,
+        category: remedy.category,
+        potency: remedy.potency,
+        frequency: remedy.frequency,
+        meridian_associations: remedy.meridianAssociations,
+        organ_associations: remedy.organAssociations,
+        element: remedy.element,
+        emotional_pattern: remedy.emotionalPattern,
+        description: remedy.description,
+        contraindications: remedy.contraindications,
+        source: remedy.source,
+      };
+
       const { data, error } = await supabase
-        .from('remedies' as any)
-        .insert({
-          name: remedy.name,
-          name_latin: remedy.nameLatin,
-          category: remedy.category,
-          potency: remedy.potency,
-          frequency: remedy.frequency,
-          meridian_associations: remedy.meridianAssociations,
-          organ_associations: remedy.organAssociations,
-          element: remedy.element,
-          emotional_pattern: remedy.emotionalPattern,
-          description: remedy.description,
-          contraindications: remedy.contraindications,
-          source: remedy.source,
-        })
+        .from('remedies')
+        .insert(newRemedy)
         .select()
         .single();
 
@@ -122,7 +128,7 @@ export function useRemedyDatabase() {
   const findByFrequency = useCallback(async (frequency: number, tolerance = 5) => {
     try {
       const { data, error } = await supabase
-        .from('remedies' as any)
+        .from('remedies')
         .select('*')
         .gte('frequency', frequency - tolerance)
         .lte('frequency', frequency + tolerance)
@@ -139,7 +145,7 @@ export function useRemedyDatabase() {
   const findByMeridian = useCallback(async (meridian: string) => {
     try {
       const { data, error } = await supabase
-        .from('remedies' as any)
+        .from('remedies')
         .select('*')
         .contains('meridian_associations', [meridian]);
 

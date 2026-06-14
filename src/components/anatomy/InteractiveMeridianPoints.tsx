@@ -9,7 +9,7 @@ import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { Zap } from 'lucide-react';
 import { COMPLETE_ACUPUNCTURE_DATABASE } from '@/utils/meridianPoints';
-import { getDysregulationColor, getDysregulationLevel } from './DysregulationLegend';
+import { getDysregulationColor, getDysregulationLevel } from './dysregulation-utils';
 
 // Lokaler Typ basierend auf der Datenbank
 type MeridianPoint = typeof COMPLETE_ACUPUNCTURE_DATABASE[number];

@@ -27,6 +27,9 @@ import {
   getSourceLabel,
 } from '@/hooks/useAnatomyModels';
 
+const getErrorMessage = (error: unknown, fallback: string): string =>
+  error instanceof Error && error.message ? error.message : fallback;
+
 interface ModelSelectorProps {
   models: AnatomyModel[];
   selectedModel: AnatomyModel | null;
@@ -65,9 +68,9 @@ export function ModelSelector({
       if (error) throw error;
       toast.success(`"${model.name}" gelöscht`);
       onDelete?.();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Lösch-Fehler:', err);
-      toast.error(`Löschen fehlgeschlagen: ${err.message}`);
+      toast.error(`Löschen fehlgeschlagen: ${getErrorMessage(err, 'Unbekannter Fehler')}`);
     } finally {
       setDeletingId(null);
     }

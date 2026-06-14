@@ -5,6 +5,7 @@
  */
 import { useState, useCallback, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import type { Database, Json } from '@/integrations/supabase/types';
 import {
   HEART_SCHEMA, HEART_LANDMARKS,
   BRAIN_SCHEMA, BRAIN_LANDMARKS,
@@ -16,6 +17,24 @@ import {
   TCM_SCHEMA, TCM_LANDMARKS,
 } from '@/data/anatomy-pilots';
 
+type OrganSchemaRow = Database['public']['Tables']['organ_schemas']['Row'];
+type OrganLandmarkRow = Database['public']['Tables']['organ_landmarks']['Row'];
+type OrganRegion = { region_code: string; name: string };
+
+const isJsonRecord = (value: Json | null): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const toJsonRecord = (value: Json | null): Record<string, unknown> =>
+  isJsonRecord(value) ? value : {};
+
+const toOrganRegions = (value: Json): OrganRegion[] =>
+  Array.isArray(value) ? (value as OrganRegion[]) : [];
+
+const hasFullSurfaceNormal = (landmark: OrganLandmarkRow): boolean =>
+  landmark.surface_normal_x != null &&
+  landmark.surface_normal_y != null &&
+  landmark.surface_normal_z != null;
+
 export interface OrganSchema {
   id: string;
   organCode: string;
@@ -23,7 +42,7 @@ export interface OrganSchema {
   sourceDataset: string;
   sourceConceptId: string | null;
   coordinateSystem: string;
-  regions: { region_code: string; name: string }[];
+  regions: OrganRegion[];
   pointClasses: string[];
   samplingConfig: Record<string, unknown>;
   validationConfig: Record<string, unknown>;
@@ -80,17 +99,17 @@ export function useOrganLandmarks() {
       if (schemaError) throw schemaError;
       if (!schemaData || schemaData.length === 0) return false;
 
-      const mappedSchemas: OrganSchema[] = schemaData.map((s: any) => ({
+      const mappedSchemas: OrganSchema[] = schemaData.map((s: OrganSchemaRow) => ({
         id: s.id,
         organCode: s.organ_code,
         organName: s.organ_name,
         sourceDataset: s.source_dataset,
         sourceConceptId: s.source_concept_id,
         coordinateSystem: s.coordinate_system,
-        regions: (s.regions || []) as { region_code: string; name: string }[],
+        regions: toOrganRegions(s.regions),
         pointClasses: s.point_classes || ['A', 'S', 'V'],
-        samplingConfig: s.sampling_config || {},
-        validationConfig: s.validation_config || {},
+        samplingConfig: toJsonRecord(s.sampling_config),
+        validationConfig: toJsonRecord(s.validation_config),
         meshFile: s.mesh_file,
         version: s.version,
       }));
@@ -108,7 +127,7 @@ export function useOrganLandmarks() {
 
       const schemaMap = new Map(mappedSchemas.map(s => [s.id, s.organCode]));
 
-      const mappedLandmarks: OrganLandmark[] = (landmarkData || []).map((l: any) => ({
+      const mappedLandmarks: OrganLandmark[] = (landmarkData || []).map((l: OrganLandmarkRow) => ({
         id: l.id,
         organSchemaId: l.organ_schema_id,
         pointId: l.point_id,
@@ -119,8 +138,8 @@ export function useOrganLandmarks() {
         x: l.x_position,
         y: l.y_position,
         z: l.z_position,
-        surfaceNormal: l.surface_normal_x != null
-          ? [l.surface_normal_x, l.surface_normal_y, l.surface_normal_z] as [number, number, number]
+        surfaceNormal: hasFullSurfaceNormal(l)
+          ? [l.surface_normal_x!, l.surface_normal_y!, l.surface_normal_z!]
           : undefined,
         scanFrequency: l.scan_frequency,
         harmonicFrequencies: l.harmonic_frequencies || [],
@@ -156,7 +175,7 @@ export function useOrganLandmarks() {
     }));
 
     const pilotLandmarks: OrganLandmark[] = ALL_PILOT_SCHEMAS.flatMap(({ schema, landmarks: lms, id: schemaId }) =>
-      lms.map((l: any, i: number) => ({
+      lms.map((l, i: number) => ({
         id: `${schemaId}-${i}`,
         organSchemaId: schemaId,
         pointId: l.point_id,

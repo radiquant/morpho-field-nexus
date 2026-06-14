@@ -6,6 +6,9 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
 import { spooky2Service, type Spooky2DeviceInfo, type Spooky2Waveform, type Spooky2Status } from '@/services/hardware/Spooky2Service';
 
+const getErrorMessage = (error: unknown, fallback: string): string =>
+  error instanceof Error && error.message ? error.message : fallback;
+
 export function useSpooky2() {
   const [device, setDevice] = useState<Spooky2DeviceInfo | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
@@ -21,8 +24,8 @@ export function useSpooky2() {
         description: info.firmwareVersion ? `Firmware: ${info.firmwareVersion}` : 'Bereit',
       });
       return info;
-    } catch (error: any) {
-      const message = error?.message || 'Verbindung fehlgeschlagen';
+    } catch (error: unknown) {
+      const message = getErrorMessage(error, 'Verbindung fehlgeschlagen');
       toast.error('Spooky2 Verbindungsfehler', { description: message });
       return null;
     } finally {
@@ -66,8 +69,8 @@ export function useSpooky2() {
     try {
       await spooky2Service.uploadSequence(frequencies, channel);
       toast.success(`${frequencies.length} Frequenzen hochgeladen`);
-    } catch (error: any) {
-      toast.error('Upload fehlgeschlagen', { description: error?.message });
+    } catch (error: unknown) {
+      toast.error('Upload fehlgeschlagen', { description: getErrorMessage(error, 'Upload fehlgeschlagen') });
     }
   }, []);
 

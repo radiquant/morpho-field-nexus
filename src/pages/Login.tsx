@@ -19,6 +19,12 @@ const loginSchema = z.object({
   password: z.string().min(6, 'Passwort muss mindestens 6 Zeichen haben'),
 });
 
+type RedirectLocationState = {
+  from?: {
+    pathname?: string;
+  };
+};
+
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -28,7 +34,8 @@ export default function Login() {
   const [isCheckingSession, setIsCheckingSession] = useState(true);
   const [activeTab, setActiveTab] = useState('login');
 
-  const redirectTo = (location.state as any)?.from?.pathname || '/';
+  const locationState = location.state as RedirectLocationState | null;
+  const redirectTo = locationState?.from?.pathname || '/';
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {

@@ -16,10 +16,12 @@ interface ClientVectorTrajectory3DProps {
   isAnimating?: boolean;
 }
 
+const DEFAULT_ATTRACTOR_POSITION: [number, number, number] = [0, 0, 0];
+
 // Cusp-Oberfläche berechnen
 function CuspSurface() {
   const meshRef = useRef<THREE.Points>(null);
-  
+
   const { geometry, colors } = useMemo(() => {
     const positions: number[] = [];
     const cols: number[] = [];
@@ -29,17 +31,17 @@ function CuspSurface() {
       for (let j = 0; j < resolution; j++) {
         const a = (i / resolution - 0.5) * 4;
         const b = (j / resolution - 0.5) * 4;
-        
+
         // Cusp: V(x) = x⁴ + ax² + bx, dV/dx = 4x³ + 2ax + b = 0
         // Approximation der stabilen Lösungen
         for (let k = -1; k <= 1; k += 0.5) {
           const x = k * 1.5;
           const derivative = 4 * Math.pow(x, 3) + 2 * a * x + b;
           const secondDerivative = 12 * x * x + 2 * a;
-          
+
           if (Math.abs(derivative) < 1.5) {
             positions.push(a, x, b);
-            
+
             // Farbe basierend auf Stabilität
             const isStable = secondDerivative > 0;
             if (isStable) {
@@ -117,11 +119,11 @@ function AttractorPoint({ position, stability }: { position: number[]; stability
 }
 
 // Aktueller Klienten-Vektor-Punkt
-function ClientPoint({ 
-  position, 
+function ClientPoint({
+  position,
   phase,
   bifurcationRisk
-}: { 
+}: {
   position: number[];
   phase: string;
   bifurcationRisk: number;
@@ -153,7 +155,7 @@ function ClientPoint({
   });
 
   // Farbe basierend auf Phase
-  const phaseColor = phase === 'stable' ? '#22c55e' : 
+  const phaseColor = phase === 'stable' ? '#22c55e' :
                      phase === 'transition' ? '#eab308' : '#ef4444';
 
   return (
@@ -168,7 +170,7 @@ function ClientPoint({
           opacity={0.5}
         />
       )}
-      
+
       {/* Klienten-Punkt */}
       <Sphere ref={meshRef} args={[1, 32, 32]} position={pos3D}>
         <meshStandardMaterial
@@ -177,7 +179,7 @@ function ClientPoint({
           emissiveIntensity={0.8}
         />
       </Sphere>
-      
+
       {/* Label */}
       <Html center position={[pos3D[0], pos3D[1] + 0.3, pos3D[2]]} distanceFactor={8}>
         <div className="bg-background/80 backdrop-blur-sm px-2 py-1 rounded text-xs text-foreground whitespace-nowrap border border-border">
@@ -192,20 +194,19 @@ function ClientPoint({
 }
 
 // Verbindungslinie zum Attraktor
-function ConnectionLine({ 
-  clientPosition, 
-  attractorPosition = [0, 0, 0] 
-}: { 
+function ConnectionLine({
+  clientPosition,
+  attractorPosition = DEFAULT_ATTRACTOR_POSITION
+}: {
   clientPosition: number[];
   attractorPosition?: number[];
 }) {
-  const pos3D: [number, number, number] = [
-    clientPosition[0] * 1.5 || 0,
-    clientPosition[1] * 1.5 || 0,
-    clientPosition[2] * 1.5 || 0
-  ];
-
   const points = useMemo(() => {
+    const pos3D: [number, number, number] = [
+      clientPosition[0] * 1.5 || 0,
+      clientPosition[1] * 1.5 || 0,
+      clientPosition[2] * 1.5 || 0
+    ];
     const start = new THREE.Vector3(...pos3D);
     const end = new THREE.Vector3(...(attractorPosition as [number, number, number]));
     const curve = new THREE.QuadraticBezierCurve3(
@@ -218,7 +219,7 @@ function ConnectionLine({
       end
     );
     return curve.getPoints(30);
-  }, [pos3D, attractorPosition]);
+  }, [clientPosition, attractorPosition]);
 
   return (
     <Line
@@ -244,13 +245,13 @@ function Axes() {
       <Text position={[2.2, 0, 0]} fontSize={0.15} color="#ef4444">
         Körperlich
       </Text>
-      
+
       {/* Y-Achse (Emotional) */}
       <Line points={[[0, -2, 0], [0, 2, 0]]} color="#a855f7" lineWidth={1} />
       <Text position={[0, 2.2, 0]} fontSize={0.15} color="#a855f7">
         Emotional
       </Text>
-      
+
       {/* Z-Achse (Mental) */}
       <Line points={[[0, 0, -2], [0, 0, 2]]} color="#3b82f6" lineWidth={1} />
       <Text position={[0, 0, 2.2]} fontSize={0.15} color="#3b82f6">
@@ -282,9 +283,9 @@ function EnergyRings({ energy, stress }: { energy: number; stress: number }) {
   );
 }
 
-const ClientVectorTrajectory3D = ({ 
-  vectorAnalysis, 
-  isAnimating = false 
+const ClientVectorTrajectory3D = ({
+  vectorAnalysis,
+  isAnimating = false
 }: ClientVectorTrajectory3DProps) => {
   const [autoRotate, setAutoRotate] = useState(true);
   const [showCusp, setShowCusp] = useState(true);
@@ -349,15 +350,15 @@ const ClientVectorTrajectory3D = ({
               <Axes />
 
               {/* Energie-Ringe */}
-              <EnergyRings 
-                energy={dimensions[3] || 0} 
-                stress={dimensions[4] || 0} 
+              <EnergyRings
+                energy={dimensions[3] || 0}
+                stress={dimensions[4] || 0}
               />
 
               {/* Attraktor */}
-              <AttractorPoint 
-                position={[0, 0, 0]} 
-                stability={attractorState.stability} 
+              <AttractorPoint
+                position={[0, 0, 0]}
+                stability={attractorState.stability}
               />
 
               {/* Klienten-Vektor */}
@@ -431,7 +432,7 @@ const ClientVectorTrajectory3D = ({
                 <Target className="w-5 h-5 text-primary" />
                 <h3 className="font-medium text-foreground">Attraktor-Status</h3>
               </div>
-              
+
               <div className="space-y-3">
                 <div>
                   <div className="flex justify-between text-sm mb-1">
@@ -439,7 +440,7 @@ const ClientVectorTrajectory3D = ({
                     <span className="text-foreground">{(attractorState.stability * 100).toFixed(0)}%</span>
                   </div>
                   <div className="h-2 bg-muted rounded-full overflow-hidden">
-                    <div 
+                    <div
                       className="h-full bg-gradient-to-r from-green-500 to-emerald-400 transition-all duration-500"
                       style={{ width: `${attractorState.stability * 100}%` }}
                     />
@@ -452,7 +453,7 @@ const ClientVectorTrajectory3D = ({
                     <span className="text-foreground">{(attractorState.bifurcationRisk * 100).toFixed(0)}%</span>
                   </div>
                   <div className="h-2 bg-muted rounded-full overflow-hidden">
-                    <div 
+                    <div
                       className="h-full bg-gradient-to-r from-yellow-500 to-red-500 transition-all duration-500"
                       style={{ width: `${attractorState.bifurcationRisk * 100}%` }}
                     />
@@ -465,7 +466,7 @@ const ClientVectorTrajectory3D = ({
                     <span className="text-foreground">{(attractorState.chreodeAlignment * 100).toFixed(0)}%</span>
                   </div>
                   <div className="h-2 bg-muted rounded-full overflow-hidden">
-                    <div 
+                    <div
                       className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-500"
                       style={{ width: `${attractorState.chreodeAlignment * 100}%` }}
                     />
@@ -497,11 +498,11 @@ const ClientVectorTrajectory3D = ({
                     <span className={`text-xs ${dim.color}`}>{dim.name}</span>
                     <div className="flex items-center gap-2">
                       <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
-                        <div 
+                        <div
                           className={`h-full transition-all duration-300 ${
                             dim.value >= 0 ? 'bg-green-500' : 'bg-red-500'
                           }`}
-                          style={{ 
+                          style={{
                             width: `${Math.abs(dim.value) * 50 + 50}%`,
                             marginLeft: dim.value < 0 ? `${50 - Math.abs(dim.value) * 50}%` : '50%'
                           }}
@@ -525,7 +526,7 @@ const ClientVectorTrajectory3D = ({
                 </div>
 
                 {vectorAnalysis.recommendedFrequencies.slice(0, 2).map((freq, i) => (
-                  <div 
+                  <div
                     key={i}
                     className="p-2 bg-muted/30 rounded-lg mb-2 last:mb-0"
                   >

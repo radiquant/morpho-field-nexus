@@ -121,10 +121,11 @@ export function useServerHardwareMetrics(): UseServerHardwareMetricsReturn {
               latestEntropyRef.current = data.entropy;
               break;
               
-            case 'pong':
+            case 'pong': {
               const now = Date.now();
               setLatency(now - data.clientTimestamp);
               break;
+            }
           }
         } catch (error) {
           console.error('[ServerMetrics] Parse error:', error);

@@ -6,7 +6,8 @@
 import { useRef, useState, useEffect, useMemo, useCallback, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Html, Environment, ContactShadows, Float, Line } from '@react-three/drei';
-import { GLBModelLoader, AVAILABLE_MODELS, type GLBModelInfo } from '@/components/anatomy/GLBModelLoader';
+import { GLBModelLoader, type GLBModelInfo } from '@/components/anatomy/GLBModelLoader';
+import { AVAILABLE_MODELS } from '@/components/anatomy/glb-model-utils';
 import { ChakraVisualization, type ChakraData } from '@/components/anatomy/ChakraVisualization';
 import { ModelSelector } from '@/components/anatomy/ModelSelector';
 import { ModelUpload } from '@/components/anatomy/ModelUpload';
@@ -42,7 +43,8 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useResonanceDatabase, type AnatomyResonancePoint } from '@/hooks/useResonanceDatabase';
-import { DysregulationLegend, getDysregulationColor, getDysregulationLevel } from '@/components/anatomy/DysregulationLegend';
+import { DysregulationLegend } from '@/components/anatomy/DysregulationLegend';
+import { getDysregulationColor, getDysregulationLevel } from '@/components/anatomy/dysregulation-utils';
 import type { VectorAnalysis } from '@/services/feldengine';
 
 import type { NLSDysregulationData } from '@/components/MeridianDiagnosisPanel';
@@ -1249,10 +1251,10 @@ const AnatomyResonanceViewer = ({
 
   // Auto-disable layers when model doesn't support them
   useEffect(() => {
-    if (!canShowMeridians && showMeridians) setShowMeridians(false);
-    if (!canShowChakras && showChakras) setShowChakras(false);
-    if (!canShowResonancePoints && showResonancePoints) setShowResonancePoints(false);
-    if (!canShowNLS && showOrganScan) setShowOrganScan(false);
+    setShowMeridians(prev => (canShowMeridians ? prev : false));
+    setShowChakras(prev => (canShowChakras ? prev : false));
+    setShowResonancePoints(prev => (canShowResonancePoints ? prev : false));
+    setShowOrganScan(prev => (canShowNLS ? prev : false));
   }, [canShowMeridians, canShowChakras, canShowResonancePoints, canShowNLS]);
 
   // Filter NLS points by model's applicable organ systems

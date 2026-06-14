@@ -13,6 +13,22 @@ import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
 } from 'recharts';
 import { supabase } from '@/integrations/supabase/client';
+import type { Database, Json } from '@/integrations/supabase/types';
+
+type TreatmentSessionRow = Database['public']['Tables']['treatment_sessions']['Row'];
+
+interface TCMImbalanceSnapshot {
+  element?: string;
+  imbalanceScore?: number;
+}
+
+interface TCMDiagnosisSnapshot {
+  imbalances?: TCMImbalanceSnapshot[];
+}
+
+interface TCMVectorSnapshot {
+  stability?: number;
+}
 
 interface TCMTrendData {
   sessionDate: string;
@@ -52,6 +68,30 @@ const KE_RELATIONS: [string, string][] = [
   ['wood', 'earth'], ['fire', 'metal'], ['earth', 'water'], ['metal', 'wood'], ['water', 'fire'],
 ];
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const toNumber = (value: unknown, fallback: number): number =>
+  typeof value === 'number' ? value : fallback;
+
+const parseDiagnosisSnapshot = (snapshot: Json | null): TCMDiagnosisSnapshot => {
+  if (!isRecord(snapshot) || !Array.isArray(snapshot.imbalances)) return {};
+
+  const imbalances = snapshot.imbalances
+    .filter(isRecord)
+    .map((imbalance) => ({
+      element: typeof imbalance.element === 'string' ? imbalance.element : undefined,
+      imbalanceScore: toNumber(imbalance.imbalanceScore, 0),
+    }));
+
+  return { imbalances };
+};
+
+const parseVectorSnapshot = (snapshot: Json | null): TCMVectorSnapshot => {
+  if (!isRecord(snapshot)) return {};
+  return { stability: toNumber(snapshot.stability, 0.5) };
+};
+
 const TCMTrendAnalytics = ({ clientId }: TCMTrendAnalyticsProps) => {
   const [trendData, setTrendData] = useState<TCMTrendData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -71,16 +111,15 @@ const TCMTrendAnalytics = ({ clientId }: TCMTrendAnalyticsProps) => {
 
       if (error) throw error;
 
-      const trends: TCMTrendData[] = (sessions || []).map((session: any) => {
-        const diag = session.diagnosis_snapshot as any;
-        const vector = session.vector_snapshot as any;
+      const trends: TCMTrendData[] = (sessions || []).map((session: TreatmentSessionRow) => {
+        const diag = parseDiagnosisSnapshot(session.diagnosis_snapshot);
+        const vector = parseVectorSnapshot(session.vector_snapshot);
 
         // Extract element scores from diagnosis or compute from vector
-        let elementScores = { wood: 0.5, fire: 0.5, earth: 0.5, metal: 0.5, water: 0.5 };
+        const elementScores = { wood: 0.5, fire: 0.5, earth: 0.5, metal: 0.5, water: 0.5 };
 
-        if (diag?.imbalances) {
-          const imbalances = diag.imbalances as any[];
-          for (const imb of imbalances) {
+        if (diag.imbalances) {
+          for (const imb of diag.imbalances) {
             const el = (imb.element || '').toLowerCase();
             const score = imb.imbalanceScore || 0;
             if (el.includes('holz') || el.includes('wood')) elementScores.wood = Math.max(elementScores.wood, score);

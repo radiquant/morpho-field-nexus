@@ -263,22 +263,11 @@
 
 @keyframes chreode-pulse {
   0%, 100% { 
-    box-shadow: 0 0 15px hsl(42 70% 55% / 0.2);
+    box-shadow: 0 0 20px hsl(var(--chreode) / 0.3);
     transform: scale(1);
   }
   50% { 
-    box-shadow: 0 0 30px hsl(42 70% 55% / 0.35);
-    transform: scale(1.02);
-  }
-}
-
-.dark @keyframes chreode-pulse {
-  0%, 100% { 
-    box-shadow: 0 0 20px hsl(42 75% 52% / 0.3);
-    transform: scale(1);
-  }
-  50% { 
-    box-shadow: 0 0 40px hsl(42 75% 52% / 0.5);
+    box-shadow: 0 0 40px hsl(var(--chreode) / 0.5);
     transform: scale(1.02);
   }
 }

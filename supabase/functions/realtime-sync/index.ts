@@ -8,6 +8,35 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+interface RealtimeMessage {
+  type?: string;
+  timestamp?: number;
+  data?: unknown;
+}
+
+interface VectorUpdatePayload {
+  vectorId?: unknown;
+  dimensions?: unknown;
+  trajectory?: unknown;
+}
+
+interface FrequencySyncPayload {
+  frequency?: unknown;
+  amplitude?: unknown;
+  waveform?: unknown;
+}
+
+interface HardwareStatusPayload {
+  devices?: { length?: number };
+  metrics?: unknown;
+}
+
+interface SessionEventPayload {
+  event?: unknown;
+  sessionId?: unknown;
+  payload?: unknown;
+}
+
 // Verbindungs-Registry für aktive Clients
 const connections = new Map<string, WebSocket>();
 
@@ -38,7 +67,7 @@ function handlePing(ws: WebSocket, clientId: string, timestamp: number) {
 }
 
 // Vektor-Update Handler
-function handleVectorUpdate(ws: WebSocket, clientId: string, data: any) {
+function handleVectorUpdate(ws: WebSocket, clientId: string, data: VectorUpdatePayload) {
   console.log(`[realtime-sync] Vector update from ${clientId}:`, data.vectorId);
   
   // Broadcast an alle anderen Clients
@@ -60,7 +89,7 @@ function handleVectorUpdate(ws: WebSocket, clientId: string, data: any) {
 }
 
 // Frequenz-Sync Handler
-function handleFrequencySync(ws: WebSocket, clientId: string, data: any) {
+function handleFrequencySync(ws: WebSocket, clientId: string, data: FrequencySyncPayload) {
   console.log(`[realtime-sync] Frequency sync from ${clientId}:`, data.frequency);
   
   broadcast({
@@ -74,7 +103,7 @@ function handleFrequencySync(ws: WebSocket, clientId: string, data: any) {
 }
 
 // Hardware-Status Handler
-function handleHardwareStatus(ws: WebSocket, clientId: string, data: any) {
+function handleHardwareStatus(ws: WebSocket, clientId: string, data: HardwareStatusPayload) {
   console.log(`[realtime-sync] Hardware status from ${clientId}:`, data.devices?.length || 0, 'devices');
   
   broadcast({
@@ -87,7 +116,7 @@ function handleHardwareStatus(ws: WebSocket, clientId: string, data: any) {
 }
 
 // Session-Event Handler
-function handleSessionEvent(ws: WebSocket, clientId: string, data: any) {
+function handleSessionEvent(ws: WebSocket, clientId: string, data: SessionEventPayload) {
   console.log(`[realtime-sync] Session event from ${clientId}:`, data.event);
   
   broadcast({
@@ -163,7 +192,7 @@ serve(async (req) => {
   
   socket.onmessage = (event) => {
     try {
-      const message = JSON.parse(event.data);
+      const message = JSON.parse(event.data) as RealtimeMessage;
       const timestamp = Date.now();
       
       console.log(`[realtime-sync] Message from ${clientId}:`, message.type);
@@ -174,19 +203,19 @@ serve(async (req) => {
           break;
           
         case 'vector_update':
-          handleVectorUpdate(socket, clientId, message.data);
+          handleVectorUpdate(socket, clientId, message.data as VectorUpdatePayload);
           break;
           
         case 'frequency_sync':
-          handleFrequencySync(socket, clientId, message.data);
+          handleFrequencySync(socket, clientId, message.data as FrequencySyncPayload);
           break;
           
         case 'hardware_status':
-          handleHardwareStatus(socket, clientId, message.data);
+          handleHardwareStatus(socket, clientId, message.data as HardwareStatusPayload);
           break;
           
         case 'session_event':
-          handleSessionEvent(socket, clientId, message.data);
+          handleSessionEvent(socket, clientId, message.data as SessionEventPayload);
           break;
           
         default:

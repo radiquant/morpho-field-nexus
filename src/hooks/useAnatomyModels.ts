@@ -32,6 +32,31 @@ export interface AnatomyModel {
   applicableOrganSystems: string[] | null; // which organ systems NLS points to show
 }
 
+interface AnatomyModelRow {
+  id: string;
+  name: string;
+  description: string | null;
+  source: string;
+  category: string;
+  gender: string;
+  storage_type: string | null;
+  file_path: string | null;
+  file_size_bytes: number | null;
+  thumbnail_url: string | null;
+  license: string | null;
+  author: string | null;
+  version: string | null;
+  supports_meridian_mapping: boolean | null;
+  supports_organ_layers: boolean | null;
+  supports_skeleton: boolean | null;
+  draco_compressed: boolean | null;
+  polygon_count: number | null;
+  body_height_normalized: boolean | null;
+  is_default: boolean | null;
+  visible_layers: string[] | null;
+  applicable_organ_systems: string[] | null;
+}
+
 const CATEGORY_LABELS: Record<string, string> = {
   full_body: 'Ganzkörper',
   organ: 'Organe',
@@ -86,7 +111,7 @@ export function useAnatomyModels() {
       const { data: storageFiles } = await supabase.storage.from('3d-models').list('', { limit: 500 });
       const existingFiles = new Set((storageFiles || []).map(f => f.name));
 
-      const mapped: AnatomyModel[] = (data || []).map((m: any) => {
+      const mapped: AnatomyModel[] = (data || []).map((m: AnatomyModelRow) => {
         const storageType = m.storage_type || 'local';
         const filePath = m.file_path || '';
         const resolvedUrl = resolveModelUrl(filePath, storageType);
@@ -125,20 +150,20 @@ export function useAnatomyModels() {
       setModels(mapped);
 
       // Auto-select default model
-      if (!selectedModel) {
-        const defaultModel = mapped.find(m => m.isDefault && m.isAvailable);
-        if (defaultModel) setSelectedModel(defaultModel);
-      }
+      setSelectedModel(prev => {
+        if (prev) return prev;
+        return mapped.find(m => m.isDefault && m.isAvailable) || null;
+      });
     } catch (err) {
       console.error('Fehler beim Laden der Modelle:', err);
     } finally {
       setIsLoading(false);
     }
-  }, [resolveModelUrl, selectedModel]);
+  }, [resolveModelUrl]);
 
   useEffect(() => {
     loadModels();
-  }, []);
+  }, [loadModels]);
 
   const categories = [...new Set(models.map(m => m.category))];
 

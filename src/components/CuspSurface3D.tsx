@@ -66,12 +66,13 @@ const AnimatedPath = ({
         a = -2 + 2.5 * t;
         b = 1.5 * Math.sin(t * Math.PI * 4) * (1 - t);
         break;
-      case "spiral":
+      case "spiral": {
         // Spiral approaching the cusp
         const radius = 2 * (1 - t * 0.7);
         a = -1 + radius * Math.cos(t * Math.PI * 6);
         b = radius * Math.sin(t * Math.PI * 6);
         break;
+      }
       default:
         a = -1.5;
         b = 0;

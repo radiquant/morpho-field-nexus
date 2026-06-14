@@ -5,7 +5,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Database,
+  Database as DatabaseIcon,
   Plus,
   Trash2,
   Edit3,
@@ -25,6 +25,11 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import type { VectorAnalysis } from '@/services/feldengine';
+import type { Database } from '@/integrations/supabase/types';
+
+type WordEnergyCollectionRow = Database['public']['Tables']['word_energy_collections']['Row'];
+type WordEnergyCollectionInsert = Database['public']['Tables']['word_energy_collections']['Insert'];
+type WordEnergyCollectionUpdate = Database['public']['Tables']['word_energy_collections']['Update'];
 
 interface WordEnergyCollection {
   id: string;
@@ -61,13 +66,13 @@ const WordEnergyDBManager = ({ vectorAnalysis, onMultiFociSelected }: WordEnergy
   const loadCollections = useCallback(async () => {
     try {
       const { data, error } = await supabase
-        .from('word_energy_collections' as any)
+        .from('word_energy_collections')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      setCollections((data || []).map((c: any) => ({
+      setCollections((data || []).map((c: WordEnergyCollectionRow) => ({
         id: c.id,
         name: c.name,
         words: c.words || [],
@@ -91,13 +96,15 @@ const WordEnergyDBManager = ({ vectorAnalysis, onMultiFociSelected }: WordEnergy
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) throw new Error('Nicht authentifiziert');
 
+      const newCollection: WordEnergyCollectionInsert = {
+        name: newName.trim(),
+        words: [],
+        user_id: session.user.id,
+      };
+
       const { error } = await supabase
-        .from('word_energy_collections' as any)
-        .insert({
-          name: newName.trim(),
-          words: [],
-          user_id: session.user.id,
-        } as any);
+        .from('word_energy_collections')
+        .insert(newCollection);
 
       if (error) throw error;
       setNewName('');
@@ -115,7 +122,7 @@ const WordEnergyDBManager = ({ vectorAnalysis, onMultiFociSelected }: WordEnergy
   const deleteCollection = useCallback(async (id: string) => {
     try {
       const { error } = await supabase
-        .from('word_energy_collections' as any)
+        .from('word_energy_collections')
         .delete()
         .eq('id', id);
       if (error) throw error;
@@ -135,9 +142,14 @@ const WordEnergyDBManager = ({ vectorAnalysis, onMultiFociSelected }: WordEnergy
   const saveWords = useCallback(async (id: string) => {
     const words = editWords.split('\n').map(w => w.trim()).filter(Boolean);
     try {
+      const updates: WordEnergyCollectionUpdate = {
+        words,
+        updated_at: new Date().toISOString(),
+      };
+
       const { error } = await supabase
-        .from('word_energy_collections' as any)
-        .update({ words, updated_at: new Date().toISOString() } as any)
+        .from('word_energy_collections')
+        .update(updates)
         .eq('id', id);
       if (error) throw error;
       setEditingId(null);
@@ -234,7 +246,7 @@ const WordEnergyDBManager = ({ vectorAnalysis, onMultiFociSelected }: WordEnergy
         className="w-full flex items-center justify-between p-3 hover:bg-muted/30 transition-colors"
       >
         <div className="flex items-center gap-2">
-          <Database className="w-4 h-4 text-primary" />
+          <DatabaseIcon className="w-4 h-4 text-primary" />
           <span className="text-sm font-medium text-foreground">Wort-Energie DBs</span>
           <Badge variant="secondary" className="text-[10px]">{collections.length}</Badge>
         </div>

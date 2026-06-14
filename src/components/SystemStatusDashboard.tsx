@@ -41,11 +41,9 @@ const SystemStatusDashboard = () => {
 
   // Auto-Start Monitoring
   useEffect(() => {
-    if (!isMonitoring) {
-      startMonitoring(1000);
-    }
+    startMonitoring(1000);
     return () => stopMonitoring();
-  }, [isMonitoring, startMonitoring, stopMonitoring]);
+  }, [startMonitoring, stopMonitoring]);
 
   // Device Events
   useEffect(() => {

@@ -112,6 +112,7 @@ type HarmonizationEventCallback = (event: {
 class RealtimeHarmonizationServiceClass {
   private audioContext: AudioContext | null = null;
   private workletNode: AudioWorkletNode | null = null;
+  private fallbackOscillator: OscillatorNode | null = null;
   private gainNode: GainNode | null = null;
   private analyser: AnalyserNode | null = null;
   private isInitialized = false;
@@ -294,8 +295,8 @@ class RealtimeHarmonizationServiceClass {
         oscillator.connect(this.gainNode!);
         oscillator.start();
         
-        // Speichere als workletNode Ersatz
-        (this as any)._fallbackOscillator = oscillator;
+        // Speichere als Worklet-Fallback
+        this.fallbackOscillator = oscillator;
       }
       
       // Fade in
@@ -366,12 +367,14 @@ class RealtimeHarmonizationServiceClass {
       }
       
       // Fallback Oszillator stoppen
-      if ((this as any)._fallbackOscillator) {
+      if (this.fallbackOscillator) {
         try {
-          (this as any)._fallbackOscillator.stop();
-          (this as any)._fallbackOscillator.disconnect();
-        } catch {}
-        (this as any)._fallbackOscillator = null;
+          this.fallbackOscillator.stop();
+          this.fallbackOscillator.disconnect();
+        } catch (error) {
+          void error;
+        }
+        this.fallbackOscillator = null;
       }
       
       this.isPlaying = false;
@@ -387,8 +390,8 @@ class RealtimeHarmonizationServiceClass {
       this.workletNode.port.postMessage({ frequency });
     }
     
-    if ((this as any)._fallbackOscillator && this.audioContext) {
-      (this as any)._fallbackOscillator.frequency.setValueAtTime(
+    if (this.fallbackOscillator && this.audioContext) {
+      this.fallbackOscillator.frequency.setValueAtTime(
         frequency,
         this.audioContext.currentTime
       );
@@ -473,7 +476,9 @@ class RealtimeHarmonizationServiceClass {
             this.websocket?.removeEventListener('message', handler);
             resolve(data.result);
           }
-        } catch {}
+        } catch (error) {
+          void error;
+        }
       };
       
       this.websocket!.addEventListener('message', handler);
