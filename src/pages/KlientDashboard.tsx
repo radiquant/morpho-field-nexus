@@ -44,7 +44,7 @@ interface ClientInfo {
 }
 
 interface SnapshotRecord {
-  [key: string]: unknown;
+  [key: string]: Json | undefined;
 }
 
 interface DiagnosisSnapshot extends SnapshotRecord {

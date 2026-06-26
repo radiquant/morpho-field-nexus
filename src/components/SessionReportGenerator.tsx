@@ -53,7 +53,7 @@ interface SessionReportGeneratorProps {
 
 const DIMENSION_NAMES = ['Körperlich', 'Emotional', 'Mental', 'Energie', 'Stress'];
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
+const isRecord = (value: unknown): value is { [key: string]: Json | undefined } =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
 const toNumber = (value: unknown, fallback: number): number =>

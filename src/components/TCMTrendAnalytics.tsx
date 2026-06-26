@@ -68,7 +68,7 @@ const KE_RELATIONS: [string, string][] = [
   ['wood', 'earth'], ['fire', 'metal'], ['earth', 'water'], ['metal', 'wood'], ['water', 'fire'],
 ];
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
+const isRecord = (value: unknown): value is { [key: string]: Json | undefined } =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
 const toNumber = (value: unknown, fallback: number): number =>

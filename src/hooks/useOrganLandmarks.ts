@@ -21,11 +21,11 @@ type OrganSchemaRow = Database['public']['Tables']['organ_schemas']['Row'];
 type OrganLandmarkRow = Database['public']['Tables']['organ_landmarks']['Row'];
 type OrganRegion = { region_code: string; name: string };
 
-const isJsonRecord = (value: Json | null): value is Record<string, unknown> =>
+const isJsonRecord = (value: Json | null): value is { [key: string]: Json | undefined } =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
 const toJsonRecord = (value: Json | null): Record<string, unknown> =>
-  isJsonRecord(value) ? value : {};
+  isJsonRecord(value) ? (value as Record<string, unknown>) : {};
 
 const toOrganRegions = (value: Json): OrganRegion[] =>
   Array.isArray(value) ? (value as OrganRegion[]) : [];
