@@ -48,13 +48,13 @@ interface SnapshotRecord {
 }
 
 interface DiagnosisSnapshot extends SnapshotRecord {
-  imbalanceCount?: unknown;
+  imbalanceCount?: Json;
 }
 
 interface TreatmentSummarySnapshot extends SnapshotRecord {
-  pointsProcessed?: unknown;
-  beforeDimensions?: unknown;
-  afterDimensions?: unknown;
+  pointsProcessed?: Json;
+  beforeDimensions?: Json;
+  afterDimensions?: Json;
 }
 
 interface SessionSummary {
