@@ -44,17 +44,17 @@ interface ClientInfo {
 }
 
 interface SnapshotRecord {
-  [key: string]: unknown;
+  [key: string]: Json | undefined;
 }
 
 interface DiagnosisSnapshot extends SnapshotRecord {
-  imbalanceCount?: unknown;
+  imbalanceCount?: Json;
 }
 
 interface TreatmentSummarySnapshot extends SnapshotRecord {
-  pointsProcessed?: unknown;
-  beforeDimensions?: unknown;
-  afterDimensions?: unknown;
+  pointsProcessed?: Json;
+  beforeDimensions?: Json;
+  afterDimensions?: Json;
 }
 
 interface SessionSummary {
